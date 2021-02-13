@@ -23,7 +23,7 @@
 ```java
 // 核心代码
 
-// MyClientHandler.java
+MyClientHandler.java
 
 package com.atguigu.netty.tcp;
 
@@ -65,9 +65,7 @@ public class MyClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 }
 
-```
-```java
-// MyServerHandler.java
+MyServerHandler.java
 
 package com.atguigu.netty.tcp;
 
@@ -154,8 +152,7 @@ public class MessageProtocol {
         this.content = content;
     }
 }
-```
-```java
+
 package com.atguigu.netty.protocoltcp;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -203,8 +200,7 @@ public class MyClientHandler extends SimpleChannelInboundHandler<MessageProtocol
         ctx.close();
     }
 }
-```
-```java
+
 package com.atguigu.netty.protocoltcp;
 
 import io.netty.buffer.ByteBuf;
@@ -220,8 +216,7 @@ public class MyMessageEncoder extends MessageToByteEncoder<MessageProtocol> {
         out.writeBytes(msg.getContent());
     }
 }
-```
-```java
+
 package com.atguigu.netty.protocoltcp;
 
 import io.netty.buffer.ByteBuf;
@@ -248,8 +243,7 @@ public class MyMessageDecoder extends ReplayingDecoder<Void> {
         out.add(messageProtocol);
     }
 }
-```
-```java
+
 package com.atguigu.netty.protocoltcp;
 
 import io.netty.channel.ChannelHandlerContext;

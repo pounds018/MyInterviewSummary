@@ -1,4 +1,4 @@
-![](https://github.com/pounds018/MyInterviewSummary/tree/master/docs/_media/java_icon_coffee.png)
+![](https://github.com/pounds018/MyInterviewSummary/tree/master/docs/_media/java_icon_coffee.jpg)
 
 [![stars](https://badgen.net/github/stars/dongzl/netty-handbook?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary) 
 [![forks](https://badgen.net/github/forks/dongzl/netty-handbook?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary)

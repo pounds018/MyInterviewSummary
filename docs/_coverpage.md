@@ -1,10 +1,14 @@
-![logo](_media/netty_logo_450px.svg)
+![logo](_media/java_icon_coffee.jpg)
 
 > 自用 java面试总结
 
-* 本课程不适合零基础的学员，需要掌握常用的设计模式和数据结构
-* 掌握 Java 的面向对象编程、多线程编程、IO 编程、网络编程等知识
-* 《Netty 核心源码剖析章节》内容学习最好有项目开发和阅读源码的经历
+* 所涉及内容仅包括学习过的技术,不包含未学习过的技术
+* 内容涵盖:
+    1. 基础: javaSE 常见面试题
+    2. 框架: Spring Framework,SpringMVC,Spring Cloud,Spring Boot,Dubbo + ZK,MyBatis,Swagger
+    3. 数据库: MySQL
+    4. 中间件: ElasticSearch,Redis,RabbitMQ
+    5. JVM
 
 [![stars](https://badgen.net/github/stars/pounds018/MyInterviewSummary?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary) 
 [![forks](https://badgen.net/github/forks/pounds018/MyInterviewSummary?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary)

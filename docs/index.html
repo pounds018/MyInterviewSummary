@@ -74,7 +74,8 @@
       owner: 'pounds018',    // 仓库的创建者，
       admin: ['pounds018'],  // 如果仓库有多个人可以操作，那么在这里以数组形式写出
       id: location.pathname,      // 用于标记评论是哪个页面的，确保唯一，并且长度小于50
-      distractionFreeMode: false  // Facebook-like distraction free mode
+      distractionFreeMode: false,  // Facebook-like distraction free mode
+      proxy: 'https://netnr-proxy.cloudno.de/https://github.com/login/oauth/access_token'// gitalk反向代理,默认的已经禁止使用了
     })
   </script>
 </body>

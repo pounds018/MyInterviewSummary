@@ -41,10 +41,10 @@ public ArrayList() {
 ```
 - 有参构造函数:
 ```java
-/**
- * @Param initialCapacity --- 初始化容量
- * @Desc 有参数就按照参数长度初始化elementData 数组,没有就使用 EMPTY_ELEMENTDATA初始化
- */
+    /**
+     * @Param initialCapacity --- 初始化容量
+     * @Desc 有参数就按照参数长度初始化elementData 数组,没有就使用 EMPTY_ELEMENTDATA初始化
+     */
 public ArrayList(int initialCapacity) {
     if (initialCapacity > 0) {
         

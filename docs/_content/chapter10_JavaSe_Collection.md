@@ -1,5 +1,5 @@
+`ps: 只列出常用集合,本章节所有的代码都是基于 jdk1.8`
 # 10.1 javaSe 集合框架结构
-`ps: 只列出常用集合`
 - 单列集合:
     - Collection:
         - list: 元素位置有序,可重复
@@ -16,3 +16,13 @@
             - LinkedHashMap: 在HashMap的基础上维护了一个双向链表,可以控制元素是存取有序还是访问有序
         - `HashTable`: 线程安全的双列集合,`但是效率不行`
         - `TreeMap`: key按照一定比较规则排序,`即键值对按照key大小有序存放`
+    
+# 10.2 ArrayList源码概述:
+## 10.2.1 几个重要的变量:
+- int `DEFAULT_CAPACITY` = 10 : 在未指定ArrayList初始化长度时,默认的初始化长度.
+- Object[] `EMPTY_ELEMENTDATA` = {} : 有参构造创建ArrayList但是没有给初始化长度时,默认的Object数组
+- Object[] `DEFAULTCAPACITY_EMPTY_ELEMENTDATA` = {} : 无参构造器创建ArrayList时,默认的Object数组
+- Object[] `elementData` : 实际存放元素的element数组
+```yaml
+# EMPTY_ELEMENTDATA 和 DEFAULTCAPACITY_EMPTY_ELEMENTDATA 这两个是扩容时识别ArrayList是由什么构造器创建的
+```

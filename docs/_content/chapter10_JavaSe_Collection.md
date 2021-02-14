@@ -1,5 +1,6 @@
 `ps: 只列出常用集合,本章节所有的代码都是基于 jdk1.8`
-# 10.1 javaSe 集合框架结构
+## 10.1 javaSe 集合框架结构
+
 - 单列集合:
     - Collection:
         - list: 元素位置有序,可重复
@@ -17,9 +18,10 @@
         - `HashTable`: 线程安全的双列集合,`但是效率不行`
         - `TreeMap`: key按照一定比较规则排序,`即键值对按照key大小有序存放`
     
+## 10.2 ArrayList源码概述:
 
-# 10.2 ArrayList源码概述:
-## 10.2.1 几个重要的变量:
+### 10.2.1 几个重要的变量:
+
 - int `DEFAULT_CAPACITY` = 10 : 在未指定ArrayList初始化长度时,默认的初始化长度.
 - Object[] `EMPTY_ELEMENTDATA` = {} : 有参构造创建ArrayList但是没有给初始化长度时,默认的Object数组
 - Object[] `DEFAULTCAPACITY_EMPTY_ELEMENTDATA` = {} : 无参构造器创建ArrayList时,默认的Object数组
@@ -27,7 +29,9 @@
 ```yaml
 # EMPTY_ELEMENTDATA 和 DEFAULTCAPACITY_EMPTY_ELEMENTDATA 这两个是扩容时识别ArrayList是由什么构造器创建的
 ```
-## 10.2.2 构造函数:
+
+### 10.2.2 构造函数:
+
 - 无参构造函数:
 ```java
 public ArrayList() {
@@ -62,7 +66,9 @@ public ArrayList(int initialCapacity) {
 ```java
 public ArrayList(Collection<? extends E> c) // 就是将集合c中元素全部存入ArrayList中,不是本章节关注的重点
 ```
-## 10.2.3 扩容流程:
+
+### 10.2.3 扩容流程:
+
 - 从上面的构造器可以看出,在构造ArrayList时,未指定arrayList初始容量的时候,arraylist实际上就是一个`空object数组`
 - 在jdk1.8 中ArrayList 实际上是一种`懒加载`的机制在进行初始化存放元素的elementData数组,`即在使用的时候才会去初始化数组`
 - 扩容流程:

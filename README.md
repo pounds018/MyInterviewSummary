@@ -1,4 +1,4 @@
-![](https://pounds018.github.io/MyInterviewSummary/_media/java_icon_coffee.jpg)
+<img style="height:600px" src="https://pounds018.github.io/MyInterviewSummary/_media/java_icon_coffee.jpg" />
 
 [![stars](https://badgen.net/github/stars/pounds018/MyInterviewSummary?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary)
 [![forks](https://badgen.net/github/forks/pounds018/MyInterviewSummary?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary)

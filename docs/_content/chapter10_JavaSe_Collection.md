@@ -71,7 +71,7 @@ public ArrayList(Collection<? extends E> c) // 就是将集合c中元素全部�
 
 - 从上面的构造器可以看出,在构造ArrayList时,未指定arrayList初始容量的时候,arraylist实际上就是一个`空object数组`
 - 在jdk1.8 中ArrayList 实际上是一种`懒加载`的机制在进行初始化存放元素的elementData数组,`即在使用的时候才会去初始化数组`
-- 扩容流程:
+- `扩容流程`:
     1. 入口方法: add(E e) ---> 先去对数组容量进行判断,判断当前数组容量是否允许插入新元素,容量不足就扩容
     ```java
     public boolean add(E e) {
@@ -88,7 +88,7 @@ public ArrayList(Collection<? extends E> c) // 就是将集合c中元素全部�
     ```
     3. calculateCapacity(Object[] elementData, int minCapacity): 判断elementData是否是由有参构造器创建,
        - 如果是就比较 `指定容量`和 `默认容量`的大小,将大的返回,作为最小期望容量
-       - 如果不是,
+       - 如果不是,就返回最小期望容量参数,作为计算结果返回
     ```java
     private static int calculateCapacity(Object[] elementData, int minCapacity) {
         if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {

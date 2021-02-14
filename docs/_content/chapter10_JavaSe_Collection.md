@@ -73,27 +73,27 @@ public ArrayList(Collection<? extends E> c) // 就是将集合c中元素全部�
 - 在jdk1.8 中ArrayList 实际上是一种`懒加载`的机制在进行初始化存放元素的elementData数组,`即在使用的时候才会去初始化数组`
 - `扩容流程`:
     1. 入口方法: add(E e) ---> 先去对数组容量进行判断,判断当前数组容量是否允许插入新元素,容量不足就扩容
-    ```java
-    public boolean add(E e) {
-        ensureCapacityInternal(size + 1);  // Increments modCount!!
-        elementData[size++] = e;
-        return true;
-    }
-    ```
+  ```java
+  public boolean add(E e) {
+      ensureCapacityInternal(size + 1);  // Increments modCount!!
+      elementData[size++] = e;
+      return true;
+  }
+  ```
     2. ensureCapacityInternal(int minCapacity): 计算期望最小容量
-    ```java
+  ```java
     private void ensureCapacityInternal(int minCapacity) {
         ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));
     }
-    ```
+  ```
     3. calculateCapacity(Object[] elementData, int minCapacity): 判断elementData是否是由有参构造器创建,
        - 如果是就比较 `指定容量`和 `默认容量`的大小,将大的返回,作为最小期望容量
        - 如果不是,就返回最小期望容量参数,作为计算结果返回
-    ```java
+  ```java
     private static int calculateCapacity(Object[] elementData, int minCapacity) {
         if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
             return Math.max(DEFAULT_CAPACITY, minCapacity);
         }
         return minCapacity;
     }
-    ```
+   ```

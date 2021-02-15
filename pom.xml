@@ -3,22 +3,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <!-- 基本信息 -->
-    <description>netty学习源码</description>
-    <modelVersion>4.0.0</modelVersion>
-    <name>netty-handbook</name>
-    <packaging>pom</packaging>
+    <name>MyInterviewSummary</name>
 
     <!-- 项目说明：这里作为聚合工程的父工程 -->
-    <groupId>com.netty.book</groupId>
-    <artifactId>netty-handbook</artifactId>
+    <groupId>cn.pounds</groupId>
+    <artifactId>MyInterviewSummary</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
 
     <modules>
-        <module>netty-code-atguigu</module>
-        <module>netty-code-self</module>
-        <module>netty-definitive-guide</module>
+        <module>test</module>
     </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>

@@ -22,6 +22,7 @@
 
 ### 10.2.1 几个重要的变量:
 
+- int `modCount` = 0 : 继承自AbstractList的属性,表示 list发生结构性 变化的次数.
 - int `DEFAULT_CAPACITY` = 10 : 在未指定ArrayList初始化长度时,默认的初始化长度.
 - Object[] `EMPTY_ELEMENTDATA` = {} : 有参构造创建ArrayList但是没有给初始化长度时,默认的Object数组
 - Object[] `DEFAULTCAPACITY_EMPTY_ELEMENTDATA` = {} : 无参构造器创建ArrayList时,默认的Object数组
@@ -80,20 +81,67 @@ public ArrayList(Collection<? extends E> c) // 就是将集合c中元素全部�
       return true;
   }
   ```
+    
     2. ensureCapacityInternal(int minCapacity): 计算期望最小容量
   ```java
     private void ensureCapacityInternal(int minCapacity) {
         ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));
     }
   ```
-    3. calculateCapacity(Object[] elementData, int minCapacity): 判断elementData是否是由有参构造器创建,
-       - 如果是就比较 `指定容量`和 `默认容量`的大小,将大的返回,作为最小期望容量
-       - 如果不是,就返回最小期望容量参数,作为计算结果返回
+    
+    3. calculateCapacity(Object[] elementData, int minCapacity): 计算 期望的新容量
+    [示例](../../test/src/main/java/Chapter10_JavaSE_Collection/ArrayListTest.java) `从实例中debug可以看出,
+       第一次存入数据的时候,有参构造(指定长度为0)和无参构造扩容的长度是不同的,有参构造(指定长度为0)构造出来的elementData数组长度为
+       插入元素个数+原数组元素个数;无参构造构造出来的elementData数组长度为10`
   ```java
     private static int calculateCapacity(Object[] elementData, int minCapacity) {
+        /**
+        从这个方法可以看出,在第一次添加元素的时候扩容分为两种情况:
+        1. 如果是使用无参构造创建的list,在第一次add元素的时候,其计算出的期望容量为 默认初始化长度(10)和最小容量二者之间的最大值.
+        2. 如果是使用有参构造创建的list,在第一次add元素的时候,其计算出的期望容量为 最小容量.
+        */
         if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
             return Math.max(DEFAULT_CAPACITY, minCapacity);
         }
         return minCapacity;
     }
    ```
+    - 如果是就比较 `指定容量`和 `默认容量`的大小,将大的返回,作为最小期望容量
+    - 如果不是,就返回最小期望容量参数,作为计算结果返回
+    
+    4. ensureExplicitCapacity(int minCapacity): 修改modCount,并且保证 确实需要扩容
+    ```java
+        private void ensureExplicitCapacity(int minCapacity) {
+        modCount++;
+
+        // overflow-conscious code
+        if (minCapacity - elementData.length > 0)
+            grow(minCapacity);
+    }
+    ```
+  
+    5. grow(int minCapacity): 真正的扩容函数,大多数情况下 将容量扩容为旧容量的1.5倍.
+    ```java
+        
+    private void grow(int minCapacity) {
+        // overflow-conscious code
+        int oldCapacity = elementData.length;
+        int newCapacity = oldCapacity + (oldCapacity >> 1);// 新容量 赋值 为旧容量的1.5倍
+        // 扩容为1.5倍后,还不够存放,就将新容量设置为 minCapacity
+        if (newCapacity - minCapacity < 0)
+            newCapacity = minCapacity;
+        // MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8,判断newCapacity是否超出容量上限
+        if (newCapacity - MAX_ARRAY_SIZE > 0)
+            newCapacity = hugeCapacity(minCapacity);
+        // minCapacity is usually close to size, so this is a win:
+        elementData = Arrays.copyOf(elementData, newCapacity);
+    }
+      
+    private static int hugeCapacity(int minCapacity) {
+        if (minCapacity < 0) // overflow
+            throw new OutOfMemoryError();
+        return (minCapacity > MAX_ARRAY_SIZE) ?
+            Integer.MAX_VALUE :
+            MAX_ARRAY_SIZE;
+    }  
+    ```

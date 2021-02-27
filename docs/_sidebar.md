@@ -8,5 +8,6 @@
 * [第 8 章 MySQL](_content/chapter08_MySQL.md)
 * [第 9 章 JVM](_content/chapter09_JVM.md)
 * [第 10 章 javaSe集合](_content/chapter10_JavaSe_Collection.md)
-  * [10.1 ArrayList](_content/chapter10_1_ArrayList.md)
+  * [第一节 框架结构]()
+  * [第二节 ArrayList](_content/chapter10_1_ArrayList.md)
 * [第 11 章 待定](_content/chapter11.md)

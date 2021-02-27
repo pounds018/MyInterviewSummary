@@ -4,7 +4,7 @@
 [![forks](https://badgen.net/github/forks/pounds018/MyInterviewSummary?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-# 自用java面试总结
+# PoundS 的 java面试总结
 
 # 内容介绍
 

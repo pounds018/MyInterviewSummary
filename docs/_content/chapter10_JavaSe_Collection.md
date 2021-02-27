@@ -24,6 +24,7 @@
 
 - int `modCount` = 0 : 继承自AbstractList的属性,表示 list发生结构性 变化的次数.
 - int `DEFAULT_CAPACITY` = 10 : 在未指定ArrayList初始化长度时,默认的初始化长度.
+- int `modCount` = 0 : arraylist在发生增删改等结构性变化的时候,modCount++
 - Object[] `EMPTY_ELEMENTDATA` = {} : 有参构造创建ArrayList但是没有给初始化长度时,默认的Object数组
 - Object[] `DEFAULTCAPACITY_EMPTY_ELEMENTDATA` = {} : 无参构造器创建ArrayList时,默认的Object数组
 - Object[] `elementData` : 实际存放元素的element数组
@@ -146,3 +147,169 @@ public ArrayList(Collection<? extends E> c) // 就是将集合c中元素全部�
             MAX_ARRAY_SIZE;
     }  
     ```
+  > 总结: 
+  > 1. ArrayList在初次扩容的时候,只有在arraylist是由 无参构造器初始化出来的时候,才会扩容为10;其他情况都是将 elementData数组的
+  > 的长度设置为 待插入元素长度+1.
+  > 2. ArrayList在初次扩容完成之后,后续的扩容都是 将容量扩容为 elementData数组原长度的1.5倍.
+  
+### 10.2.4 ArrayList的subList方法:
+- 先上源码: 实际上就是新建了一个 list的内部类subList返回
+  
+  `ps: 传入参数fromIndex,toIndex是Arraylist的下标,并且截取出来的subList范围是一个左闭右开区间,即[formIndex,toIndex),`
+  ```java
+    public List<E> subList(int fromIndex, int toIndex) {
+        // 检查范围
+        subListRangeCheck(fromIndex, toIndex, size);
+        return new SubList(this, 0, fromIndex, toIndex);
+    }
+  
+      //检查范围是否合法
+    static void subListRangeCheck(int fromIndex, int toIndex, int size) {
+        if (fromIndex < 0)
+            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+        if (toIndex > size)
+            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+        if (fromIndex > toIndex)
+            throw new IllegalArgumentException("fromIndex(" + fromIndex +
+                    ") > toIndex(" + toIndex + ")");
+    }
+  ``` 
+- 返回的SubList究竟是什么?
+  - SubList: `private class SubList extends AbstractList<E> implements RandomAccess ` 继承了AbstractList的内部类
+  - 重要属性:
+  ```java
+        private final AbstractList<E> parent; // 指向subList的父List,即调用subList()的ArrayList
+        private final int parentOffset;// 父list中截取区间的起始索引
+        private final int offset;// 子list的起始索引
+        int size;// 记录当前sublist的元素个数
+  ```
+  - 常用方法:
+    > 说明:  下面的所有方法都是在下面这个list,sublist中完成</br>
+    `未修改之前的TEST_LIST` : [java, c, erlang, go, c++, python, ruby]<br/>
+    `sublist` : [erlang, go, c++]
+    - subList构造函数,这个parent实际上是指向 父类list,`即调用subList()方法的list`
+    ```java
+    SubList(AbstractList<E> parent,int offset, int fromIndex, int toIndex) {
+        this.parent = parent;
+        this.parentOffset = fromIndex;
+        this.offset = offset + fromIndex;
+        this.size = toIndex - fromIndex;
+        this.modCount = ArrayList.this.modCount;
+    }
+    ```
+    - `set方法`: `E set(int index, E e)`将subList中index位置上的元素设置成 e,返回旧址
+      
+        `ps: 注意index指的是sublist中的元素下标,不要越界`
+        ```java
+        public E set(int index, E e) {
+            rangeCheck(index);// 检查待处理元素是否位于sublist内
+            checkForComodification();// 检查
+            E oldValue = ArrayList.this.elementData(offset + index);
+            ArrayList.this.elementData[offset + index] = e;
+            return oldValue;
+        }
+        ```
+        示例:
+        ```java
+            // E set(int index, E e),将subList中第二个元素设置成"php"
+            subList.set(1,"php");
+            System.out.println(TEST_LIST);
+            System.out.println(subList);
+            /**
+             * TEST_LIST:
+             * [java, c, erlang, php, c++, python, ruby]
+             * sublist:
+             * [erlang, php, c++]
+             */
+        ```
+      > 原因: 
+      >    ArrayList.this.elementData[offset + index] = e,实际上是修改了父list中的元素, 
+      > 而这个sublist对象,实际上只是一个父list的视图. 
+    - `get方法`: 从父list的elementData数组中获取到指定元素,返回 
+        ```java
+        public E get(int index) {
+            rangeCheck(index);
+            checkForComodification();
+            return ArrayList.this.elementData(offset + index);
+        }  
+        ```
+    - `add方法`: `add(int index, E e)`
+      ```java
+      public void add(int index, E e) {
+        rangeCheckForAdd(index);
+        checkForComodification();
+        parent.add(parentOffset + index, e);
+        this.modCount = parent.modCount;
+        this.size++;
+      }
+      ```
+      示例:
+      ```java
+      // add(int index, E e)
+        subList.add("js");
+        System.out.println(TEST_LIST);
+        System.out.println(subList);
+        /**
+         * TEST_LIST:
+         * [java, c, erlang, php, c++, js, python, ruby]
+         * subList:
+         * [erlang, php, c++, js]
+         */
+        subList.add(1,"c#");
+        System.out.println(TEST_LIST);
+        System.out.println(subList);
+        /**
+         * TEST_lIST:
+         * [java, c, erlang, c#, php, c++, js, python, ruby]
+         * sublist:
+         * [erlang, c#, php, c++, js]
+         */
+      ```
+      > 原因:<br/>
+      parent.add(parentOffset + index, e);前面说过parent指向的是父list,parentOffset实际上就是fromIndex,<br/>
+      所以sublist最终还是通过父list在对list进行修改
+      
+    - `remove方法` : 
+      ```java
+              public E remove(int index) {
+            rangeCheck(index);
+            checkForComodification();
+            E result = parent.remove(parentOffset + index);
+            this.modCount = parent.modCount;
+            this.size--;
+            return result;
+        }
+      ```
+      ````java
+              // 删除指定元素,不会删除掉父list中的元素
+        subList.remove("js");
+        System.out.println(TEST_LIST);
+        System.out.println(subList);
+        /**
+         * TEST_LIST:
+         * [java, c, erlang, c#, php, c++, js, python, ruby]
+         * subList:
+         * [erlang, c#, php]
+         */
+        // 删除指定位置上的元素,会删除掉父list上的元素
+        subList.remove(1);
+        System.out.println(TEST_LIST);
+        System.out.println(subList);
+        /**
+         * TEST_LIST
+         * [java, c, erlang, php, c++, js, python, ruby]
+         *  sublist
+         * [erlang, php]
+         */
+      ````
+      > 原因:<br/>
+      1.remove(Object o)删除某个指定元素是继承自 abstractList的方法(并且SubList没有重写)
+      , 所以其删除操作是在sublist自身上操作
+      2.remove(index i)删除某个指定位置上的元素,在SubList类中重写了方法,
+      并且最终是通过parent属性所指向的父list来执行的一个删除操作.
+      
+> 总结: `谨慎使用SubList中会造成元素发生更改的方法.`
+> 1. sublist方法拿到的子list,仅仅是一个视图效果,并不代表重新生成了一个与父list没有关联的list.
+> 2. sublist对象根据索引来执行的操作,实际上都是通过父list来完成的.最终都会影响两个list
+> 3. 虽然add(Object o)方法不是根据索引的来执行的,但是他内部最终还是调用的根据索引操作的方法 - add(size(),o)
+> 由于SubList重写了根据索引来执行的add操作,所以这个方法他也会造成`子父list` 都发生变化.

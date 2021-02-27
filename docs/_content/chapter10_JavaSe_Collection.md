@@ -90,7 +90,8 @@ public ArrayList(Collection<? extends E> c) // 就是将集合c中元素全部�
   ```
     
     3. calculateCapacity(Object[] elementData, int minCapacity): 计算 期望的新容量
-    [示例](../../test/src/main/java/Chapter10_JavaSE_Collection/ArrayListTest.java) `从实例中debug可以看出,
+    [示例](https://pounds018.github.io/MyInterviewSummary/test/src/main/java/Chapter10_JavaSE_Collection/ArrayListTest.
+       java) `从实例中debug可以看出,
        第一次存入数据的时候,有参构造(指定长度为0)和无参构造扩容的长度是不同的,有参构造(指定长度为0)构造出来的elementData数组长度为
        插入元素个数+原数组元素个数;无参构造构造出来的elementData数组长度为10`
   ```java

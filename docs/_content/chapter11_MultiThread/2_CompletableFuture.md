@@ -16,20 +16,21 @@
       - 处理异步异常
       - 非阻塞获取某个任务的执行结果
       - 支持异步任务的链式调用
-   
+
 ## 11.2.2 CompletableFuture常用方法总结:
 1. 静态工厂方法创建异步任务
    - `supplyAsync`: 创建一个可以获取任务执行结果的CompletableFuture
-   1. static &lt;U&gt; CompletableFuture&lt;U&gt; supplyAsync(Supplier&lt;U&gt; supplier) `不建议使用`
-   2. static &lt;U&gt; CompletableFuture&lt;U&gt; supplyAsync(Supplier&lt;U&gt; supplier, Executor executor)
-      ps: `U为返回值的类型,带Excutor参数表示使用自定义的线程池执行任务`,否则使用默认提供的ForkJoin.commonPool执行异步任务
+      1. static &lt;U&gt; CompletableFuture&lt;U&gt; supplyAsync(Supplier&lt;U&gt; supplier) `不建议使用`
+      2. static &lt;U&gt; CompletableFuture&lt;U&gt; supplyAsync(Supplier&lt;U&gt; supplier, Executor executor)
+         ps: `U为返回值的类型,带Excutor参数表示使用自定义的线程池执行任务`,否则使用默认提供的ForkJoin.commonPool执行异步任务
    - `runAsync`: 创建一个可以获取任务执行结果的CompletableFuture
       1. static CompletableFuture<?Void> runAsync(Runnable runnable) `不建议使用`
       2. static CompletableFuture<?Void> runAsync(Runnable runnable, Executor executor)
          ps: `带Excutor参数表示使用自定义的线程池执行任务`,否则使用默认提供的ForkJoin.commonPool执行异步任务
    - `completedFuture` : 创建一个已完成的任务,并且设置结果为value
-      1. static &lt;U&gt; CompletableFuture&lt;U&gt; completedFuture(U value)
-   > 注意:  
+      1. static &lt;U&gt; CompletableFuture&lt;U&gt; completedFuture(U value)  
+     
+    > 注意:  
    1. 由于CompletableFuture支持异步执行任务,在使用这一特性的时候需要提供一个线程池,如果不提供线程池的话就会使用其默认提供 
       的线程池(ForkJoin.commonPool),但是在其创建线程池的时候使用的是 `Runtime.getRuntime().availableProcessors() - 1` 
       即: 当前运行环境下可用的处理器数量-1(cpu核心数-1),并且所产生的线程是守护线程.
@@ -231,8 +232,9 @@
        - `allOf`: 所有任务都完成才能执行新任务,无返回值
            - public static CompletableFuture<Void> allOf(CompletableFuture<?>... cfs)
        - `anyOf`: 所有任务完成其中一个就可以开始执行新任务 
-           - public static CompletableFuture<Object> anyOf(CompletableFuture<?>... cfs)
-    
+           - public static CompletableFuture<Object> anyOf(CompletableFuture<?>... cf)
+   
+
 ## 11.2.3 实例代码
 ```java
 // todo

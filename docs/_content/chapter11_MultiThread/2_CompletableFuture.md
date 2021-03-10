@@ -19,7 +19,7 @@
 
 ## 11.2.2 CompletableFuture常用方法总结:
 1. 静态工厂方法创建异步任务
-   - `supplyAsync`: 创建一个可以获取任务执行结果的CompletableFuture
+   - `supplyAsync` : 创建一个可以获取任务执行结果的CompletableFuture
    ```java
     1. static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier) //不建议使用
     2. static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier, Executor executor)

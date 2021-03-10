@@ -1,10 +1,10 @@
 <img style="height:600px" src="https://pounds018.github.io/MyInterviewSummary/_media/java_icon_coffee.jpg" />
 
-> PoundS 的 java面试总结
+> PoundS 的 学习总结
 
 * 所涉及内容仅包括学习过的技术,不包含未学习过的技术
 * 内容涵盖:
-    1. 基础: javaSE 常见面试题
+    1. 基础: javaSE
     2. 框架: Spring Framework,SpringMVC,Spring Cloud,Spring Boot,Dubbo + ZK,MyBatis,Swagger
     3. 数据库: MySQL
     4. 中间件: ElasticSearch,Redis,RabbitMQ

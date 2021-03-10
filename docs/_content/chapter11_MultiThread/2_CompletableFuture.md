@@ -20,15 +20,21 @@
 ## 11.2.2 CompletableFuture常用方法总结:
 1. 静态工厂方法创建异步任务
    - `supplyAsync`: 创建一个可以获取任务执行结果的CompletableFuture
-      1. static &lt;U&gt; CompletableFuture&lt;U&gt; supplyAsync(Supplier&lt;U&gt; supplier) `不建议使用`
-      2. static &lt;U&gt; CompletableFuture&lt;U&gt; supplyAsync(Supplier&lt;U&gt; supplier, Executor executor)
-         ps: `U为返回值的类型,带Excutor参数表示使用自定义的线程池执行任务`,否则使用默认提供的ForkJoin.commonPool执行异步任务
+   ```java
+    1. static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier) //不建议使用
+    2. static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier, Executor executor)
+   ```
+   ps: `U为返回值的类型,带Excutor参数表示使用自定义的线程池执行任务`,否则使用默认提供的ForkJoin.commonPool执行异步任务
    - `runAsync`: 创建一个可以获取任务执行结果的CompletableFuture
-      1. static CompletableFuture<?Void> runAsync(Runnable runnable) `不建议使用`
-      2. static CompletableFuture<?Void> runAsync(Runnable runnable, Executor executor)
-         ps: `带Excutor参数表示使用自定义的线程池执行任务`,否则使用默认提供的ForkJoin.commonPool执行异步任务
+   ```java
+    1. static CompletableFuture<?Void> runAsync(Runnable runnable) //不建议使用
+    2. static CompletableFuture<?Void> runAsync(Runnable runnable, Executor executor)
+   ```  
+   ps: `带Excutor参数表示使用自定义的线程池执行任务`,否则使用默认提供的ForkJoin.commonPool执行异步任务
    - `completedFuture` : 创建一个已完成的任务,并且设置结果为value
-      1. static &lt;U&gt; CompletableFuture&lt;U&gt; completedFuture(U value)  
+   ```java
+    1. static <U> CompletableFuture<U> completedFuture(U value)  
+   ```
      
     > 注意:  
    1. 由于CompletableFuture支持异步执行任务,在使用这一特性的时候需要提供一个线程池,如果不提供线程池的话就会使用其默认提供 
@@ -152,90 +158,117 @@
    > `新任务` : 是指下面这些方法中参数action,fn
     - 串行关系:
         - `thenRun`: 不关心前置任务的结果,只是需要等待前置任务执行完成才开始执行 新任务
-            - CompletableFuture<Void> thenRun(Runnable action)
-            - CompletableFuture<Void> thenRunAsync(Runnable action)
-            - CompletableFuture<Void> thenRunAsync(Runnable action, Executor executor)
+        ```java
+            1. CompletableFuture<Void> thenRun(Runnable action)
+            2. CompletableFuture<Void> thenRunAsync(Runnable action)
+            3. CompletableFuture<Void> thenRunAsync(Runnable action, Executor executor)
+        ```
         - `thenAccept`: 等待前置任务执行结束之后,接收前置任务的返回值作为action的参数,执行 `新任务`,`新任务无返回值`
-            - CompletableFuture<Void> thenAccept(Consumer<? super T> action)
-            - CompletableFuture<Void> thenAcceptAsync(Consumer<? super T> action)
-            - CompletableFuture<Void> thenAcceptAsync(Consumer<? super T> action, Executor executor)
+        ```java
+            1. CompletableFuture<Void> thenAccept(Consumer<? super T> action)
+            2. CompletableFuture<Void> thenAcceptAsync(Consumer<? super T> action)
+            3. CompletableFuture<Void> thenAcceptAsync(Consumer<? super T> action, Executor executor)
+        ```    
         - `thenApply`: 等待前置任务执行结束之后,接收前置任务的返回值作为action的参数,执行 `新任务`,`新任务有返回值`
-            - &lt;U&gt; CompletableFuture&lt;U&gt; thenApply(Function<? super T,? extends U> fn)
-            - &lt;U&gt; CompletableFuture&lt;U&gt; thenApplyAsync(Function<? super T,? extends U> fn)
-            - &lt;U&gt; CompletableFuture&lt;U&gt; thenApplyAsync(Function<? super T,? extends U> fn, Executor executor)
+        ```java
+            1. <U> CompletableFuture<U> thenApply(Function<? super T,? extends U> fn)
+            2. <U> CompletableFuture<U> thenApplyAsync(Function<? super T,? extends U> fn)
+            3. <U> CompletableFuture<U> thenApplyAsync(Function<? super T,? extends U> fn, Executor executor)
+        ```    
         - `thenCompose`: 等待前置任务执行结束之后,接收前置任务的返回值作为action的参数,执行 `新任务`,`新任务有返回值,且返回值类型为CompletionStage或其子类`
-            - public &lt;U&gt; CompletableFuture&lt;U&gt; thenCompose(Function<? super T, ? extends
-              CompletionStage&lt;U&gt;> fn)
-            - public &lt;U&gt; CompletableFuture&lt;U&gt; thenComposeAsync(Function<? super T, ? extends
-              CompletionStage&lt;U&gt;> fn)
-            - public &lt;U&gt; CompletableFuture&lt;U&gt; thenComposeAsync(Function<? super T, ? extends
-              CompletionStage&lt;U&gt;> fn, Executor executor)
+        ```java
+            1. public <U> CompletableFuture<U> thenCompose(Function<? super T, ? extends CompletionStage<U>> fn)
+            2. public <U> CompletableFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn)
+            3. public <U> CompletableFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn,
+            Executor executor)
+        ```
     - 前置任务并行关系:
    ```java
    // todo 验证前置任务是不是都是并行,都是异步执行
    ```
-    - 前置任务都执行完才执行新任务
+   - 前置任务都执行完才执行新任务
         - `runAfterBoth`:
-            - public CompletableFuture<Void> runAfterBoth(CompletionStage<?> other, Runnable action)
-                        - public CompletableFuture<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action)
-            - public CompletableFuture<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor
+        ```java
+            1. public CompletableFuture<Void> runAfterBoth(CompletionStage<?> other, Runnable action)
+            2. public CompletableFuture<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action)
+            3. public CompletableFuture<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor
               executor)
+        ```
         - `thenAcceptBoth`:
-            - public &lt;U&gt; CompletableFuture<Void> thenAcceptBoth(CompletionStage<? extends U> other,BiConsumer<?
+        ```java
+            1. public <U> CompletableFuture<Void> thenAcceptBoth(CompletionStage<? extends U> other,BiConsumer<?
               super T, ? super U> action)
-            - public &lt;U&gt; CompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U>
+            2. public <U> CompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U>
               other,BiConsumer<? super T, ? super U> action)
-            - public &lt;U&gt; CompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U> other,
+            3. public <U> CompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U> other,
               BiConsumer<? super T, ? super U> action, Executor executor)
+        ```   
         - `thenCombine`:
-            - public <U,V> CompletableFuture<V> thenCombine(CompletionStage<? extends U> other, BiFunction<? super T,?
+        ```java
+            1. public <U,V> CompletableFuture<V> thenCombine(CompletionStage<? extends U> other, BiFunction<? super T,?
               super U,? extends V> fn)
-            - public <U,V> CompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super
+            2. public <U,V> CompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super
               T,? super U,? extends V> fn)
-            - public <U,V> CompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super
+            3. public <U,V> CompletableFuture<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super
               T,? super U,? extends V> fn, Executor executor)
+        ```
     - 前置任务其中一个完成执行,就执行新任务
         - `runAfterEither`
-            - public CompletableFuture<Void> runAfterEither(CompletionStage<?> other, Runnable action)
-            - public CompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action)
-            - public CompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor
+        ```java
+            1. public CompletableFuture<Void> runAfterEither(CompletionStage<?> other, Runnable action)
+            2. public CompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action)
+            3. public CompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor
               executor)
+        ```
         - `acceptEither`
-            - public CompletableFuture<Void> acceptEither(CompletionStage<? extends T> other, Consumer<? super T>
+        ```java
+            1. public CompletableFuture<Void> acceptEither(CompletionStage<? extends T> other, Consumer<? super T>
               action)
-            - public CompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T>
+            2. public CompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T>
               action)
-            - public CompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T>
+            3. public CompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T>
               action, Executor executor)
+        ```
         - `applyToEither`
-            - public &lt;U&gt; CompletableFuture&lt;U&gt; applyToEither(CompletionStage<? extends T> other, Function<?
+        ```java
+            1. public <U> CompletableFuture<U> applyToEither(CompletionStage<? extends T> other, Function<?
               super T, U> fn)
-            - public &lt;U&gt; CompletableFuture&lt;U&gt; applyToEitherAsync(CompletionStage<? extends T> other,
+            2. public <U> CompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other,
               Function<? super T, U> fn)
-            - public &lt;U&gt; CompletableFuture&lt;U&gt; applyToEitherAsync(CompletionStage<? extends T> other,
+            3. public <U> CompletableFuture<U> applyToEitherAsync(CompletionStage<? extends T> other,
               Function<? super T, U> fn, Executor executor)
+        ```
     - 异常处理:
         - `exceptionally`: 等价于catch,`似乎无法捕获Exception,必须通过catch捕获之后转换成CompletionException才能抛出`
-            - public CompletableFuture<T> exceptionally(Function<Throwable, ? extends T> fn)
+        ```java
+            1. public CompletableFuture<T> exceptionally(Function<Throwable, ? extends T> fn)
+        ```
         - `handle`: 等价于finally
-            - public &lt;U&gt; CompletableFuture&lt;U&gt; handle(BiFunction<? super T, Throwable, ? extends U> fn)
-            - public &lt;U&gt; CompletableFuture&lt;U&gt; handleAsync(BiFunction<? super T, Throwable, ? extends U> fn)
-            - public &lt;U&gt; CompletableFuture&lt;U&gt; handleAsync(BiFunction<? super T, Throwable, ? extends U> fn, Executor
-              executor)
+        ```java
+            1. public <U> CompletableFuture<U> handle(BiFunction<? super T, Throwable, ? extends U> fn)
+            2. public <U> CompletableFuture<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn)
+            3. public <U> CompletableFuture<U> handleAsync(BiFunction<? super T, Throwable, ? extends U> fn,
+              Executor executor)
+        ```
         - `whenComplete`: 等价于finally
-            - public CompletableFuture<T> whenComplete(BiConsumer<? super T, ? super Throwable> action)
-            - public CompletableFuture<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor
+        ```java
+            1. public CompletableFuture<T> whenComplete(BiConsumer<? super T, ? super Throwable> action)
+            2. public CompletableFuture<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor
               executor)
-            - public CompletableFuture<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor
+            3. public CompletableFuture<T> whenCompleteAsync(BiConsumer<? super T, ? super Throwable> action, Executor
               executor)
-   - 多任务的简单组合:
-       - `allOf`: 所有任务都完成才能执行新任务,无返回值
-           - public static CompletableFuture<Void> allOf(CompletableFuture<?>... cfs)
-       - `anyOf`: 所有任务完成其中一个就可以开始执行新任务 
-           - public static CompletableFuture<Object> anyOf(CompletableFuture<?>... cf)
-   
-
-## 11.2.3 实例代码
+        ```
+    - 多任务的简单组合:
+        - `allOf`: 所有任务都完成才能执行新任务,无返回值
+        ```java
+            1. public static CompletableFuture<Void> allOf(CompletableFuture<?>... cfs)
+        ```
+        - `anyOf`: 所有任务完成其中一个就可以开始执行新任务  
+        ```java
+            2. public static CompletableFuture<Object> anyOf(CompletableFuture<?>... cf)
+        ```
+      
+## 11.2.3 示例代码:
 ```java
 // todo
 ```

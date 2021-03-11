@@ -31,8 +31,9 @@
         2. static CompletableFuture<?Void> runAsync(Runnable runnable, Executor executor)
     ```  
     3. `completedFuture` : 创建一个已完成的任务,并且设置结果为value  
+    > ps : 由这个静态工厂方法创建出来的completableFuture是已经完成了的任务
     ```java
-    1. static <U> CompletableFuture<U> completedFuture(U value)  
+        1. static <U> CompletableFuture<U> completedFuture(U value)  
     ```
     > 关于默认线程池的一些建议:  
     1. 由于CompletableFuture支持异步执行任务,在使用这一特性的时候需要提供一个线程池,如果不提供线程池的话就会使用其默认提供

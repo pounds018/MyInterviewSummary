@@ -17,3 +17,4 @@
 * [第 11 章 java多线程](_content/chapter11_MultiThread/coverpage.md)
   * [第一节 volatile](_content/chapter11_MultiThread/1_volatile.md)
   * [第二节 CompletableFuture使用介绍](_content/chapter11_MultiThread/2_CompletableFuture.md)
+  * [第三节 ThreadPool](_content/chapter11_MultiThread/3_ThreadPool.md)

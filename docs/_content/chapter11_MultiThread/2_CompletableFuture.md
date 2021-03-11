@@ -184,14 +184,14 @@
          ```  
    2. 前置任务并行关系:  
        1. 前置任务都执行完才执行新任务: 
-           - `runAfterBoth`:
+           - `runAfterBoth`: 该方法不关心前置任务的执行结果,新任务可以说是一个独立的新任务,只是在执行时间上需要等待前值任务执行完毕
             ```java
                 1. public CompletableFuture<Void> runAfterBoth(CompletionStage<?> other, Runnable action)
                 2. public CompletableFuture<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action)
                 3. public CompletableFuture<Void> runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor
                   executor)
             ```
-           - `thenAcceptBoth`:
+           - `thenAcceptBoth`: 接受前置任务的执行结果,分别为新任务action的参数1,参数2可以在新任务中对前置任务的结果进行处理
             ```java
                 1. public <U> CompletableFuture<Void> thenAcceptBoth(CompletionStage<? extends U> other,BiConsumer<?
                   super T, ? super U> action)
@@ -200,7 +200,7 @@
                 3. public <U> CompletableFuture<Void> thenAcceptBothAsync(CompletionStage<? extends U> other,
                   BiConsumer<? super T, ? super U> action, Executor executor)
             ```   
-           - `thenCombine`:
+           - `thenCombine`: 与`thenAcceptBoth`的区别在于 `thenCombine`可以有返回值
             ```java
                 1. public <U,V> CompletableFuture<V> thenCombine(CompletionStage<? extends U> other, BiFunction<? super T,?
                   super U,? extends V> fn)
@@ -210,14 +210,14 @@
                   T,? super U,? extends V> fn, Executor executor)
             ```  
        2. 前置任务其中一个完成执行,就执行新任务:  
-           - `runAfterEither`
+           - `runAfterEither` : 无返回值,不接收前置任务的执行结果作为参数
             ```java
                 1. public CompletableFuture<Void> runAfterEither(CompletionStage<?> other, Runnable action)
                 2. public CompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action)
                 3. public CompletableFuture<Void> runAfterEitherAsync(CompletionStage<?> other, Runnable action, Executor
                   executor)
             ```
-           - `acceptEither`
+           - `acceptEither`: 无返回值,接收前置任务的执行结果作为参数
             ```java
                 1. public CompletableFuture<Void> acceptEither(CompletionStage<? extends T> other, Consumer<? super T>
                   action)
@@ -226,7 +226,7 @@
                 3. public CompletableFuture<Void> acceptEitherAsync(CompletionStage<? extends T> other, Consumer<? super T>
                   action, Executor executor)
             ```
-           - `applyToEither`
+           - `applyToEither`: 有返回值,接收前置任务的执行结果作为参数
             ```java
                 1. public <U> CompletableFuture<U> applyToEither(CompletionStage<? extends T> other, Function<?
                   super T, U> fn)

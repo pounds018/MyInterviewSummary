@@ -9,6 +9,3 @@
   - [:es: Spanish](/es/)
   - [:ru: Russian](/ru-ru/) 
 -->
-
-* [LeetCode Cookbook](https://books.halfrost.com/leetcode/)
-* [算法小抄](https://labuladong.gitbook.io/algo/)

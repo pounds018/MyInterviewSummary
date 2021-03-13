@@ -68,7 +68,8 @@
             - 查询线程池是否允许核心线程空闲太久被关闭
             - 返回值:
                - true: 线程池允许核心线程在空闲时间超过keepAliveTime参数的时候,关闭核心线程
-               - false: 线程池不允许核心线程空闲太久被关闭
+               - false: 线程池不允许核心线程空闲太久被关闭  
+      > 注意: 当线程池还处于运行中,阻塞队列里面还有任务,并且现有线程仅剩1个的时候,线程是不允许回收的.
 
 5. 任务管理:
    1. 任务存放: 阻塞队列存放任务  
@@ -88,13 +89,74 @@
       | LinkedTransferQueue  |多了transfer和tryTransfer方法|
       | LinkedBlockingDeque   |链表双端队列,可以将锁的竞争最多降低到一半|  
       > 推荐使用: ArrayBlockingQueue根据业务场景,合理规划线程池任务容纳数量,有效利用资源,防止资源耗尽
-   
+      
    2. 任务分发:
       1. 任务执行的时机:
          - 直接由新创建的线程执行任务  ->  `线程数小于corePoolSize, corePoolS ize<线程数<maximumPoolSize`
          - 执行完一个任务的线程,队列中获取新任务执行 ->  `线程池开启的其他时间`
-      2. 流程图:
-   
+      2. 源码:
+         ```java
+            // 执行阻塞等待或者显示等待任务,取决于当前的设置.
+            // 或者如果出现以下情况导致当前线程必须要退出的话,就返回null:
+            // 1. 因为重新设置了 maximumPoolSize,导致线程超出了 maximumPoolSize
+            // 2. 线程池停止(即不接受新任务,不处理任务,并中断正在执行的任务)
+            // 3. 线程池关闭(不再接受新任务,可以继续处理任务)
+            // 4. (设置了空闲时间)限时等待任务的线程,在回收前和回收后都是不能接受任务的,
+            // 如果该线程不是池中最后一个线程,任务队列又是非空的.
+            private Runnable getTask() {
+                 // 通过阻塞队列的poll()(限时获取)来表示一个线程是不是超时了
+                 boolean timedOut = false; // Did the last poll() time out?
+         
+                 for (;;) {
+                     int c = ctl.get();// 获取ctl值
+                     int rs = runStateOf(c);// 获取线程池的运行状态
+         
+                     // Check if queue empty only if necessary.
+                     // 判断线程池 是否关闭,线程池是否停止运行或者阻塞队列中没有任务
+                     // workQueue.isEmpty()一般都不会判断
+                     if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
+                         decrementWorkerCount();
+                         return null;
+                     }
+         
+                     int wc = workerCountOf(c); // 获取 线程数量
+         
+                     // Are workers subject to culling?
+                     // timed 为false 表示此时线程不会被回收
+                     boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
+         
+                     // if条件解释:采用 了||和&&的短路特点
+                     // (wc > maximumPoolSize || (timed && timedOut)
+                         // 首先线程数如果大于了 maximumPoolSize,根本不需要判断线程是否要超时回收,因为这个时候是肯定需要回收的
+                         // 如果 wc > maximumPoolSize 为false ,这个时候再去判断线程是否需要超时回收
+                     // 如果 (wc > maximumPoolSize || (timed && timedOut)为false 就不会去做剩下的判断,直接去取任务
+                     // (wc > 1 || workQueue.isEmpty()) 判断线程是否真的需要回收,当只剩下1个线程或者任务队列没有空的时候
+                        // 是不会回收线程的,这个逻辑实际上是在限制当有任务存在的时候最后一个线程是不能回收的
+                     if ((wc > maximumPoolSize || (timed && timedOut))
+                         && (wc > 1 || workQueue.isEmpty())) {
+                         if (compareAndDecrementWorkerCount(c))
+                             return null;
+                         continue;
+                     }
+         
+                     try {
+                         // 判断线程是否 超时就回收,true就是限时获取任务,false就直到取到任务位置
+                         Runnable r = timed ?
+                             workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
+                             workQueue.take();
+                         // 取到任务就退出循环,重置线程空闲的时间.
+                         if (r != null)
+                             return r;
+                         timedOut = true;
+                     } catch (InterruptedException retry) {
+                         timedOut = false;
+                     }
+                 }
+            }
+         ```
+      3. 流程图:
+         ![单次任务分配](../../_media/chapter11_MultiThread/3_ThreadPool/单次任务分配.png)  
+         
    3. 拒绝任务:  
       1. 拒绝任务的时机:
             - `线程池被关闭`  
@@ -205,7 +267,45 @@
               e.printStackTrace();
               }
             }
-            ```
+            ```  
+         
+6. 线程池生命周期:  
+   1. 重要参数:
+      - ctl : 线程池通过一个32位原子整数封装线程池两个重要信息,一个是线程池运行状态runState,一个是当前池中线程数量  
+        `final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0))`
+        > 高3位存放线程池运行状态runState,后29位存放线程池数量
+      - COUNT_BITS: 用来描述 原子整数ctl中29位存放线程数量信息  
+        `private static final int COUNT_BITS = Integer.SIZE - 3`
+      - CAPACITY :   
+        `private static final int CAPACITY   = (1 << COUNT_BITS) - 1`
+      - 线程池运行状态信息:
+      ```java
+         1. private static final int RUNNING    = -1 << COUNT_BITS; 
+         2. private static final int SHUTDOWN   =  0 << COUNT_BITS;
+         3. private static final int STOP       =  1 << COUNT_BITS;
+         4. private static final int TIDYING    =  2 << COUNT_BITS;
+         5. private static final int TERMINATED =  3 << COUNT_BITS;
+      ```
+      - ThreadPoolExecutor为了提高运算速度采用了位运算来剥离 runState 和 workerCount 两个参数
+      ```java
+         private static int runStateOf(int c)     { return c & ~CAPACITY; } 
+         private static int workerCountOf(int c)  { return c & CAPACITY; }
+         private static int ctlOf(int rs, int wc) { return rs | wc; }
+      ```
+      位运算原理如图:  
+      ![ctl掩码剥离信息](../../_media/chapter11_MultiThread/3_ThreadPool/ctl掩码剥离信息.png)
+      |状态|含义|
+      |:--|---|
+      | RUNNING   |可以接受新任务,能处理队列中的任务|
+      | SHUTDOWN   |不接受新任务,仍能处理队列中的任务|
+      | STOP      |不接受新任务,不再处理队列中的任务,并中断正在处理中的任务|
+      | TIDYING |当所有任务已经终止,工作线程数量也为0了,线程也装换到该状态,就会调用钩子方法terminated()去关闭线程池|
+      | TIDYING            |实现优先级队列延迟获取元素的无界队列,如同消息队列中的延迟队列|
+      | TERMINATED  |terminated()方法完成之后进入该状态|
+   2. 状态流转图:
+      ![状态流转图](../../_media/chapter11_MultiThread/3_ThreadPool/线程池状态流转.png)
+
+7. 真正的打工仔: 
 
 ## 11.3 参考:
 [Java线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)
@@ -213,3 +313,5 @@
 [线程池](https://www.jianshu.com/p/c41e942bcd64)
 
 [Java线程池ThreadPoolExecutor](https://www.cnblogs.com/study-everyday/p/6707968.html)
+
+[线程池常用方法](https://www.sohu.com/a/213212378_827544)

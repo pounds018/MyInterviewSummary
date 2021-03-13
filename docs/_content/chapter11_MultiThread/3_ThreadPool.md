@@ -86,10 +86,14 @@
       | PriorityBlockingQueue |默认自然排序的优先级队列,同级元素无法排序|
       | DelayQueue            |实现优先级队列延迟获取元素的无界队列,如同消息队列中的延迟队列|
       | LinkedTransferQueue  |多了transfer和tryTransfer方法|
-      | LinkedBlockingDeque   |链表双端队列,可以将锁的竞争最多降低到一半|
+      | LinkedBlockingDeque   |链表双端队列,可以将锁的竞争最多降低到一半|  
+      > 推荐使用: ArrayBlockingQueue根据业务场景,合理规划线程池任务容纳数量,有效利用资源,防止资源耗尽
    
    2. 任务分发:
-      
+      1. 任务执行的时机:
+         - 直接由新创建的线程执行任务  ->  `线程数小于corePoolSize, corePoolS ize<线程数<maximumPoolSize`
+         - 执行完一个任务的线程,队列中获取新任务执行 ->  `线程池开启的其他时间`
+      2. 流程图:
    
    3. 拒绝任务:  
       1. 拒绝任务的时机:
@@ -162,13 +166,14 @@
                void rejectedExecution(Runnable r, ThreadPoolExecutor executor);
             }
             ```
+            
             - 举个栗子:
             ```java
-                   /**
+            /**
             * 自定义拒绝策略
               */
-              @Test
-             public void test(){
+            @Test
+            public void test(){
               // 由于RejectedExecutionHandler是个函数式接口,所以直接使用lambda表达式实现
               ThreadPoolExecutor executor1 = new ThreadPoolExecutor(
                     1,

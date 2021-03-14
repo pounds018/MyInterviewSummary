@@ -154,9 +154,10 @@
                  }
             }
          ```
-      3. 流程图:
-         ![单次任务分配](../../_media/chapter11_MultiThread/3_ThreadPool/单次任务分配.png)  
-         
+      3. 流程图:  
+         ![单次任务分配](../../_media/chapter11_MultiThread/3_ThreadPool/单次任务分配.png)
+
+
    3. 拒绝任务:  
       1. 拒绝任务的时机:
             - `线程池被关闭`  

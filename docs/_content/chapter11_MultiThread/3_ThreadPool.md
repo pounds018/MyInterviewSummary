@@ -82,8 +82,8 @@
       |阻塞队列|作用|
       |:--|---|
       | ArrayBlockingQueue   |数组实现的FIFO队列,容量有限,支持公平锁和非公平锁|
-      | LinkedBlockingQueue   |链表实现的FIFO队列,默认长度限制为Integer.Max_Value.当任务处理的速度小于了任务提交的速度,造成队列无限制增长.造成资源耗尽|
-      | SynchronousQueue      |一个不存储元素的阻塞队列,每个put都必须有一个take,否则无法添加元素.作为线程池的阻塞队列来说,容易造成线程数量无限制的增长,从而导致资源耗尽|
+      | LinkedBlockingQueue   |链表实现的FIFO队列,默认长度限制为Integer.Max_Value.当任务处理的速度小于了任务提交的速度,`造成队列无限制增长.造成资源耗尽`|
+      | SynchronousQueue      |一个不存储元素的阻塞队列,每个put都必须有一个take,否则无法添加元素.作为线程池的阻塞队列来说,`容易造成线程数量无限制的增长,从而导致资源耗尽`|
       | PriorityBlockingQueue |默认自然排序的优先级队列,同级元素无法排序|
       | DelayQueue            |实现优先级队列延迟获取元素的无界队列,如同消息队列中的延迟队列|
       | LinkedTransferQueue  |多了transfer和tryTransfer方法|
@@ -305,8 +305,13 @@
    2. 状态流转图:
       ![状态流转图](../../_media/chapter11_MultiThread/3_ThreadPool/线程池状态流转.png)
 
-7. 真正的打工仔: 
-
+7. 真正的打工仔: worker
+   1. 内部类worker的继承关系图以及作用 : `private final class Worker extends AbstractQueuedSynchronizer implements Runnable`  
+   ![打工仔worker](../../_media/chapter11_MultiThread/3_ThreadPool/打工仔worker.png)
+   作用: 
+      - worker主要作用是用来控制线程运行时中断状态控制,以及其他次要属性的记录.
+      - worker继承于AQS,以独占锁表示线程正在运行,防止为了唤醒等待任务的线程而中断正在执行的线程,同时也是为防止线程池的一些控制方法,
+        造成正在执行的线程被中断(比如: setCorePoolSize()).
 ## 11.3 参考:
 [Java线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)
 

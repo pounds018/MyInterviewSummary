@@ -301,7 +301,6 @@
       | SHUTDOWN   |不接受新任务,仍能处理队列中的任务|
       | STOP      |不接受新任务,不再处理队列中的任务,并中断正在处理中的任务|
       | TIDYING |当所有任务已经终止,工作线程数量也为0了,线程也装换到该状态,就会调用钩子方法terminated()去关闭线程池|
-      | TIDYING            |实现优先级队列延迟获取元素的无界队列,如同消息队列中的延迟队列|
       | TERMINATED  |terminated()方法完成之后进入该状态|
    2. 状态流转图:
       ![状态流转图](../../_media/chapter11_MultiThread/3_ThreadPool/线程池状态流转.png)

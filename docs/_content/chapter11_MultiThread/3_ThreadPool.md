@@ -308,7 +308,7 @@
 
 7. 真正的打工仔: worker
    1. 内部类worker的继承关系图以及作用 : `private final class Worker extends AbstractQueuedSynchronizer implements Runnable`  
-   ![打工仔worker](../../_media/chapter11_MultiThread/3_ThreadPool/打工仔worker.png)
+   ![打工仔worker](../../_media/chapter11_MultiThread/3_ThreadPool/打工仔worker.png)  
    作用: 
       - worker主要作用是用来控制线程运行时中断状态控制,以及其他次要属性的记录.
       - worker继承于AQS,以独占锁表示线程正在运行,防止为了唤醒等待任务的线程而中断正在执行的线程,同时也是为防止线程池的一些控制方法,

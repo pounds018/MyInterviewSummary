@@ -302,7 +302,7 @@
       | STOP      |不接受新任务,不再处理队列中的任务,并中断正在处理中的任务|
       | TIDYING |当所有任务已经终止,工作线程数量也为0了,线程也装换到该状态,就会调用钩子方法terminated()去关闭线程池|
       | TERMINATED  |terminated()方法完成之后进入该状态|
-   2. 状态流转图:
+   2. 状态流转图:  
       ![状态流转图](../../_media/chapter11_MultiThread/3_ThreadPool/线程池状态流转.png)
 
 7. 真正的打工仔: worker

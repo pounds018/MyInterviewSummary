@@ -43,11 +43,11 @@
    ![任务执行流程](../../_media/chapter11_MultiThread/3_ThreadPool/线程池流程.png)
 
    1. 线程池是否还在运行: 是执行步骤2,否直接拒绝,线程池主要是保证线程池在其running状态下执行任务
-   2. 提交进来的任务数量 < corePoolSize : 直接开启一个线程去执行任务,直到池中线程数到达corePoolSize
+   2. workerCount < corePoolSize : 直接开启一个线程去执行任务,直到池中线程数到达corePoolSize
       `注意: corePoolSize是从零开始增长的,不是线程池一来就是corePoolSize这么多个线程`
-   3. corePoolSize < 任务数量 < 阻塞队列容量: 任务进入阻塞队列
-   4. 阻塞队列容量 < 任务数量 < maximumPoolSize : 继续创建线程去执行任务,直到池中数量到达maximumPoolSize
-   5. 任务数量 > maximumPoolSize : 开始执行拒绝策略,根据策略处理任务  
+   3. corePoolSize < workerCount,阻塞队列未满 : 任务进入阻塞队列
+   4. 阻塞队列已满,workerCount < maximumPoolSize : 继续创建线程去执行任务,直到池中数量到达maximumPoolSize
+   5. 阻塞队列已满,workerCount >= maximumPoolSize : 开始执行拒绝策略,根据策略处理任务  
       流程图:
       ![流程图](../../_media/chapter11_MultiThread/3_ThreadPool/单个任务执行流程.png)
 

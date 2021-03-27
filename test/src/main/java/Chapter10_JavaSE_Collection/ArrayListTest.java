@@ -3,6 +3,7 @@ package Chapter10_JavaSE_Collection;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -122,4 +123,15 @@ public class ArrayListTest {
          */
     }
 
+    /**
+     * Arrays.asList的坑
+     */
+    @Test
+    public void testAsList(){
+        Object[] languages = TEST_LIST.toArray();
+        // 使用Arrays.asList转换
+        List<Object> strings = Arrays.asList(languages);
+        // 使用Arrays内部类ArrayList没有的remove方法
+        boolean c = strings.remove("c");
+    }
 }

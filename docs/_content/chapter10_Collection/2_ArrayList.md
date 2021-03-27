@@ -290,4 +290,119 @@ public ArrayList(Collection<? extends E> c) // 就是将集合c中元素全部�
 > 1. sublist方法拿到的子list,仅仅是一个视图效果,并不代表重新生成了一个与父list没有关联的list.
 > 2. sublist对象根据索引来执行的操作,实际上都是通过父list来完成的.最终都会影响两个list
 > 3. 虽然add(Object o)方法不是根据索引的来执行的,但是他内部最终还是调用的根据索引操作的方法 - add(size(),o)
-     由于SubList重写了根据索引来执行的add操作,所以这个方法他也会造成`子父list` 都发生变化.
+     由于SubList重写了根据索引来执行的add操作,所以这个方法他也会造成`子父list` 都发生变化.  
+
+### 10.2.5 关于List的另外一个坑,Arrays工具类的asList方法:
+1. Arrays.asList:
+```java
+   public static <T> List<T> asList(T... a) {
+      return new ArrayList<>(a);
+   }
+```
+> 从上面这端代码来看,asList方法是返回了一个"ArrayList"对象,但是此ArrayList非彼ArrayList,此ArrayList是ArrayList的一个内部类
+2. Arrays工具类的内部类:ArrayList
+```java
+    private static class ArrayList<E> extends AbstractList<E> implements RandomAccess, java.io.Serializable {
+        private static final long serialVersionUID = -2764017481108945198L;
+        private final E[] a;
+    
+        ArrayList(E[] array) {
+            a = Objects.requireNonNull(array);
+        }
+    
+        @Override
+        public int size() {
+            return a.length;
+        }
+    
+        @Override
+        public Object[] toArray() {
+            return a.clone();
+        }
+    
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T[] toArray(T[] a) {
+            int size = size();
+            if (a.length < size)
+                return Arrays.copyOf(this.a, size,
+                        (Class<? extends T[]>) a.getClass());
+            System.arraycopy(this.a, 0, a, 0, size);
+            if (a.length > size)
+                a[size] = null;
+            return a;
+        }
+    
+        @Override
+        public E get(int index) {
+            return a[index];
+        }
+    
+        @Override
+        public E set(int index, E element) {
+            E oldValue = a[index];
+            a[index] = element;
+            return oldValue;
+        }
+    
+        @Override
+        public int indexOf(Object o) {
+            E[] a = this.a;
+            if (o == null) {
+                for (int i = 0; i < a.length; i++)
+                    if (a[i] == null)
+                        return i;
+            } else {
+                for (int i = 0; i < a.length; i++)
+                    if (o.equals(a[i]))
+                        return i;
+            }
+            return -1;
+        }
+    
+        @Override
+        public boolean contains(Object o) {
+            return indexOf(o) != -1;
+        }
+    
+        @Override
+        public Spliterator<E> spliterator() {
+            return Spliterators.spliterator(a, Spliterator.ORDERED);
+        }
+    
+        @Override
+        public void forEach(Consumer<? super E> action) {
+            Objects.requireNonNull(action);
+            for (E e : a) {
+                action.accept(e);
+            }
+        }
+    
+        @Override
+        public void replaceAll(UnaryOperator<E> operator) {
+            Objects.requireNonNull(operator);
+            E[] a = this.a;
+            for (int i = 0; i < a.length; i++) {
+                a[i] = operator.apply(a[i]);
+            }
+        }
+    
+        @Override
+        public void sort(Comparator<? super E> c) {
+            Arrays.sort(a, c);
+        }
+    }
+```
+> 由于返回的并不是我们熟悉的ArrayList,所以在我们使用Arrays.asList返回的list进行一些他没有的操作的时候,就会抛出UnsupportedOperationException
+```java
+        @Test
+        public void testAsList(){
+            Object[] languages = TEST_LIST.toArray();
+            // 使用Arrays.asList转换
+            List<Object> strings = Arrays.asList(languages);
+            // 使用Arrays内部类ArrayList没有的remove方法
+            boolean c = strings.remove("c");
+        }
+```
+如图:  
+![UnsupportedOperationException](../../_media/chapter10_collections/Arrays-asList.png)

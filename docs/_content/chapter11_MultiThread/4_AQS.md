@@ -26,8 +26,7 @@
            |属性                             |作用|
            |:--                             |---|
            | Node head                      |等待队列的head结点,除了初始化,只能通过setHead修改这个指针,并且`如果head存在,他的waitStatus状态一定不能是 CANCELLED`|
-           | Node tail                      |等待队列的tail结点,只能通过enq方法添加等待结点的时候修改.`主要作用是 等待结点入队 和 待激活节点的waitStatus为CANCELLED的时候,
-           寻找队列中第一个waitStatus不为CANCELLED的结点` |
+           | Node tail                      |等待队列的tail结点,只能通过enq方法添加等待结点的时候修改.`主要作用是 等待结点入队 和 待激活节点的waitStatus为CANCELLED的时候,寻找队列中第一个waitStatus不为CANCELLED的结点` |
            | volatile int state             |共享状态,不同模式下,不同值表示不同含义|
            | Thread exclusiveOwnerThread    |继承自AbstractOwnableSynchronizer,代表当前持有独占锁的线程,用于锁重入控制等|
        > AQS里面还有一些属性没有列出,比如用来协助 Unsafe类CAS操作内存中head,tail,state变量的内存偏移量等.

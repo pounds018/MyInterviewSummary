@@ -88,7 +88,7 @@
                 }
             }
         ```
-       *** 流程图: ***  
+       *** 流程图: ***  虚线表示的是 结点进入之前tail的指向
        ![CLH自旋锁原理](../../_media/chapter11_MultiThread/4_AQS/CLH自旋锁原理.png)
        
 ## 11.4.2 通过ReentrantLock理解基于AQS实现独占锁

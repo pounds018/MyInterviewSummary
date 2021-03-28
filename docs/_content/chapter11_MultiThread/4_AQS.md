@@ -16,16 +16,32 @@
     3. AQS体系使用的继承结构:  
         ![AQS使用时继承结构](../../_media/chapter11_MultiThread/4_AQS/AQS使用时的继承结构.png)  
         > 通常在使用AQS框架的时候,都需要使用一个内部类来实现AQS完成某种同步机制的实现.
-    4. AQS内部结构:  
-        - 内部类:
-            - Node: AQS实现FIFO队列的基础,一个Node结点表示一个线程
-            - ConditionObject: 与AQS条件队列有关的一个内部类
-        - 属性:
-            - int state: 共享资源的同步状态, `取int类型: 是为了复用这个属性,不同的值有不同的含义`
-            - Node head: 指向等待队列的头节点, `head结点的waitStatus一定不会是Cancelled`
-            - Node Tail: 指向等待队列的尾结点, `主要作用是 等待结点入队 和 待激活节点的waitStatus为CANCELLED的时候,
-              寻找队列中第一个waitStatus不为CANCELLED的结点` 
-        > AQS里面还有一些属性没有列出,比如用来协助 Unsafe类CAS操作内存中head,tail,state变量的内存偏移量等.          
+    4. AQS结构:
+        1. 内部类:
+           |内部类                           |作用|
+           |:--                             |---|
+           | Node                           |封装线程成为AQS等待队列中的某个结点|
+           | ConditionObject                |AQS条件队列有关的内部类|
+        2. 属性:
+           |属性                             |作用|
+           |:--                             |---|
+           | Node head                      |等待队列的head结点,除了初始化,只能通过setHead修改这个指针,并且`如果head存在,他的waitStatus状态一定不能是 CANCELLED`|
+           | Node tail                      |等待队列的tail结点,只能通过enq方法添加等待结点的时候修改.`主要作用是 等待结点入队 和 待激活节点的waitStatus为CANCELLED的时候,
+           寻找队列中第一个waitStatus不为CANCELLED的结点` |
+           | volatile int state             |共享状态,不同模式下,不同值表示不同含义|
+           | Thread exclusiveOwnerThread    |继承自AbstractOwnableSynchronizer,代表当前持有独占锁的线程,用于锁重入控制等|
+       > AQS里面还有一些属性没有列出,比如用来协助 Unsafe类CAS操作内存中head,tail,state变量的内存偏移量等.
+        - state属性相关的方法:
+        ```java
+           int getState() { return state; } // 获取,由于volatile修饰state,获取出来的
+           void setState(int newState) { state = newState; } // 设置,具有volatile的内存语义
+           // 保证cas修改State.
+           boolean compareAndSetState(int expect, int update) {
+               return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
+           }
+        ```
+        3. AQS方法体系:
+       ![AQS方法体系](../../_media/chapter11_MultiThread/4_AQS/AQS方法体系.png)
 2. AQS核心: FIFO阻塞队列 --- CLH阻塞队列的变型
     1. 自旋锁与互斥锁:
         - 自旋锁: 一种非阻塞锁,线程不会因为没有获取到锁就阻塞等待锁的释放,而是一直处于busy-waiting状态,会一直占用cpu的执行周期,
@@ -99,7 +115,7 @@
             `AQS队列示意图`:  
             ![AQS队列](../../_media/chapter11_MultiThread/4_AQS/AQS队列.png)
         
-        2. AQS队列的核心: Node节点
+        2. AQS队列的核心: 内部类Node节点
             - 属性:
            |Node结点的属性  |作用|
            |:--           |---|
@@ -152,22 +168,5 @@
                    this.thread = thread;
                }
            ```
-3. AQS结构:
-    1. 属性:
-    |属性                             |作用|
-    |:--                             |---|
-    | Node head                      |等待队列的head结点,除了初始化,只能通过setHead修改这个指针,并且`如果head存在,他的waitStatus状态一定不能是 CANCELLED`|
-    | Node tail                      |等待队列的tail结点,只能通过enq方法添加等待结点的时候修改|
-    | volatile int state             |共享状态,不同模式下,不同值表示不同含义|
-    | Thread exclusiveOwnerThread    |继承自AbstractOwnableSynchronizer,代表当前持有独占锁的线程,用于锁重入控制等|
-    - state属性相关的方法:
-    ```java
-       int getState() { return state; } // 获取,由于volatile修饰state,获取出来的
-       void setState(int newState) { state = newState; } // 设置,具有volatile的内存语义
-       // 保证cas修改State.
-       boolean compareAndSetState(int expect, int update) {
-           return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
-       }
-    ```
 ## 11.4.2 通过ReentrantLock理解基于AQS实现独占锁
 ## 11.4.3 通过CountDownLatch理解基于AQS实现共享锁

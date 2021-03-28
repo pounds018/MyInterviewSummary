@@ -88,8 +88,86 @@
                 }
             }
         ```
-       *** 流程图: ***  虚线表示的是 结点进入之前tail的指向
-       ![CLH自旋锁原理](../../_media/chapter11_MultiThread/4_AQS/CLH自旋锁原理.png)
-       
+       *** 加锁流程图: ***  虚线表示的是 结点进入之前tail的指向
+       ![CLH自旋锁原理](../../_media/chapter11_MultiThread/4_AQS/CLH自旋锁原理.png)  
+       > 解锁: 解锁就是自旋控制那里,一旦发现pre.lock = false了,就跳出while循环,lock()方法结束,然后去执行剩余的逻辑.  
+    3. CLH自旋锁的变体: AQS阻塞队列
+        1. AQS队列: 在CLH队列的基础上,AQS增加了以下几点:
+            - 单向链表变成了双向链表: AQS node结点中不仅有了prev指针,还有next指针.
+            - 锁资源状态属性变成了int类型: AQS的目的是让用户根据这套模板去实现不同的同步机制,为了支撑不同同步机制下复用state属性,将其设置为int
+            - 未获取锁的线程不一定是一直自旋: 根据Node结点waitStatus属性的不同,节点等待时执行的操作也有可能不同.  
+            `AQS队列示意图`:  
+            ![AQS队列](../../_media/chapter11_MultiThread/4_AQS/AQS队列.png)
+        
+        2. AQS队列的核心: Node节点
+            - 属性:
+           |Node结点的属性  |作用|
+           |:--           |---|
+           | waitStatus   |当前结点在队列中的状态|
+           | thread       |当前结点代表的线程|
+           | prev         |指向当前结点的前驱结点|
+           | next         |指向当前结点的后继节点|
+           | nextWaiter   |指向条件队列中的下一个节点,即处于CONDITION状态的节点|
+           - waitStatus属性的枚举值:
+           |Node结点的属性  |作用|
+           |:--           |---|
+           | 0                       |表示node节点初始化的默认值|
+           | int CANCELLED =  1      |表示当前线程获取锁的请求已经取消|
+           | int SIGNAL    = -1      |表示后继结点已经准备好了,就等当前结点释放锁资源,然后unparking后继节点|
+           | int CONDITION = -2      |表示当前结点处于条件等待队列上|
+           | int PROPAGATE = -3      |表示当前结点处于共享模式下,需要向后传递state状态信息|
+           - node结点的两种模式:
+           |模式           |作用|
+           |:--           |---|
+           | Node SHARED = new Node()   |表示共享模式,在结点初始化的时候传入|
+           | Node EXCLUSIVE = null      |表示独占模式,在结点初始化的时候传入|
+           - 方法:
+           ```java
+               // 判断下一个条件结点是否是 共享模式
+               final boolean isShared() {
+                  return nextWaiter == SHARED;
+               }
+                  
+                  // 前驱结点不能为null的时候使用这个方法(即检查前驱结点是否为null).可以不要null检查,现在这样做是为了协助vm的.
+               final Node predecessor() throws NullPointerException {
+                  Node p = prev;
+                  if (p == null)
+                  throw new NullPointerException();
+                  else
+                  return p;
+               }
+        
+               // 用来初始化 head结点,或者创建 SHARED标记
+               Node() {}
+        
+               // 添加等待结点时使用,mode表示 模式标记(如SHARED)
+               Node(Thread thread, Node mode) {     
+                   this.nextWaiter = mode;
+                   this.thread = thread;
+               }
+        
+               // 创建条件结点的时候使用
+               Node(Thread thread, int waitStatus) { // Used by Condition
+                   this.waitStatus = waitStatus;
+                   this.thread = thread;
+               }
+           ```
+3. AQS结构:
+    1. 属性:
+    |属性                             |作用|
+    |:--                             |---|
+    | Node head                      |等待队列的head结点,除了初始化,只能通过setHead修改这个指针,并且`如果head存在,他的waitStatus状态一定不能是 CANCELLED`|
+    | Node tail                      |等待队列的tail结点,只能通过enq方法添加等待结点的时候修改|
+    | volatile int state             |共享状态,不同模式下,不同值表示不同含义|
+    | Thread exclusiveOwnerThread    |继承自AbstractOwnableSynchronizer,代表当前持有独占锁的线程,用于锁重入控制等|
+    - state属性相关的方法:
+    ```java
+       int getState() { return state; } // 获取,由于volatile修饰state,获取出来的
+       void setState(int newState) { state = newState; } // 设置,具有volatile的内存语义
+       // 保证cas修改State.
+       boolean compareAndSetState(int expect, int update) {
+           return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
+       }
+    ```
 ## 11.4.2 通过ReentrantLock理解基于AQS实现独占锁
 ## 11.4.3 通过CountDownLatch理解基于AQS实现共享锁

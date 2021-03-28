@@ -39,7 +39,7 @@
                return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
            }
         ```
-        3. AQS方法体系:
+        3. AQS方法体系:  
        ![AQS方法体系](../../_media/chapter11_MultiThread/4_AQS/AQS方法体系.png)
 2. AQS核心: FIFO阻塞队列 --- CLH阻塞队列的变型
     1. 自旋锁与互斥锁:

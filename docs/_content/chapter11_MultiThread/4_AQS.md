@@ -166,6 +166,8 @@
                    this.waitStatus = waitStatus;
                    this.thread = thread;
                }
-           ```
+           ```   
+  
+
 ## 11.4.2 通过ReentrantLock理解基于AQS实现独占锁
 ## 11.4.3 通过CountDownLatch理解基于AQS实现共享锁

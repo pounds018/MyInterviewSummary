@@ -9,7 +9,7 @@
   * [第一节 官方文档翻译](_content/chapter08_MySQL/第一节_官方文档翻译/coverpage.md)
     * [13 SQL语句](_content/chapter08_MySQL/第一节_官方文档翻译/coverpage.md)
       * [2 数据操作语句](_content/chapter08_MySQL/第一节_官方文档翻译/coverpage.md)
-        * [5_delete语句](_content/chapter08_MySQL/第一节_官方文档翻译/13_SQL语言/2_数据操作语言/13.2.5_delete.md)
+        * [5 delete语句](_content/chapter08_MySQL/第一节_官方文档翻译/13_SQL语言/2_数据操作语言/13.2.5_delete.md)
         * [6 insert语句](_content/chapter08_MySQL/第一节_官方文档翻译/13_SQL语言/2_数据操作语言/13.2.6_insert.md)
 * [第 9 章 JVM](_content/chapter09_JVM/coverpage.md)
   * [上篇 内存和垃圾回收](_content/chapter09_JVM/coverpage.md)

@@ -23,7 +23,7 @@
           2. 高并发场景下,容易造成服务端的压力增加  
         - NIO: 同步非阻塞模型,服务端实现方式为: 一个线程(服务端可以维护多个这样的线程)处理多个client连接,通过一个多路复用器以轮询的方式去
           发现是否有连接有数据要传输,如果轮询到某个连接有数据传输就处理.对于连接是立即响应的,不会进行阻塞等待.  
-          示意图: 
+          示意图:   
           ![JAVA NIO](../../_media/chapter13_Netty/1_javaIO复习/NIO.png)  
         - AIO: 异步非阻塞,AIO引入异步通道的概念,采用了Proactor模式,简化了程序编写,有效请求才启动线程,他的特点就是由操作系统处理完成后再通知
           服务端应用进程去处理,一般适用于连接较多且连接时间比较长的应用.
@@ -160,11 +160,11 @@
             - 通道可以实现异步读写数据  
             - 通道总是向缓冲区中读写数据
         - 几种常用的channel:
-            -  FileChannel : `从文件中读取数据`
+            -  FileChannel : `从文件中读取数据`  
                ![FileChannel常用方法](../../_media/chapter13_Netty/1_javaIO复习/fileChannel常用方法.png)
-            -  SocketChannel : `tcp客户端读写数据通道`
+            -  SocketChannel : `tcp客户端读写数据通道`  
                ![socketChannel常用方法](../../_media/chapter13_Netty/1_javaIO复习/socketChannel常用方法.png)
-            -  ServerSocketChannel : `tcp服务端读写数据的通道,通常使用来监听socketChannel连接的.`
+            -  ServerSocketChannel : `tcp服务端读写数据的通道,通常使用来监听socketChannel连接的.`  
                ![ServerSocketChannel常用方法](../../_media/chapter13_Netty/1_javaIO复习/serverSocketChannel常用方法.png)
             -  DatagramChannel : `udp通信读写数据的通道`  
     3. selector[选择器]:  
@@ -210,7 +210,9 @@
     1. `BIO` 以流的方式处理数据，而 `NIO` 以块的方式处理数据，块 `I/O` 的效率比流 `I/O` 高很多。
     2. `BIO` 是阻塞的，`NIO` 则是非阻塞的。
     3. `BIO` 基于字节流和字符流进行操作，而 `NIO` 基于 `Channel`（通道）和 `Buffer`（缓冲区）进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。
-       `Selector`（选择器）用于监听多个通道的事件（比如：连接请求，数据到达等），因此使用单个线程就可以监听多个客户端通道。
+       `Selector`（选择器）用于监听多个通道的事件（比如：连接请求，数据到达等），因此使用单个线程就可以监听多个客户端通道。   
+       
+
 ## 4. 实例代码:
 1. 内存往磁盘写文件:
     ```java
@@ -362,110 +364,110 @@
 
 6. `NIO` 还提供了 `MappedByteBuffer`，可以让文件直接在内存（堆外的内存）中进行修改，而如何同步到文件由 `NIO` 来完成。【举例说明】
 
-```java
-package com.atguigu.nio;
-
-import java.io.RandomAccessFile;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-
-/**
- * 说明 1.MappedByteBuffer 可让文件直接在内存（堆外内存）修改,操作系统不需要拷贝一次
- */
-public class MappedByteBufferTest {
-
-    public static void main(String[] args) throws Exception {
-
-        RandomAccessFile randomAccessFile = new RandomAccessFile("1.txt", "rw");
-        //获取对应的通道
-        FileChannel channel = randomAccessFile.getChannel();
-
-        /**
-         * 参数 1:FileChannel.MapMode.READ_WRITE 使用的读写模式
-         * 参数 2：0：可以直接修改的起始位置
-         * 参数 3:5: 是映射到内存的大小（不是索引位置），即将 1.txt 的多少个字节映射到内存
-         * 可以直接修改的范围就是 0-5
-         * 实际类型 DirectByteBuffer
-         */
-        MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 5);
-
-        mappedByteBuffer.put(0, (byte) 'H');
-        mappedByteBuffer.put(3, (byte) '9');
-        mappedByteBuffer.put(5, (byte) 'Y');//IndexOutOfBoundsException
-
-        randomAccessFile.close();
-        System.out.println("修改成功~~");
+    ```java
+    package com.atguigu.nio;
+    
+    import java.io.RandomAccessFile;
+    import java.nio.MappedByteBuffer;
+    import java.nio.channels.FileChannel;
+    
+    /**
+     * 说明 1.MappedByteBuffer 可让文件直接在内存（堆外内存）修改,操作系统不需要拷贝一次
+     */
+    public class MappedByteBufferTest {
+    
+        public static void main(String[] args) throws Exception {
+    
+            RandomAccessFile randomAccessFile = new RandomAccessFile("1.txt", "rw");
+            //获取对应的通道
+            FileChannel channel = randomAccessFile.getChannel();
+    
+            /**
+             * 参数 1:FileChannel.MapMode.READ_WRITE 使用的读写模式
+             * 参数 2：0：可以直接修改的起始位置
+             * 参数 3:5: 是映射到内存的大小（不是索引位置），即将 1.txt 的多少个字节映射到内存
+             * 可以直接修改的范围就是 0-5
+             * 实际类型 DirectByteBuffer
+             */
+            MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_WRITE, 0, 5);
+    
+            mappedByteBuffer.put(0, (byte) 'H');
+            mappedByteBuffer.put(3, (byte) '9');
+            mappedByteBuffer.put(5, (byte) 'Y');//IndexOutOfBoundsException
+    
+            randomAccessFile.close();
+            System.out.println("修改成功~~");
+        }
     }
-}
-```  
+    ```  
 
 7. 前面都是通过一个 `Buffer` 完成的，`NIO` 还支持通过多个 `Buffer`（即 `Buffer`数组）完成读写操作，即 `Scattering` 和 `Gathering`【举例说明】
 
-```java
-package com.atguigu.nio;
-
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.util.Arrays;
-
-/**
- * Scattering：将数据写入到 buffer 时，可以采用 buffer 数组，依次写入 [分散]
- * Gathering：从 buffer 读取数据时，可以采用 buffer 数组，依次读
- */
-public class ScatteringAndGatheringTest {
-
-    public static void main(String[] args) throws Exception {
-        
-        //使用 ServerSocketChannel 和 SocketChannel 网络
-        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(7000);
-
-        //绑定端口到 socket，并启动
-        serverSocketChannel.socket().bind(inetSocketAddress);
-
-        //创建 buffer 数组
-        ByteBuffer[] byteBuffers = new ByteBuffer[2];
-        byteBuffers[0] = ByteBuffer.allocate(5);
-        byteBuffers[1] = ByteBuffer.allocate(3);
-
-        //等客户端连接 (telnet)
-        SocketChannel socketChannel = serverSocketChannel.accept();
-
-        int messageLength = 8; //假定从客户端接收 8 个字节
-
-        //循环的读取
-        while (true) {
-            int byteRead = 0;
-
-            while (byteRead < messageLength) {
-                long l = socketChannel.read(byteBuffers);
-                byteRead += l; //累计读取的字节数
-                System.out.println("byteRead = " + byteRead);
-                //使用流打印,看看当前的这个 buffer 的 position 和 limit
-                Arrays.asList(byteBuffers).stream().map(buffer -> "position = " + buffer.position() + ", limit = " + buffer.limit()).forEach(System.out::println);
-            }
-
-            //将所有的 buffer 进行 flip
-            Arrays.asList(byteBuffers).forEach(buffer -> buffer.flip());
-            //将数据读出显示到客户端
-            long byteWirte = 0;
-            while (byteWirte < messageLength) {
-                long l = socketChannel.write(byteBuffers);//
-                byteWirte += l;
-            }
+    ```java
+    package com.atguigu.nio;
+    
+    import java.net.InetSocketAddress;
+    import java.nio.ByteBuffer;
+    import java.nio.channels.ServerSocketChannel;
+    import java.nio.channels.SocketChannel;
+    import java.util.Arrays;
+    
+    /**
+     * Scattering：将数据写入到 buffer 时，可以采用 buffer 数组，依次写入 [分散]
+     * Gathering：从 buffer 读取数据时，可以采用 buffer 数组，依次读
+     */
+    public class ScatteringAndGatheringTest {
+    
+        public static void main(String[] args) throws Exception {
             
-            //将所有的buffer进行clear
-            Arrays.asList(byteBuffers).forEach(buffer -> {
-                buffer.clear();
-            });
-            
-            System.out.println("byteRead = " + byteRead + ", byteWrite = " + byteWirte + ", messagelength = " + messageLength);
+            //使用 ServerSocketChannel 和 SocketChannel 网络
+            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+            InetSocketAddress inetSocketAddress = new InetSocketAddress(7000);
+    
+            //绑定端口到 socket，并启动
+            serverSocketChannel.socket().bind(inetSocketAddress);
+    
+            //创建 buffer 数组
+            ByteBuffer[] byteBuffers = new ByteBuffer[2];
+            byteBuffers[0] = ByteBuffer.allocate(5);
+            byteBuffers[1] = ByteBuffer.allocate(3);
+    
+            //等客户端连接 (telnet)
+            SocketChannel socketChannel = serverSocketChannel.accept();
+    
+            int messageLength = 8; //假定从客户端接收 8 个字节
+    
+            //循环的读取
+            while (true) {
+                int byteRead = 0;
+    
+                while (byteRead < messageLength) {
+                    long l = socketChannel.read(byteBuffers);
+                    byteRead += l; //累计读取的字节数
+                    System.out.println("byteRead = " + byteRead);
+                    //使用流打印,看看当前的这个 buffer 的 position 和 limit
+                    Arrays.asList(byteBuffers).stream().map(buffer -> "position = " + buffer.position() + ", limit = " + buffer.limit()).forEach(System.out::println);
+                }
+    
+                //将所有的 buffer 进行 flip
+                Arrays.asList(byteBuffers).forEach(buffer -> buffer.flip());
+                //将数据读出显示到客户端
+                long byteWirte = 0;
+                while (byteWirte < messageLength) {
+                    long l = socketChannel.write(byteBuffers);//
+                    byteWirte += l;
+                }
+                
+                //将所有的buffer进行clear
+                Arrays.asList(byteBuffers).forEach(buffer -> {
+                    buffer.clear();
+                });
+                
+                System.out.println("byteRead = " + byteRead + ", byteWrite = " + byteWirte + ", messagelength = " + messageLength);
+            }
         }
     }
-}
-```  
+    ```  
 
 8. NIO 网络编程应用实例 - 群聊系统
 
@@ -476,7 +478,8 @@ public class ScatteringAndGatheringTest {
 3. 服务器端：可以监测用户上线，离线，并实现消息转发功能
 4. 客户端：通过 `Channel` 可以无阻塞发送消息给其它所有用户，同时可以接受其它用户发送的消息（有服务器转发得到）
 5. 目的：进一步理解 `NIO` 非阻塞网络编程机制
-6. 示意图分析和代码
+6. 示意图分析和代码  
+
 服务端代码:  
 ```java
     package cn.pounds.nio;
@@ -552,6 +555,8 @@ public class ScatteringAndGatheringTest {
     }
 
 ```  
+
+
 客户端代码:  
 ```java
 package cn.pounds.nio;

@@ -109,34 +109,34 @@
         - 建立连接之后,如果没有数据响应,那么这个线程就会被阻塞在这个I/O请求上, 造成资源的浪费.
 
 
-## 3. JAVA NIO:
+## 3. JAVA NIO:  
 1. NIO基本介绍:
     1. `NIO(non-blocking i/o)`: jdk提供的一套新的i/o api,同步非阻塞模型.
     2. NIO位于jdk的java.nio包下,大多数是对java.io包中类进行了一些修改.
-    3. NIO的三大核心组件: `Channel(通道)`,`Buffer(缓冲区)`,`Selector(选择器)`.  
+    3. NIO的三大核心组件: `Channel(通道)`,`Buffer(缓冲区)`,`Selector(选择器)`.
     4. NIO是 `面向缓冲区` 或者 `面向块` 编程的.数据读取到一个它稍后处理的缓冲区,需要时可在缓冲区前后移动获取数据,这样增加了处理过程中的灵活性
-    ,使用NIO可以提供非阻塞式的搞伸缩网络.  
-    5. JAVA NIO的非阻塞模式:  
+       ,使用NIO可以提供非阻塞式的搞伸缩网络.
+    5. JAVA NIO的非阻塞模式:
         - 读: 使一个线程从某个通道发送请求或者读取数据,但是他仅仅能得到当前可用数据,如果当前没有可用数据,什么都拿不到,不会阻塞保持线程阻塞.所以
-    在数据准备完成之前,该线程是可以做其他事情的.
+          在数据准备完成之前,该线程是可以做其他事情的.
         - 写: 一个线程请求写入一些数据到某个通道,但不需要等待线程完全写入,这个线程就可以去做其他的事情.
 2. NIO的原理示意图:
    ![NIO原理示意图](../../_media/chapter13_Netty/1_javaIO复习/Nio原理示意图.png)  
-   解释:  
-   1. 上图是服务端的NIO原理示意图
-   2. 一个线程对应一个selector,服务端可以开启多个线程管理多个selector,然后通过一个selector去管理多个channel
-   3. 一个channel对应一个buffer,一个channel就可以看做是一个连接,channel会像selector注册自己. `一个severSocketChannel和多个socketC hannel`.
-   4. 一个buffer对应一个client 
-   5. selector根据不同的事件,在不同事件的channel上切换,切换到哪一个channel是由事件决定的,比如: accept,read,write等事件
-   6. buffer就是一个内存块,底层就是一个数组.
-   7. 数据的写入读取都是通过buffer实现的.[这里就是与BIO的区别,NIO一个buffer就能解决输入与输出,BIO要么是输入,要么是输出,无法达到双向传输的效果]
-    NIO只需要通过buffer的flip和clear方法就能完成读写的切换.  
-   8. channel是双线的,可以返回底层操作系统的情况.比如linux底层操作系统就是双向的.
+   解释:
+    1. 上图是服务端的NIO原理示意图
+    2. 一个线程对应一个selector,服务端可以开启多个线程管理多个selector,然后通过一个selector去管理多个channel
+    3. 一个channel对应一个buffer,一个channel就可以看做是一个连接,channel会像selector注册自己. `一个severSocketChannel和多个socketC hannel`.
+    4. 一个buffer对应一个client
+    5. selector根据不同的事件,在不同事件的channel上切换,切换到哪一个channel是由事件决定的,比如: accept,read,write等事件
+    6. buffer就是一个内存块,底层就是一个数组.
+    7. 数据的写入读取都是通过buffer实现的.[这里就是与BIO的区别,NIO一个buffer就能解决输入与输出,BIO要么是输入,要么是输出,无法达到双向传输的效果]
+       NIO只需要通过buffer的flip和clear方法就能完成读写的切换.
+    8. channel是双线的,可以返回底层操作系统的情况.比如linux底层操作系统就是双向的.
 3. NIO的三大核心组件:
     1. Buffer[缓冲区]: 缓冲区本质上是一个可以读写的内存块.(底层结构类似于数组). buffer提供了一组操作内存块的方法.缓冲区内部有一套机制,来跟踪和记录缓冲区
-    内部的状态变化.channel提供文件,网络读取数据的通道,但是数据的读取和写入都需要经过buffer.  
-    ![NIO中buffer的作用](../../_media/chapter13_Netty/1_javaIO复习/NIO中buffer的作用.png)  
-    ![buffer继承关系](../../_media/chapter13_Netty/1_javaIO复习/buffer继承关系.png)
+       内部的状态变化.channel提供文件,网络读取数据的通道,但是数据的读取和写入都需要经过buffer.  
+       ![NIO中buffer的作用](../../_media/chapter13_Netty/1_javaIO复习/NIO中buffer的作用.png)  
+       ![buffer继承关系](../../_media/chapter13_Netty/1_javaIO复习/buffer继承关系.png)
         - buffer中几个重要的属性:  
           |属性           |作用|
           |:--           |---|  
@@ -144,20 +144,20 @@
           | position     |描述缓冲区下一个能够`写入`或者`读取`的位置,`get,put等方法会更新这个值`|  
           | limit        |描述缓冲区第一个不能`写入`或者`读取的位置`,读写模式的切换实际上就是操作的个变量|  
           | mark         |标记,表示当前position的位置.可以通过reset()将position恢复到mark的位置|
-          | 几个变量的大小关系   |0 <= mark <= position <= limit <= capacity|  
+          | 几个变量的大小关系   |0 <= mark <= position <= limit <= capacity|
         - 几个属性关系示意图:  
           ![buffer属性示意图](../../_media/chapter13_Netty/1_javaIO复习/buffer属性示意图.png)
         - 读写模式切换属性变化示意图:  
           ![读写模式切换属性变化示意图](../../_media/chapter13_Netty/1_javaIO复习/buffer读写模式切换.png)
         - 常用方法:  
-          ![buffer常用方法](../../_media/chapter13_Netty/1_javaIO复习/buffer常用方法.png)  
+          ![buffer常用方法](../../_media/chapter13_Netty/1_javaIO复习/buffer常用方法.png)
         - 最常用的buffer --> ByteBuffer:  
           ![ByteBuffer常用方法](../../_media/chapter13_Netty/1_javaIO复习/ByteBUffer常见方法.png)
-          
-    2. Channel[通道]: 
-        - NIO中的channel跟传统i/o中的流很相似,但主要有以下几点区别:   
-            - 通道是双向的,即可以读或者写,流要么是写入,要么是读取  
-            - 通道可以实现异步读写数据  
+
+    2. Channel[通道]:
+        - NIO中的channel跟传统i/o中的流很相似,但主要有以下几点区别:
+            - 通道是双向的,即可以读或者写,流要么是写入,要么是读取
+            - 通道可以实现异步读写数据
             - 通道总是向缓冲区中读写数据
         - 几种常用的channel:
             -  FileChannel : `从文件中读取数据`  
@@ -166,23 +166,23 @@
                ![socketChannel常用方法](../../_media/chapter13_Netty/1_javaIO复习/socketChannel常用方法.png)
             -  ServerSocketChannel : `tcp服务端读写数据的通道,通常使用来监听socketChannel连接的.`  
                ![ServerSocketChannel常用方法](../../_media/chapter13_Netty/1_javaIO复习/serverSocketChannel常用方法.png)
-            -  DatagramChannel : `udp通信读写数据的通道`  
-    3. selector[选择器]:  
-        - 概念: 
+            -  DatagramChannel : `udp通信读写数据的通道`
+    3. selector[选择器]:
+        - 概念:
             - NIO,使用非阻塞式I/O,使用一个线程处理多个I/O操作,就是selector实现的.
             - `selector能够检测多个注册了的通道上是否有事件发生.`(ps: 多个通道以时间的方式可以注册到同一个selector上面,selector中维护了
-            一个事件key集合,遍历这个集合判断通道对应key的状态,然后确定通道发生什么事件),``如果通道上发生了某个事件,就做对应的逻辑处理`这样就实现了
-            非阻塞I/O以一个线程去管理多个I/O通道.
-            - `只有在通道真正有读写事件发生的时候,才会去进行读写操作,可以大大的减少系统开销`.并且不必为每一个连接都创建一个线程,减少线程创建销毁的开销  
-            - `避免了线程之间上下文切换的开销`  
-        - selector的特点:  
-            - selector可以处理多个客户端连接的请求.  
+              一个事件key集合,遍历这个集合判断通道对应key的状态,然后确定通道发生什么事件),``如果通道上发生了某个事件,就做对应的逻辑处理`这样就实现了
+              非阻塞I/O以一个线程去管理多个I/O通道.
+            - `只有在通道真正有读写事件发生的时候,才会去进行读写操作,可以大大的减少系统开销`.并且不必为每一个连接都创建一个线程,减少线程创建销毁的开销
+            - `避免了线程之间上下文切换的开销`
+        - selector的特点:
+            - selector可以处理多个客户端连接的请求.
             - selector在某个通道没有进行数据读写的时候,可以去处理其他通道上的事件.
             - selector通常将阻塞I/O等待I/O操作完成的时间,用在处理其他通道上的I/O操作.
             - 由于读写操作都是非阻塞的,可以提升I/O线程的运行效率,避免频繁I/O导致线程挂起
-            - 一个线程对应一个selector,从而处理多个客户端连接和读写操作,从根本上解决了传统I/O一对一线程模型.架构的性能,弹性伸缩能力,可靠性都大幅度提升  
+            - 一个线程对应一个selector,从而处理多个客户端连接和读写操作,从根本上解决了传统I/O一对一线程模型.架构的性能,弹性伸缩能力,可靠性都大幅度提升
         - selector处理时间的流程:  
-            ![selector流程图](../../_media/chapter13_Netty/1_javaIO复习/selector处理事件的流程图片.png)  
+          ![selector流程图](../../_media/chapter13_Netty/1_javaIO复习/selector处理事件的流程图片.png)
             - 创建服务端通道serverSocketChannel,并将其注册到selector上面,关注事件为accept
             - 当accept事件发生的时候,通过serverSocketChannel.accept()方法获取客户端通道socketChannel并将其按照关心的事件注册
               (socketChannel.register(selector,ops))到selector上
@@ -194,26 +194,24 @@
             - serverSocketChannel也需要注册到selector上面去,然后通过selector来管理监听事件.`通常一个serverSocketChannel`只有一个.
             - selector的方法keys和selectedKeys的区别:
                 1. keys: 返回的是所有注册到selector上面的所有selectionKey, `即:只要注册成功就会生成一个key放进去`,是个set,selector不会主动删除这个set
-                里面的元素.[ps:任何删除操作都不支持]  
-                2. selectedKey: 返回select方法中有事件发生的channel对应的selectionKey,[同样是任何删除操作都不支持]  
+                   里面的元素.[ps:任何删除操作都不支持]
+                2. selectedKey: 返回select方法中有事件发生的channel对应的selectionKey,[同样是任何删除操作都不支持]
         - selectionKey API:
             - selectionKey,表示selector与channel之间的一种注册关系,即 channel关心事件在selector中的记录.`共四种`:  
-                ![selectionKey注册事件](../../_media/chapter13_Netty/1_javaIO复习/selectionKey的注册事件.png)  
+              ![selectionKey注册事件](../../_media/chapter13_Netty/1_javaIO复习/selectionKey的注册事件.png)
             - api:  
-                ![selectionKey的api](../../_media/chapter13_Netty/1_javaIO复习/selection.png)  
-4. NIO注意事项:  
+              ![selectionKey的api](../../_media/chapter13_Netty/1_javaIO复习/selection.png)
+4. NIO注意事项:
     1. ByteBuffer在put,get的时候 ,put什么类型的数据,get的时候就需要使用什么类型的数据来接收,否则会抛出异常.
-    2. buffer可以转换成只读buffer,但是之后就无法写入,否则抛出异常  
+    2. buffer可以转换成只读buffer,但是之后就无法写入,否则抛出异常
     3. Nio还提供了MappedByteBuffer,可以让文件直接在内存中进行修改,然后是利用NIO来通不到文件
     4. NIO还支持通过多个buffer来完成同一个事件的读写.
-5. NIO和BIO的比较:  
+5. NIO和BIO的比较:
     1. `BIO` 以流的方式处理数据，而 `NIO` 以块的方式处理数据，块 `I/O` 的效率比流 `I/O` 高很多。
     2. `BIO` 是阻塞的，`NIO` 则是非阻塞的。
     3. `BIO` 基于字节流和字符流进行操作，而 `NIO` 基于 `Channel`（通道）和 `Buffer`（缓冲区）进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。
-       `Selector`（选择器）用于监听多个通道的事件（比如：连接请求，数据到达等），因此使用单个线程就可以监听多个客户端通道。   
-       
-
-## 4. 实例代码:
+       `Selector`（选择器）用于监听多个通道的事件（比如：连接请求，数据到达等），因此使用单个线程就可以监听多个客户端通道。
+## 4. 实例:  
 1. 内存往磁盘写文件:
     ```java
         /*

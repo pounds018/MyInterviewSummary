@@ -36,10 +36,45 @@
    - unit: 空闲时长的单位
    - workQueue: 存放任务的阻塞队列
    - threadFactory: 线程工厂,控制产生什么样的线程,实现ThreadFactor重写newThread方法
-   - handler: 拒绝策略,决定当任务数量 > 线程数+阻塞队列重量的时候,如何处理新提交上来的任务
+   - handler: 拒绝策略,决定当任务数量 > 线程数+阻塞队列重量的时候,如何处理新提交上来的任务   
+   
+3. 线程池生命周期:
+   1. 重要参数:
+      - ctl : 线程池通过一个32位原子整数封装线程池两个重要信息,一个是线程池运行状态runState,一个是当前池中线程数量  
+        `final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0))`
+        > 高3位存放线程池运行状态runState,后29位存放线程池数量
+      - COUNT_BITS: 用来描述 原子整数ctl中29位存放线程数量信息  
+        `private static final int COUNT_BITS = Integer.SIZE - 3`
+      - CAPACITY :   
+        `private static final int CAPACITY   = (1 << COUNT_BITS) - 1`
+      - 线程池运行状态信息:
+      ```java
+         1. private static final int RUNNING    = -1 << COUNT_BITS; 
+         2. private static final int SHUTDOWN   =  0 << COUNT_BITS;
+         3. private static final int STOP       =  1 << COUNT_BITS;
+         4. private static final int TIDYING    =  2 << COUNT_BITS;
+         5. private static final int TERMINATED =  3 << COUNT_BITS;
+      ```
+      - ThreadPoolExecutor为了提高运算速度采用了位运算来剥离 runState 和 workerCount 两个参数
+      ```java
+         private static int runStateOf(int c)     { return c & ~CAPACITY; } 
+         private static int workerCountOf(int c)  { return c & CAPACITY; }
+         private static int ctlOf(int rs, int wc) { return rs | wc; }
+      ```
+      位运算原理如图:  
+      ![ctl掩码剥离信息](../../_media/chapter11_MultiThread/3_ThreadPool/ctl掩码剥离信息.png)
+      |状态|含义|
+      |:--|---|
+      | RUNNING   |可以接受新任务,能处理队列中的任务|
+      | SHUTDOWN   |不接受新任务,仍能处理队列中的任务|
+      | STOP      |不接受新任务,不再处理队列中的任务,并中断正在处理中的任务|
+      | TIDYING |当所有任务已经终止,工作线程数量也为0了,线程也装换到该状态,就会调用钩子方法terminated()去关闭线程池|
+      | TERMINATED  |terminated()方法完成之后进入该状态|
+   2. 状态流转图:  
+      ![状态流转图](../../_media/chapter11_MultiThread/3_ThreadPool/线程池状态流转.png)
 
 
-3. 线程池任务的执行流程:
+4. 线程池任务的执行流程:
    ![任务执行流程](../../_media/chapter11_MultiThread/3_ThreadPool/线程池流程.png)
 
    1. 线程池是否还在运行: 是执行步骤2,否直接拒绝,线程池主要是保证线程池在其running状态下执行任务
@@ -48,11 +83,11 @@
    3. corePoolSize < workerCount,阻塞队列未满 : 任务进入阻塞队列
    4. 阻塞队列已满,workerCount < maximumPoolSize : 继续创建线程去执行任务,直到池中数量到达maximumPoolSize
    5. 阻塞队列已满,workerCount >= maximumPoolSize : 开始执行拒绝策略,根据策略处理任务  
-      流程图:
+      流程图:  
       ![流程图](../../_media/chapter11_MultiThread/3_ThreadPool/单个任务执行流程.png)
 
 
-4. 线程池中线程数量的增减时机:
+5. 线程池中线程数量的增减时机:
    1. 创建线程的时机:
       1. 任务数量 < corePoolSize
       2. 阻塞队列容量 < 任务数量 < maximumPoolSize
@@ -71,7 +106,7 @@
                - false: 线程池不允许核心线程空闲太久被关闭
       > 注意: 当线程池还处于运行中,阻塞队列里面还有任务,并且现有线程仅剩1个的时候,线程是不允许回收的.
 
-5. 任务管理:
+6. 任务管理:
    1. 任务存放: 阻塞队列存放任务  
       阻塞队列的引入主要是为了将任务的提交和任务的执行进行解耦,`类似于消息队列,只不过不会限制哪个消费者消费`  
       阻塞队列的两个附加操作:
@@ -269,41 +304,8 @@
                     }
                }
             ```  
+             
 
-6. 线程池生命周期:
-   1. 重要参数:
-      - ctl : 线程池通过一个32位原子整数封装线程池两个重要信息,一个是线程池运行状态runState,一个是当前池中线程数量  
-        `final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0))`
-        > 高3位存放线程池运行状态runState,后29位存放线程池数量
-      - COUNT_BITS: 用来描述 原子整数ctl中29位存放线程数量信息  
-        `private static final int COUNT_BITS = Integer.SIZE - 3`
-      - CAPACITY :   
-        `private static final int CAPACITY   = (1 << COUNT_BITS) - 1`
-      - 线程池运行状态信息:
-      ```java
-         1. private static final int RUNNING    = -1 << COUNT_BITS; 
-         2. private static final int SHUTDOWN   =  0 << COUNT_BITS;
-         3. private static final int STOP       =  1 << COUNT_BITS;
-         4. private static final int TIDYING    =  2 << COUNT_BITS;
-         5. private static final int TERMINATED =  3 << COUNT_BITS;
-      ```
-      - ThreadPoolExecutor为了提高运算速度采用了位运算来剥离 runState 和 workerCount 两个参数
-      ```java
-         private static int runStateOf(int c)     { return c & ~CAPACITY; } 
-         private static int workerCountOf(int c)  { return c & CAPACITY; }
-         private static int ctlOf(int rs, int wc) { return rs | wc; }
-      ```
-      位运算原理如图:  
-      ![ctl掩码剥离信息](../../_media/chapter11_MultiThread/3_ThreadPool/ctl掩码剥离信息.png)
-      |状态|含义|
-      |:--|---|
-      | RUNNING   |可以接受新任务,能处理队列中的任务|
-      | SHUTDOWN   |不接受新任务,仍能处理队列中的任务|
-      | STOP      |不接受新任务,不再处理队列中的任务,并中断正在处理中的任务|
-      | TIDYING |当所有任务已经终止,工作线程数量也为0了,线程也装换到该状态,就会调用钩子方法terminated()去关闭线程池|
-      | TERMINATED  |terminated()方法完成之后进入该状态|
-   2. 状态流转图:  
-      ![状态流转图](../../_media/chapter11_MultiThread/3_ThreadPool/线程池状态流转.png)
 
 7. 真正的打工仔: worker
    1. 内部类worker的继承关系图以及作用 : `private final class Worker extends AbstractQueuedSynchronizer implements Runnable`  

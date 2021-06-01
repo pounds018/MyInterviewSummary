@@ -158,117 +158,117 @@
          ![单次任务分配](../../_media/chapter11_MultiThread/3_ThreadPool/单次任务分配.png)
 
 
-3. 拒绝任务:
-   1. 拒绝任务的时机:
-      - `线程池被关闭`
-      - 当提交任务数量超过 `最大线程数+阻塞队列容量` ,超过部分的任务会被拒绝执行
-   2. ThreadPoolExecutor通过内部类一共提供了四种拒绝策略
-      - `ThreadPoolExecutor.AbortPolicy`: 当达到执行拒绝策略的时候,就不再执行任务,而是抛出`RejectedExecutionException`异常
-      > `默认拒绝策略`
-      ```java
-      public static class AbortPolicy implements RejectedExecutionHandler {
-        
-        public AbortPolicy() { }
-        
-        // 满足拒绝条件的时候,执行该方法
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-            throw new RejectedExecutionException("Task " + r.toString() +
-                                                 " rejected from " +
-                                                 e.toString());
-        }
-      }
-      ```
-      - `ThreadPoolExecutor.CallerRunsPolicy`: 拒绝执行任务,将任务交回给调用 execute(Runnable r)方法的线程(即提交任务的线程)来执行.
-      > 特别的: 如果线程池关闭,那么该任务r 将会被抛弃  
-      这个策略的目的是为了让所有任务都确保被顺利执行,`在一些要求所有任务无论什么情况都被执行时`,可以使用这个策略
-      ```java
-      public static class CallerRunsPolicy implements RejectedExecutionHandler {
-        public CallerRunsPolicy() { }
-        // 拒绝方法
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-            if (!e.isShutdown()) {
-                r.run();
-            }
-        }
-      }
-      ```
-      - `ThreadPoolExecutor.DiscardPolicy`: 拒绝执行任务,并将任务丢弃
-      > 内部的实现实际上rejectedExecution就是一个空方法体  
-      由于拒绝的时候不会做任何事情,可能让我们对任务执行情况无法掌控,`所以这种拒绝策略建议使用在不重要的业务上`
-      ```java
-      public static class DiscardPolicy implements RejectedExecutionHandler {
-        
-        public DiscardPolicy() { }
-        // 空方法体实现丢弃
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-        }
-      }
-      ```
-      - `ThreadPoolExecutor.DiscardOldestPolicy`: 当到达拒绝条件的时候,先丢弃阻塞队列对头的任务,然后再次提交任务.
-      > 线程池被关闭的话,就是丢弃任务  
-      `需要考虑业务是否允许丢弃任务来决定是否使用这个策略`
-      ```java
-      public static class DiscardOldestPolicy implements RejectedExecutionHandler {
-        
-        public DiscardOldestPolicy() { }
-        
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
-            if (!e.isShutdown()) {
-                e.getQueue().poll();
-                e.execute(r);
-            }
-        }
-      }
-      ```
-      - `自定义拒绝策略`:
-      > 根据业务来定制符合业务逻辑的拒绝策略
-      - RejectedExecutionHandler: 所有的拒绝策略都是这个接口的实现类,同样自定义拒绝策略的时候实现这个接口就行
+   3. 拒绝任务:
+      1. 拒绝任务的时机:
+         - `线程池被关闭`
+         - 当提交任务数量超过 `最大线程数+阻塞队列容量` ,超过部分的任务会被拒绝执行
+      2. ThreadPoolExecutor通过内部类一共提供了四种拒绝策略
+         - `ThreadPoolExecutor.AbortPolicy`: 当达到执行拒绝策略的时候,就不再执行任务,而是抛出`RejectedExecutionException`异常
+         > `默认拒绝策略`
          ```java
-            public interface RejectedExecutionHandler {
-            // 重写这个方法
-            void rejectedExecution(Runnable r, ThreadPoolExecutor executor);
+         public static class AbortPolicy implements RejectedExecutionHandler {
+           
+           public AbortPolicy() { }
+           
+           // 满足拒绝条件的时候,执行该方法
+           public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+               throw new RejectedExecutionException("Task " + r.toString() +
+                                                    " rejected from " +
+                                                    e.toString());
+           }
          }
          ```
-
-      - 举个栗子:
+         - `ThreadPoolExecutor.CallerRunsPolicy`: 拒绝执行任务,将任务交回给调用 execute(Runnable r)方法的线程(即提交任务的线程)来执行.
+         > 特别的: 如果线程池关闭,那么该任务r 将会被抛弃  
+         这个策略的目的是为了让所有任务都确保被顺利执行,`在一些要求所有任务无论什么情况都被执行时`,可以使用这个策略
          ```java
-              /*
-              * 自定义拒绝策略
-              */
-            @Test
-            public void test(){
-                 // 由于RejectedExecutionHandler是个函数式接口,所以直接使用lambda表达式实现
-                 ThreadPoolExecutor executor1 = new ThreadPoolExecutor(
-                       1,
-                       1,
-                       1000,
-                       TimeUnit.MILLISECONDS,
-                       new ArrayBlockingQueue<Runnable>(10),
-                       Executors.defaultThreadFactory(),
-                       (r, executor) -> {// 拒绝策略
-                       System.out.println("自定义拒绝策略开始了");
+         public static class CallerRunsPolicy implements RejectedExecutionHandler {
+           public CallerRunsPolicy() { }
+           // 拒绝方法
+           public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+               if (!e.isShutdown()) {
+                   r.run();
+               }
+           }
+         }
+         ```
+         - `ThreadPoolExecutor.DiscardPolicy`: 拒绝执行任务,并将任务丢弃
+         > 内部的实现实际上rejectedExecution就是一个空方法体  
+         由于拒绝的时候不会做任何事情,可能让我们对任务执行情况无法掌控,`所以这种拒绝策略建议使用在不重要的业务上`
+         ```java
+         public static class DiscardPolicy implements RejectedExecutionHandler {
+           
+           public DiscardPolicy() { }
+           // 空方法体实现丢弃
+           public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+           }
+         }
+         ```
+         - `ThreadPoolExecutor.DiscardOldestPolicy`: 当到达拒绝条件的时候,先丢弃阻塞队列对头的任务,然后再次提交任务.
+         > 线程池被关闭的话,就是丢弃任务  
+         `需要考虑业务是否允许丢弃任务来决定是否使用这个策略`
+         ```java
+         public static class DiscardOldestPolicy implements RejectedExecutionHandler {
+           
+           public DiscardOldestPolicy() { }
+           
+           public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+               if (!e.isShutdown()) {
+                   e.getQueue().poll();
+                   e.execute(r);
+               }
+           }
+         }
+         ```
+         - `自定义拒绝策略`:
+         > 根据业务来定制符合业务逻辑的拒绝策略
+         - RejectedExecutionHandler: 所有的拒绝策略都是这个接口的实现类,同样自定义拒绝策略的时候实现这个接口就行
+            ```java
+               public interface RejectedExecutionHandler {
+               // 重写这个方法
+               void rejectedExecution(Runnable r, ThreadPoolExecutor executor);
+            }
+            ```
+   
+         - 举个栗子:
+            ```java
+                 /*
+                 * 自定义拒绝策略
+                 */
+               @Test
+               public void test(){
+                    // 由于RejectedExecutionHandler是个函数式接口,所以直接使用lambda表达式实现
+                    ThreadPoolExecutor executor1 = new ThreadPoolExecutor(
+                          1,
+                          1,
+                          1000,
+                          TimeUnit.MILLISECONDS,
+                          new ArrayBlockingQueue<Runnable>(10),
+                          Executors.defaultThreadFactory(),
+                          (r, executor) -> {// 拒绝策略
+                          System.out.println("自定义拒绝策略开始了");
+                          }
+                    );
+                    // max + queue = 11,循环提交12个任务,第十二个任务将会被拒绝
+                    for (int i = 0; i < 12; i++) {
+                    executor1.execute(()->{
+                       try {
+                       Thread.sleep(1000);
+                       } catch (InterruptedException e) {
+                       e.printStackTrace();
                        }
-                 );
-                 // max + queue = 11,循环提交12个任务,第十二个任务将会被拒绝
-                 for (int i = 0; i < 12; i++) {
-                 executor1.execute(()->{
+                       System.out.println("提交任务了!!");
+                       });
+                    }
+               
+                    // 防止主线程退出,不打印结果
                     try {
-                    Thread.sleep(1000);
+                    Thread.sleep(15000);
                     } catch (InterruptedException e) {
                     e.printStackTrace();
                     }
-                    System.out.println("提交任务了!!");
-                    });
-                 }
-            
-                 // 防止主线程退出,不打印结果
-                 try {
-                 Thread.sleep(15000);
-                 } catch (InterruptedException e) {
-                 e.printStackTrace();
-                 }
-            }
-         ```  
+               }
+            ```  
 
 6. 线程池生命周期:
    1. 重要参数:

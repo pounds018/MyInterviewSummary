@@ -19,6 +19,7 @@
 * [第 10 章 javaSe集合](_content/chapter10_Collection/coverpage.md)
   * [第一节 框架结构](_content/chapter10_Collection/1_框架结构.md)
   * [第二节 ArrayList](_content/chapter10_Collection/2_ArrayList.md)
+  * [第三节 HashMap](_content/chapter10_Collection/3_HashMap.md)
 * [第 11 章 java多线程](_content/chapter11_MultiThread/coverpage.md)
   * [第一节 volatile](_content/chapter11_MultiThread/1_volatile.md)
   * [第二节 CompletableFuture使用介绍](_content/chapter11_MultiThread/2_CompletableFuture.md)

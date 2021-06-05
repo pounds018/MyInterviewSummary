@@ -299,7 +299,7 @@ public ArrayList(Collection<? extends E> c) // 就是将集合c中元素全部�
       return new ArrayList<>(a);
    }
 ```
-> 从上面这端代码来看,asList方法是返回了一个"ArrayList"对象,但是此ArrayList非彼ArrayList,此ArrayList是ArrayList的一个内部类
+> 从上面这端代码来看,asList方法是返回了一个"ArrayList"对象,但是此ArrayList非彼ArrayList,此ArrayList是Arrays的一个内部类
 2. Arrays工具类的内部类:ArrayList
 ```java
     private static class ArrayList<E> extends AbstractList<E> implements RandomAccess, java.io.Serializable {

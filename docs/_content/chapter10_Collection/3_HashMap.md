@@ -219,7 +219,7 @@
            ![链地址法](../../_media/chapter10_collections/hashmap/hash解决冲突链地址法.png)  
            
 
-2. HashMap在hash值,散列函数,冲突解决是怎么处理的.
+2. `HashMap`在hash值,散列函数,冲突解决是怎么处理的.
     - 位运算:
         - `~`运算: 取反  
           一元运算符,将二进制数逐位按照规则(`1变为0,0变为1`)产生一个新的二进制数字.
@@ -237,10 +237,27 @@
           `a >> 2`: 将 `a`向右移动`2`位,0填充左侧因为移动空出来的位置,多余的0丢弃,  
           比如: 4 >> 2, 计算过程为 0000 0100 => 0000 0001 从4变为了1  
           意义: p进制数字num向右移n位,就是将 num除以p^n
-    - HashMap选择的散列算法: `除数取余法`: hashCode mod p  
-      在jdk1.7中散列函数算法公式为: `h(key) = hashCode % (table.length-1)`. <font color=#ff4500>但是模运算的效率不高.</font>   
+    - HashMap选择的`散列算法`: `除数取余法`: hashCode mod p
+      - Hash算法实现的步骤:  
+        1. 通过 key.hashCode()方法获取key的hashCode值
+        2. 通过高低16位异或操作,增加当table长度比较的时候,hash值得复杂度,让散列更均匀.  
+        3. (n-1) & hash,其中hash为第二部计算出来的hash值,n为数组长度.
+        ```java
+        static final int hash(Object key) {
+            int h;
+            return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+        }
+        ```  
+        实际上HashMap在计算key对应的hash值得时候,并没有将key自身的hashCode方法返回的值作为hash值来传入散列算法中使用.  
+        ![hash值计算过程](../../_media/chapter10_collections/hashmap/hash值计算过程.png)
+        > 为什么不直接采用key.hashCode()计算出来的结果,作为hash值来使用: `主要是为了减少hash冲突`  
+        1.将hashCode方法计算出来的值,右移16位的原因: `位运算参与运算的位数越多,产生不同结果的可能性就越大`.由于hashmap的长度在通常情况下无法让hash值得高16位参与到运算中来(hash表的长度通常都
+        比较小,转换成32位的二进制的时候,高16位一般都是0,自然结果也就是0了),为了产生更多不同的结果,就将hash值高16位通过位移运算变位低16位,通过 `^`运算将其信息融合到低16位中.  
+        2.高16位,低16位信息融合采用`^`的原因也是为了: `产生更多不同的结果`. `^`操作的特点是 `相同为0,不同为1,即产生结果为0或者1的可能性是50%`,相比于其他位运算操作,`^`运算得到不同结果的可能性
+        更均匀,即hash值分布更均匀,这样散列函数计算出来的结果也就更均匀.
+      - 在jdk1.7中散列函数算法公式为: `h(key) = hashCode % (table.length-1)`. <font color=#ff4500>但是模运算的效率不高.</font>   
       `为了优化计算效率`,jdk1.8 将模运算修`%`改为了位移运算`&`的等价公式,即 `h(key) = hashCode & (table.length -1)`  
-      HashMap在存储空间长度,即table上面的一些限制: `HashMap限制存储元素的hash表长度总是2的n次幂大小`
+      - HashMap在存储空间长度,即table上面的一些限制: `HashMap限制存储元素的hash表长度总是2的n次幂大小`
         - 默认无参构造初始化出来的table长度,默认为16: `DEFAULT_INITIAL_CAPACITY = 1 << 4`
         - table 最大长度: `MAXIMUM_CAPACITY = 1 << 30;`,即2^30
         - 有参构造函数初始化出来的table长度,通过 `tableSizeFor(int cap)` 对其进行限制:  `总是会将table的长度设置指定table长度(假设为x)转换成比x大的最小2^n的值`
@@ -295,29 +312,17 @@
                     */
                 }
            ```  
-    > 为什么要限制hash表的长度只能是2的n次幂:
-
-      原因1,`为了减少hash冲突`: 由于HashMap采取的散列算法为: `除数取余法(hashCode & table.length - 1)`. 根据`&`运算的特点: <font color=#00ff7f>对应位置全部为1结果才为1.</font>
-        - 如果`hash表长度取奇数`,那么`table.length -1`转换成二进制之后,末位一定是0,无论hashCode的值为什么值,`&`运算的结果一定是一个偶数,即`所有的元素都散列在hash表的偶数下标上`,
-          除了要浪费一半的空间以外,还会造成hash冲突的增加.
-        - 如果`hash表长度取偶数`,那么 `table.length - 1`转换成二进制之后,末位一定是1,当hashCode为奇数,计算结果为奇数,即`元素落在hash表的奇数下标上`,当hashCode为偶数,
-          计算结果为偶数,即`元素落在hash表的偶数下标上`.换句话说: `当限定了hash表的长度为2的n次幂之后,元素的散列情况由hash值确定`
-
-      原因2: 在hash表需要扩容的时候,可以让元素要么落在原来的位置上,要么落在原来位置+原hash表长度的位置上,这样可以优化掉 `1.7版本中扩容需要rehash的问题,提高效率`.[详情见源码分析扩容部分]
-    - HashMap计算hash值的算法:
-        ```java
-        static final int hash(Object key) {
-            int h;
-            return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
-        }
-        ```  
-      实际上HashMap在计算key对应的hash值得时候,并没有将key自身的hashCode方法返回的值作为hash值来传入散列算法中使用.
-      > 为什么不直接采用key.hashCode()计算出来的结果,作为hash值来使用: `主要是为了减少hash冲突`  
-      1.将hashCode方法计算出来的值,右移16位的原因: `位运算参与运算的位数越多,产生不同结果的可能性就越大`.由于hashmap的长度在通常情况下无法让hash值得高16位参与到运算中来(hash表的长度通常都
-      比较小,转换成32位的二进制的时候,高16位一般都是0,自然结果也就是0了),为了产生更多不同的结果,就将hash值高16位通过位移运算变位低16位,通过 `^`运算将其信息融合到低16位中.  
-      2.高16位,低16位信息融合采用`^`的原因也是为了: `产生更多不同的结果`. `^`操作的特点是 `相同为0,不同为1,即产生结果为0或者1的可能性是50%`,相比于其他位运算操作,`^`运算得到不同结果的可能性
-      更均匀,即hash值分布更均匀,这样散列函数计算出来的结果也就更均匀.
-    - HashMap在hash冲突上的解决方案:  `链地址法`  
+        > 为什么要限制hash表的长度只能是2的n次幂:
+    
+          原因1,`为了减少hash冲突`: 由于HashMap采取的散列算法为: `除数取余法(hashCode & table.length - 1)`. 根据`&`运算的特点: <font color=#00ff7f>对应位置全部为1结果才为1.</font>
+            - 如果`hash表长度取奇数`,那么`table.length -1`转换成二进制之后,末位一定是0,无论hashCode的值为什么值,`&`运算的结果一定是一个偶数,即`所有的元素都散列在hash表的偶数下标上`,
+              除了要浪费一半的空间以外,还会造成hash冲突的增加.
+            - 如果`hash表长度取偶数`,那么 `table.length - 1`转换成二进制之后,末位一定是1,当hashCode为奇数,计算结果为奇数,即`元素落在hash表的奇数下标上`,当hashCode为偶数,
+              计算结果为偶数,即`元素落在hash表的偶数下标上`.换句话说: `当限定了hash表的长度为2的n次幂之后,元素的散列情况由hash值确定`
+    
+          原因2: 在hash表需要扩容的时候,可以让元素要么落在原来的位置上,要么落在原来位置+原hash表长度的位置上,这样可以优化掉 `1.7版本中扩容需要rehash的问题,提高效率`.[详情见源码分析扩容部分]
+    
+    - `HashMap`在hash冲突上的解决方案:  `链地址法`  
       ![hashMap冲突解决](../../_media/chapter10_collections/hashmap/hashMap冲突解决方案.png)
         - 1.7 采用 `数组 + 链表`
         - 1.8 采用 `数组 + 链表/红黑树`
@@ -326,6 +331,50 @@
        
 
 ## 3. 部分源码分析:  
-
+1. 初始化:  `1.7 会直接初始化hash表,1.8是在put的时候才会去创建hash表,采取延迟初始化的策略`
+    - 无参构造初始化流程:  这个没什么看的,所有的值都直接被设置成了默认值
+    ```java
+        //空HashMap的构造器
+        public HashMap() {
+            this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted
+        }
+    ```
+    - 有参构造初始化流程: 以设置hash表长度参数为例  
+    ```java
+        //空HashMap的构造器,指定初始容量
+        public HashMap(int initialCapacity) {
+            this(initialCapacity, DEFAULT_LOAD_FACTOR);
+        }
+        
+        public HashMap(int initialCapacity, float loadFactor) {
+            // 检查指定的容量是否合法
+            if (initialCapacity < 0)
+                throw new IllegalArgumentException("Illegal initial capacity: " +
+                                                   initialCapacity);
+            // 检查指定的容量是否超出最大容量
+            if (initialCapacity > MAXIMUM_CAPACITY)
+                initialCapacity = MAXIMUM_CAPACITY;
+            // 检查负载因子是否合法
+            if (loadFactor <= 0 || Float.isNaN(loadFactor))
+                throw new IllegalArgumentException("Illegal load factor: " +
+                                                   loadFactor);
+            this.loadFactor = loadFactor;
+            // 这里就是在对指定容量进行调整,让其符合2的n次幂
+            this.threshold = tableSizeFor(initialCapacity);
+        }    
+        static final int tableSizeFor(int cap) {
+            int n = cap - 1;
+            n |= n >>> 1;
+            n |= n >>> 2;
+            n |= n >>> 4;
+            n |= n >>> 8;
+            n |= n >>> 16;
+            return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+        }
+    ```  
+   
+2. 插入操作:  
+    
+    
    
 

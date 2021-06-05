@@ -330,8 +330,9 @@
       其根节点的左子结点的值小于根结点,右子结点的值大于根结点,这样每次查找都会排除一半的元素,提高了查找效率.  
        
 
-## 3. 部分源码分析:  
-1. 初始化:  `1.7 会直接初始化hash表,1.8是在put的时候才会去创建hash表,采取延迟初始化的策略`
+## 3. 部分源码分析:   
+说明: hashmap的hash表下面都称 Node数组,hash值没有特殊说明都表示hash(key)计算出来的值.
+1. 初始化:  `1.7 会直接初始化Node数组,1.8是在put的时候才会去创建Node数组,采取延迟初始化的策略`
     - 无参构造初始化流程:  这个没什么看的,所有的值都直接被设置成了默认值
     ```java
         //空HashMap的构造器
@@ -339,7 +340,7 @@
             this.loadFactor = DEFAULT_LOAD_FACTOR; // all other fields defaulted
         }
     ```
-    - 有参构造初始化流程: 以设置hash表长度参数为例  
+    - 有参构造初始化流程: 以设置Node数组长度参数为例  
     ```java
         //空HashMap的构造器,指定初始容量
         public HashMap(int initialCapacity) {
@@ -374,7 +375,227 @@
     ```  
    
 2. 插入操作:  
+   - 插入流程: `确定两个node结点相同的条件: hash值相同,key1.euqals(key2)的返回值为true`  
+     1. 第一步: 调用hash(key)方法,计算真正用在散列函数中的hash值
+     2. 第二步: 进行插入操作  
+        - 情况1: Node数组为空,会进行Node数组的初始化,将其长度初始化为16或者tableSizeFor计算出来的值
+        - 情况2: Node数组不为空,根据hash值定位Node数组下标,`根据该下标上有无元素`确定下一步操作.  
+            - `没有元素`: 根据待插入元素的key和value值创建一个node节点插入该位置
+            - `有元素`:   
+                - `该位置上仅有一个元素,且与待插入元素相同`,这时候将待插入value赋值给该位置上的元素的value.
+                - `不止一个元素,且仍然是个链表`,遍历整个链表逐个比较结点.如果结点相同就执行value赋值操作,如果没有相同结点就创建一个新结点,然后插入尾部  
+                - `不止一个元素,此时Node结点链表已经转换为红黑树`, 执行红黑树的插入操作.  
+     3. 第三步: 判断Node结点数组是否到达了扩容的条件,即 table.size() >= threshold.
+   - 源码:  
+   ```java
+       final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+                       boolean evict) {
+            Node<K,V>[] tab;//用来指向table
+            Node<K,V> p;//同来指向hash定位的元素桶第一个结点
+            int n, i;//n为表示为hash表长度,i为元素下标
+            // 判断hashmap是否是第一次插入,如果是第一次插入就会先扩容再插入
+            if ((tab = table) == null || (n = tab.length) == 0)
+                n = (tab = resize()).length;//扩容为16
     
+            // ★★★★★★★★★★★★★★★★★★★★★ 插入操作代码 ★★★★★★★★★★★★★★★★★★★★★★★
     
+            // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ 计算index,如果该位置上没有桶,就存放普通结点 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+            if ((p = tab[i = (n - 1) & hash]) == null)
+                tab[i] = newNode(hash, key, value, null);
+            // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ 计算出来的位置上有桶 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+            else    {
+                Node<K,V> e;//表示与待插入键值对相等的键值对,即缓存可能要被修改的原有结点.
+                K k;//遍历时存放hash表结点的key
+                //★★★★★★★★★★★★★★★ 判断第一个结点与带插入元素 ★★★★★★★★★★★★★★★
+                //如果链表桶的第一个元素结点p.hash等于hash,且p.key等于key,p就是与待插入键值对相同的结点
+                if (p.hash == hash &&
+                        ((k = p.key) == key || (key != null && key.equals(k))))
+                    e = p;
+    
+                //★★★★★★★★★★★★★★★ 如果第一个结点已经树形化,进行红黑树操作 ★★★★★★★★★★★★★★★
+                    // 如果p是树形桶的第一个结点,证明hashMap已经树型化了,执行红黑树的插入操作
+                else if (p instanceof TreeNode)
+                    e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+    
+                //★★★★★★★★★★★★★★★ hash桶中第一个结点与待插入元素不相同,且是链表 ★★★★★★★★★★★★★★★
+                else {
+                    //如果p是链表桶的第一个结点,以待插入元素不相等,遍历链表开始逐一比较结点是否相等
+                    for (int binCount = 0; ; ++binCount) {
+                        //如果p的下一个结点为null,将待插入键值对写入p.next
+                        if ((e = p.next) == null) {
+                            p.next = newNode(hash, key, value, null);
+                            //如果链表桶中链表结点数>=8,转换成树形桶
+                            if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                                // 这个方法里面回去判断容量是不是大于64
+                                treeifyBin(tab, hash);
+                            break;
+                        }
+                        //如果p.next != null,就比较e是否等于待插入键值对
+                        if (e.hash == hash &&
+                                ((k = e.key) == key || (key != null && key.equals(k))))
+                            break;
+                        p = e;//p移动
+                    }
+                }
+                //如果e非空,将e原有的值改为新值
+                if (e != null) { // existing mapping for key
+                    V oldValue = e.value;
+                    if (!onlyIfAbsent || oldValue == null)
+                        e.value = value;
+                    afterNodeAccess(e);
+                    return oldValue;
+                }
+            }
+    
+            // 判断是不是需要扩容
+            ++modCount;
+            if (++size > threshold)
+                resize();
+            afterNodeInsertion(evict);
+            return null;
+       }
+   ```  
+   > hashMap在第一次put的时候先扩容再插入,后续都是先插入再扩容.
    
-
+3. 扩容操作: 
+    - 触发扩容的条件: Node结点元素个数 >= Node结点当前容量 * 负载因子
+    - 扩容流程:  
+        1. 第一步: 计算新容量
+            - 情况1: 旧数组的容量大于0,即有元素
+                - 判断原来的容量是不是超出 `MAXIMUM_CAPACITY(2^30)` 把阈值设置为 MAXIMUM_CAPACITY 直接返回原Node结点
+                - 如果 原容量小于`MAXIMUM_CAPACITY`,将Node数组扩容2倍,如果新容量小于 `MAXIMUM_CAPACITY`并且 原容量 大于等于 16,直接将新的阈值也扩大两倍.
+            - 情况2: 原数组为null,但是原来的阈值>0
+                - 直接将新容量设置为旧阈值  
+            - 情况3: node数组也没有初始化,阈值也没有初始化,初始化这俩参数
+                - 将新容量设置为 16
+                - 阈值设置为16*0.75 = 12
+        2. 第二步: 重新计算新阈值确保 阈值不会超出 `MAXIMUM_CAPACITY`.
+        3. 第三步: threshold赋值,以新容量创建Node数组,table指向刚创建出来的数组
+        4. 第四步: 把原数组中元素移动到新数组
+            - 遍历整个数组,逐个移动
+                - 情况1: 当前位置上仅有一个node结点,直接在新数组中定位,插入
+                - 情况2: 当前位置上的Node结点已经是一个红黑树结构,执行红黑树的移动操作
+                - 情况3; 当前位置上的Node结点仍然是一个链表结构
+                    - 逐个遍历链表上的结点,根据 e.hash & oldCap是否为0判断该结点是不是需要移动,然后用尾插法将整个链表上的结点分成两个链表
+                    - 在新Node数组中,分别把两个链表存放于`原位置+oldCap`,`原位置`上.
+    - 源码:  
+        ````java
+            final Node<K,V>[] resize() {
+            Node<K,V>[] oldTab = table;//oldTab指向原来的hash表
+            int oldCap = (oldTab == null) ? 0 : oldTab.length;//OldCap表示原hash表的容量
+            int oldThr = threshold;//oldThr表示原来的扩容阈值.
+            int newCap, newThr = 0;//newCap新表容量,newThr新表扩容阈值
+            //☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑  第一步: 计算新容量  ☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑
+            //♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥  情况1: 如果oldCap > 0,即有元素  ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥
+            if (oldCap > 0) {
+                //如果oldCap大于等于hash表最大容量,
+                // 扩容阈值设置为int的最大值,并返回原table(即随便你撞吧)
+                if (oldCap >= MAXIMUM_CAPACITY) {
+                    threshold = Integer.MAX_VALUE;
+                    return oldTab;
+                }
+                //如果oldCap比最大容量小:
+                    //将newCap扩容大为原OldCap的两倍,
+                    //再与MAXIMUM_CAPACITY比较
+                        //如果扩容后超出了就不再进行任何操作.
+                        //如果没有超出,比较oldCap是不是大于默认初始化长度
+                            //如果大于,将新的扩容阈值扩大为2倍.
+                else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
+                         oldCap >= DEFAULT_INITIAL_CAPACITY)
+                    newThr = oldThr << 1; // double threshold
+            }
+            //♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥ 情况2 oldTab == null ,oldThr大于零,将新table容量置为oldThr.♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥
+            else if (oldThr > 0) // initial capacity was placed in threshold
+                newCap = oldThr;
+            //♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥ 情况3:oldTab == null,oldThr == 0,即初始化 ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥
+                // 将新容量设置为默认初始容量,新的扩容阈值设为16*0.75
+            else {               // zero initial threshold signifies using defaults
+                newCap = DEFAULT_INITIAL_CAPACITY;
+                newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+            }
+            //☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑  第二步: 重新计算新阈值确保 阈值不会超出 `MAXIMUM_CAPACITY`.  ☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑
+            //计算新的resize上限
+            if (newThr == 0) {
+                float ft = (float)newCap * loadFactor;
+                newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
+                          (int)ft : Integer.MAX_VALUE);
+            }
+       
+             //☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑  第三步: threshold赋值,以新容量创建Node数组,table指向刚创建出来的数组.  ☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑
+    
+            threshold = newThr;
+            @SuppressWarnings({"rawtypes","unchecked"})
+            Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+            table = newTab;
+            
+            //☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑  第四步: 把原数组中元素移动到新数组  ☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑☑
+                
+            if (oldTab != null) {
+                // 遍历map重新存放元素
+                for (int j = 0; j < oldCap; ++j) {
+                    Node<K,V> e;
+                    if ((e = oldTab[j]) != null) {
+                        oldTab[j] = null;
+                        // ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥  情况1 · 链表只有一个元素 ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥
+                        if (e.next == null)
+                            newTab[e.hash & (newCap - 1)] = e;
+                        // ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥  情况2 · Map已经树型化 ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥
+                        else if (e instanceof TreeNode)
+                            //TODO 红黑树的操作,移动操作,看不懂
+                            ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
+    
+                        // ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥  情况3 · 链表不止一个元素,需要遍历链表 ♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥♥
+                        else {// 链表优化重hash的代码块
+                            //采用的是  原桶元素插入原位置,新桶元素+oldCap之后放入hash表中
+    
+                            // ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ 1.8 对rehash的优化  ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+                            Node<K,V> loHead = null, loTail = null;// 不动的链表,loHead指向头节点,loTail指向尾结点
+                            Node<K,V> hiHead = null, hiTail = null;// 需要移动的链表,hiHead指向头结点,hiTail指向尾结点
+                            Node<K,V> next; // 当前处理结点的下一个结点,定位结点.
+                            do {
+                                next = e.next;
+                                // 不需要移动的情况
+                                if ((e.hash & oldCap) == 0) {
+                                    //如果尾结点指针为空,表示不需要移动的链表为空,头结点指向当前结点
+                                    if (loTail == null)
+                                        loHead = e;
+                                    else
+                                        loTail.next = e;
+                                    loTail = e;// 尾结点指针始终指向最后一个
+                                }
+                                // 原索引+oldCap
+                                else {
+                                    // 链表插入元素与不移动链表的逻辑是一样的
+                                    if (hiTail == null)
+                                        hiHead = e;
+                                    else
+                                        hiTail.next = e;
+                                    hiTail = e;
+                                }
+                            } while ((e = next) != null);
+                            // 下面的逻辑就是存放不移动的链表
+                            if (loTail != null) {
+                                loTail.next = null;
+                                newTab[j] = loHead;
+                            }
+                            // 存放移动的链表
+                            if (hiTail != null) {
+                                hiTail.next = null;
+                                newTab[j + oldCap] = hiHead;
+                            }
+                        }
+                    }
+                }
+            }
+            return newTab;
+        }
+        ````
+    - 图解链表转移:  
+        ![链表转移](../../_media/chapter10_collections/hashmap/hashmap扩容链表拆分.png)  
+    - 图解1.8扩容原理:  
+        ![扩容原理](../../_media/chapter10_collections/hashmap/hashmap1.8扩容原理.png)  
+      
+## 4. HashMap红黑树相关处理:  
+    TO BE CONTINUE
+## 5. HashMap1.7,1.8中存在的问题:  
+    TO BE CONTINUE

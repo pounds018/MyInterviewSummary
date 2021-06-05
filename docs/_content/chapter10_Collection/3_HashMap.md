@@ -128,6 +128,8 @@
         //entry个数
         transient int size;
     ```  
+   
+
 ## 2. Hash:  
 1. 关于 `hash`:
     - 什么是hash:  
@@ -181,17 +183,17 @@
           ![除数取余法](../../_media/chapter10_collections/hashmap/除数取余法.png)
           > ps: p就是存储空间的长度,即tableSize,通常p会取一个素数
         - `数字分析法`: 分析数字key在各个位置的变化情况,取比较随机的位(key的某几位)作为存储key的位置
-          ![数字分析法示例1](../../_media/chapter10_collections/hashmap/hash算法数字分析法示例1.png)
-          ![数字分析算法示例2](../../_media/chapter10_collections/hashmap/hash算法数字分析法示例2.png)
+          ![数字分析法示例1](../../_media/chapter10_collections/hashmap/hash算法数字分析法示例1.png)  
+          ![数字分析算法示例2](../../_media/chapter10_collections/hashmap/hash算法数字分析法示例2.png)  
           > 1. 示例1中: (char *key)是c语言中形参的一种写法, key表示地址值(又叫指针),这个图片示例中,关键字传入的是个字符串,key则表示的是该字符串第一个字符的地址值  
                散列公式中的atoi(key+7)表示的就是指针key向后移动7位,从图上来讲就是从1的位置移动到5的位置
           > 2. 示例2中: 蓝色标记的几位数字是比较随机的,将其取出作为关键字,拼接成hash值.公式中仍然是c语言的写法,当然java中也有
         - `折叠法`: 将key分成几段相同位数的数字,然后求和,再将结果的后几位(这个几位要与key分段的位数相同)  
-          ![折叠法](../../_media/chapter10_collections/hashmap/hash算法折叠法.png)
+          ![折叠法](../../_media/chapter10_collections/hashmap/hash算法折叠法.png)  
         - `平方取中法`:  将key表示的数字去平方,然后去结果的中间几位数字作为结果  
           ![平法取中法](../../_media/chapter10_collections/hashmap/平方取中法.png)  
-          key为字符的散列算法:  
-          ![字符hash算法](../../_media/chapter10_collections/hashmap/hash算法字符的哈希算法.png)
+      key为字符的散列算法:  
+        ![字符hash算法](../../_media/chapter10_collections/hashmap/hash算法字符的哈希算法.png)  
     - hash存在的问题:  
       由于hash算法的目的是将任意长度输入值转换成在某个固定长度的取值范围内,如果同时转换大量的输入,这个结果取值范围总有被用完的一天,就会造成两个不同的输入输出同一个输出值.
       `这种情况称为hash冲突`
@@ -214,7 +216,9 @@
               第4次冲突此时定位为`下标9`,下一次定位`下标5-4`即下标1
             - `双散列`: `di = i * h2(key)`,重新设置一个散列函数,然后乘以冲突次数作为偏移量.
         2. `链地址法` : 将所有发生hash冲突的元素搞成一个单向链表串联起来,`就是用一个指针去指向下一个元素的结构`  
-           ![链地址法](../../_media/chapter10_collections/hashmap/hash解决冲突链地址法.png)
+           ![链地址法](../../_media/chapter10_collections/hashmap/hash解决冲突链地址法.png)  
+           
+
 2. HashMap在hash值,散列函数,冲突解决是怎么处理的.
     - 位运算:
         - `~`运算: 取反
@@ -318,7 +322,9 @@
         - 1.7 采用 `数组 + 链表`
         - 1.8 采用 `数组 + 链表/红黑树`
       > 为什么要将1.7 `数组+链表`的方式改成 1.8 `数组+链表/红黑树`: 链表在进行查找的时候效率不高,只能通过一个一个元素的遍历,单向链表更是只能从第一个元素遍历起走.红黑树是一种平衡二叉树,
-      其根节点的左子结点的值小于根结点,右子结点的值大于根结点,这样每次查找都会排除一半的元素,提高了查找效率.
+      其根节点的左子结点的值小于根结点,右子结点的值大于根结点,这样每次查找都会排除一半的元素,提高了查找效率.  
+       
+
 ## 3. 部分源码分析:  
 
    

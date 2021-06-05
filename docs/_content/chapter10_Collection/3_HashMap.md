@@ -179,10 +179,10 @@
       key为数字的散列算法:
         - `直接定址法`: 取key的某种线性函数值为散列地址,即  
           ![直接定址法](../../_media/chapter10_collections/hashmap/hash算法直接定址.png)
-        - `除数取余法`:  用key去除以存储空间的长度,将余数作为存储key的下标,即  
+        - `除数取余法`:  用key去除以存储空间的长度,将余数作为存储key的下标,即   
           ![除数取余法](../../_media/chapter10_collections/hashmap/除数取余法.png)
           > ps: p就是存储空间的长度,即tableSize,通常p会取一个素数
-        - `数字分析法`: 分析数字key在各个位置的变化情况,取比较随机的位(key的某几位)作为存储key的位置
+        - `数字分析法`: 分析数字key在各个位置的变化情况,取比较随机的位(key的某几位)作为存储key的位置  
           ![数字分析法示例1](../../_media/chapter10_collections/hashmap/hash算法数字分析法示例1.png)  
           ![数字分析算法示例2](../../_media/chapter10_collections/hashmap/hash算法数字分析法示例2.png)  
           > 1. 示例1中: (char *key)是c语言中形参的一种写法, key表示地址值(又叫指针),这个图片示例中,关键字传入的是个字符串,key则表示的是该字符串第一个字符的地址值  

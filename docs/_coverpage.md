@@ -1,4 +1,4 @@
-<img style="height:600px" src="https://pounds018.github.io/MyInterviewSummary/_media/java_icon_coffee.jpg" />
+<img style="height:600px" src="https://pounds018.github.io/MyJavaSummary/_media/java_icon_coffee.jpg" />
 
 > PoundS 的 学习总结
 

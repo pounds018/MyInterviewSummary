@@ -10,9 +10,9 @@
     4. 中间件: ElasticSearch,Redis,RabbitMQ
     5. JVM
 
-[![stars](https://badgen.net/github/stars/pounds018/MyInterviewSummary?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary) 
-[![forks](https://badgen.net/github/forks/pounds018/MyInterviewSummary?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary)
+[![stars](https://badgen.net/github/stars/pounds018/MyJavaSummary?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary) 
+[![forks](https://badgen.net/github/forks/pounds018/MyJavaSummary?icon=github&color=4ab8a1)](https://github.com/pounds018/MyInterviewSummary)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-[GitHub](https://github.com/pounds018/MyInterviewSummary/)
+[GitHub](https://github.com/pounds018/MyJavaSummary/)
 [Get Started](README.md)

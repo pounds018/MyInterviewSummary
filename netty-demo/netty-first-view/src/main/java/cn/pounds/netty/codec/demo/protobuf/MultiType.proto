@@ -1,0 +1,30 @@
+syntax = "proto3";
+option optimize_for = SPEED; // 加快解析
+option java_package = "cn.pounds.netty.codec.protobuf"; //指定解析到哪个包下
+option java_outer_classname = "MultiTypeDto";
+// protobuf可以使用一个 message共同管理其他message
+message ControlMessage {
+  // 定义一个枚举类型
+  enum DataType {
+    StudentType = 0; // proto3中 要求enum的编号从0开始
+    WorkerType = 1;
+  }
+
+  // 用data_type 来标识传的是哪一个枚举类性,data_type是ControlMessage的第一个属性
+  DataType data_type = 1;
+  // 表示每次枚举类型最多只能出现其中一个,节省空间.
+  // oneof表示从这个里面选择一个做ControlMessage的另外一个属性
+  // 由于已经有了一个data_type属性,所以oneof里面提供来选择的属性标号就要从2开始,依次递增
+  oneof dataBody {
+    Student student = 2;
+    Worker worker = 3;
+  }
+}
+message Student {
+  int32 id = 1;
+  string name = 2;
+}
+message  Worker {
+  int32 age = 1;
+  string name = 2;
+}

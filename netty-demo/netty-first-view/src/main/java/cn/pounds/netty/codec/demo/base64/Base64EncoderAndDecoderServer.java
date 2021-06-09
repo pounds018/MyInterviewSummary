@@ -1,4 +1,4 @@
-package cn.pounds.netty.encode.demo.line;
+package cn.pounds.netty.codec.demo.base64;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -10,16 +10,17 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.base64.Base64Decoder;
+import io.netty.handler.codec.base64.Base64Encoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
 /**
- * 回车分割
+ * Base64编解码示例
  * @author yinjihuan
  *
  */
-public class LineBasedFrameServer {
+public class Base64EncoderAndDecoderServer {
 	public static void main(String[] args) {
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -30,14 +31,15 @@ public class LineBasedFrameServer {
         		.childHandler(new ChannelInitializer<SocketChannel>() { 
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
-                    	ch.pipeline().addLast(new LineBasedFrameDecoder(10240));
     					ch.pipeline().addLast("decoder", new StringDecoder());
     					ch.pipeline().addLast("encoder", new StringEncoder());
+    					ch.pipeline().addLast("base64Decoder", new Base64Decoder());
+    					ch.pipeline().addLast("base64Encoder", new Base64Encoder());
     					ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
     						@Override
     					    public void channelRead(ChannelHandlerContext ctx, Object msg) {
     							System.err.println("server:" + msg.toString());
-    							ctx.writeAndFlush(msg.toString() + "你好" + System.getProperty("line.separator"));
+    							ctx.writeAndFlush(msg.toString() + "你好");
     					    }
 						});
                     }

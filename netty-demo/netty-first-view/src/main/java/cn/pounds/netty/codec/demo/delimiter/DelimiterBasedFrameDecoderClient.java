@@ -1,4 +1,4 @@
-package cn.pounds.netty.encode.demo.delimiter;
+package cn.pounds.netty.codec.demo.delimiter;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;

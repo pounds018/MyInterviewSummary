@@ -1,4 +1,4 @@
-package cn.pounds.netty.encode.demo.fixed;
+package cn.pounds.netty.codec.demo.length;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -11,11 +11,12 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.FixedLengthFrameDecoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
-public class FixedLengthFrameDecoderClient {
+public class LengthFieldBasedFrameDecoderClient {
 	public static void main(String[] args) {
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 		Channel channel = null;
@@ -27,7 +28,8 @@ public class FixedLengthFrameDecoderClient {
 			b.handler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) throws Exception {
-					ch.pipeline().addLast(new FixedLengthFrameDecoder(1500));
+					ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
+					ch.pipeline().addLast("frameEncoder", new LengthFieldPrepender(4));
 					ch.pipeline().addLast("decoder", new StringDecoder());
 					ch.pipeline().addLast("encoder", new StringEncoder());
 					ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
@@ -45,7 +47,6 @@ public class FixedLengthFrameDecoderClient {
 			for (int i = 0; i < 100; i++) {
 				msg.append("hello yinjihuan");
 			}
-			System.out.println(msg.length());
 			channel.writeAndFlush(msg);
 		} catch(Exception e) {
 			e.printStackTrace();

@@ -1,4 +1,4 @@
-package cn.pounds.netty.encode.demo.length;
+package cn.pounds.netty.codec.demo.base64;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -11,12 +11,17 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.base64.Base64Decoder;
+import io.netty.handler.codec.base64.Base64Encoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
-public class LengthFieldBasedFrameDecoderClient {
+/**
+ * Base64编解码示例
+ * @author yinjihuan
+ *
+ */
+public class Base64EncoderAndDecoderClient {
 	public static void main(String[] args) {
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 		Channel channel = null;
@@ -28,10 +33,10 @@ public class LengthFieldBasedFrameDecoderClient {
 			b.handler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) throws Exception {
-					ch.pipeline().addLast("frameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
-					ch.pipeline().addLast("frameEncoder", new LengthFieldPrepender(4));
 					ch.pipeline().addLast("decoder", new StringDecoder());
 					ch.pipeline().addLast("encoder", new StringEncoder());
+					ch.pipeline().addLast("base64Decoder", new Base64Decoder());
+					ch.pipeline().addLast("base64Encoder", new Base64Encoder());
 					ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
 						@Override
 					    public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -43,11 +48,7 @@ public class LengthFieldBasedFrameDecoderClient {
 
 			ChannelFuture f = b.connect("127.0.0.1", 2222).sync();
 			channel = f.channel();
-			StringBuilder msg = new StringBuilder();
-			for (int i = 0; i < 100; i++) {
-				msg.append("hello yinjihuan");
-			}
-			channel.writeAndFlush(msg);
+			channel.writeAndFlush("hello yinjihuan");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

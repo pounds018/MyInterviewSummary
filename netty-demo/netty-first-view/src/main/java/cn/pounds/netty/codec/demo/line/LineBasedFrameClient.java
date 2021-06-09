@@ -1,4 +1,4 @@
-package cn.pounds.netty.encode.demo.line;
+package cn.pounds.netty.codec.demo.line;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;

@@ -1,4 +1,4 @@
-package cn.pounds.netty.encode.demo.object;
+package cn.pounds.netty.codec.demo.object;
 
 import java.io.Serializable;
 

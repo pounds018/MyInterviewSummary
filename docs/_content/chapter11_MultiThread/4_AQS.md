@@ -169,5 +169,9 @@
            ```   
   
 
-## 11.4.2 通过ReentrantLock理解基于AQS实现独占锁
+## 11.4.2 通过ReentrantLock理解基于AQS实现独占锁   
+### 1. ReentrantLock实现独占锁原理  
+### 2. ReentrantLock实现非公平锁   
+### 3. ReentrantLock实现公平锁  
+### 4. ReentrantLock实现锁重入
 ## 11.4.3 通过CountDownLatch理解基于AQS实现共享锁

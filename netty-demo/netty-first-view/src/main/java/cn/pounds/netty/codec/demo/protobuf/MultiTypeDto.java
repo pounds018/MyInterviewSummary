@@ -33,7 +33,7 @@ public final class MultiTypeDto {
      *
      * <code>.ControlMessage.DataType data_type = 1;</code>
      */
-    cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType getDataType();
+    MultiTypeDto.ControlMessage.DataType getDataType();
 
     /**
      * <code>.Student student = 2;</code>
@@ -42,11 +42,11 @@ public final class MultiTypeDto {
     /**
      * <code>.Student student = 2;</code>
      */
-    cn.pounds.netty.codec.protobuf.MultiTypeDto.Student getStudent();
+    MultiTypeDto.Student getStudent();
     /**
      * <code>.Student student = 2;</code>
      */
-    cn.pounds.netty.codec.protobuf.MultiTypeDto.StudentOrBuilder getStudentOrBuilder();
+    MultiTypeDto.StudentOrBuilder getStudentOrBuilder();
 
     /**
      * <code>.Worker worker = 3;</code>
@@ -55,13 +55,13 @@ public final class MultiTypeDto {
     /**
      * <code>.Worker worker = 3;</code>
      */
-    cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker getWorker();
+    MultiTypeDto.Worker getWorker();
     /**
      * <code>.Worker worker = 3;</code>
      */
-    cn.pounds.netty.codec.protobuf.MultiTypeDto.WorkerOrBuilder getWorkerOrBuilder();
+    MultiTypeDto.WorkerOrBuilder getWorkerOrBuilder();
 
-    public cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataBodyCase getDataBodyCase();
+    public MultiTypeDto.ControlMessage.DataBodyCase getDataBodyCase();
   }
   /**
    * <pre>
@@ -83,7 +83,7 @@ public final class MultiTypeDto {
       dataType_ = 0;
     }
 
-    @Override
+    @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
       return this.unknownFields;
@@ -94,7 +94,7 @@ public final class MultiTypeDto {
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
       if (extensionRegistry == null) {
-        throw new NullPointerException();
+        throw new java.lang.NullPointerException();
       }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
@@ -114,28 +114,28 @@ public final class MultiTypeDto {
               break;
             }
             case 18: {
-              cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.Builder subBuilder = null;
+              MultiTypeDto.Student.Builder subBuilder = null;
               if (dataBodyCase_ == 2) {
-                subBuilder = ((cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_).toBuilder();
+                subBuilder = ((MultiTypeDto.Student) dataBody_).toBuilder();
               }
               dataBody_ =
-                  input.readMessage(cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.parser(), extensionRegistry);
+                  input.readMessage(MultiTypeDto.Student.parser(), extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom((cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_);
+                subBuilder.mergeFrom((MultiTypeDto.Student) dataBody_);
                 dataBody_ = subBuilder.buildPartial();
               }
               dataBodyCase_ = 2;
               break;
             }
             case 26: {
-              cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.Builder subBuilder = null;
+              MultiTypeDto.Worker.Builder subBuilder = null;
               if (dataBodyCase_ == 3) {
-                subBuilder = ((cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_).toBuilder();
+                subBuilder = ((MultiTypeDto.Worker) dataBody_).toBuilder();
               }
               dataBody_ =
-                  input.readMessage(cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.parser(), extensionRegistry);
+                  input.readMessage(MultiTypeDto.Worker.parser(), extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom((cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_);
+                subBuilder.mergeFrom((MultiTypeDto.Worker) dataBody_);
                 dataBody_ = subBuilder.buildPartial();
               }
               dataBodyCase_ = 3;
@@ -162,15 +162,15 @@ public final class MultiTypeDto {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_ControlMessage_descriptor;
+      return MultiTypeDto.internal_static_ControlMessage_descriptor;
     }
 
-    @Override
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_ControlMessage_fieldAccessorTable
+      return MultiTypeDto.internal_static_ControlMessage_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.class, cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.Builder.class);
+              MultiTypeDto.ControlMessage.class, MultiTypeDto.ControlMessage.Builder.class);
     }
 
     /**
@@ -213,7 +213,7 @@ public final class MultiTypeDto {
 
       public final int getNumber() {
         if (this == UNRECOGNIZED) {
-          throw new IllegalArgumentException(
+          throw new java.lang.IllegalArgumentException(
               "Can't get the number of an unknown enum value.");
         }
         return value;
@@ -222,7 +222,7 @@ public final class MultiTypeDto {
       /**
        * @deprecated Use {@link #forNumber(int)} instead.
        */
-      @Deprecated
+      @java.lang.Deprecated
       public static DataType valueOf(int value) {
         return forNumber(value);
       }
@@ -257,7 +257,7 @@ public final class MultiTypeDto {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.getDescriptor().getEnumTypes().get(0);
+        return MultiTypeDto.ControlMessage.getDescriptor().getEnumTypes().get(0);
       }
 
       private static final DataType[] VALUES = values();
@@ -265,7 +265,7 @@ public final class MultiTypeDto {
       public static DataType valueOf(
           com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
         if (desc.getType() != getDescriptor()) {
-          throw new IllegalArgumentException(
+          throw new java.lang.IllegalArgumentException(
             "EnumValueDescriptor is not for this type.");
         }
         if (desc.getIndex() == -1) {
@@ -284,7 +284,7 @@ public final class MultiTypeDto {
     }
 
     private int dataBodyCase_ = 0;
-    private Object dataBody_;
+    private java.lang.Object dataBody_;
     public enum DataBodyCase
         implements com.google.protobuf.Internal.EnumLite {
       STUDENT(2),
@@ -297,7 +297,7 @@ public final class MultiTypeDto {
       /**
        * @deprecated Use {@link #forNumber(int)} instead.
        */
-      @Deprecated
+      @java.lang.Deprecated
       public static DataBodyCase valueOf(int value) {
         return forNumber(value);
       }
@@ -340,10 +340,10 @@ public final class MultiTypeDto {
      *
      * <code>.ControlMessage.DataType data_type = 1;</code>
      */
-    public cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType getDataType() {
+    public MultiTypeDto.ControlMessage.DataType getDataType() {
       @SuppressWarnings("deprecation")
-      cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType result = cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType.valueOf(dataType_);
-      return result == null ? cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType.UNRECOGNIZED : result;
+      MultiTypeDto.ControlMessage.DataType result = MultiTypeDto.ControlMessage.DataType.valueOf(dataType_);
+      return result == null ? MultiTypeDto.ControlMessage.DataType.UNRECOGNIZED : result;
     }
 
     public static final int STUDENT_FIELD_NUMBER = 2;
@@ -356,20 +356,20 @@ public final class MultiTypeDto {
     /**
      * <code>.Student student = 2;</code>
      */
-    public cn.pounds.netty.codec.protobuf.MultiTypeDto.Student getStudent() {
+    public MultiTypeDto.Student getStudent() {
       if (dataBodyCase_ == 2) {
-         return (cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_;
+         return (MultiTypeDto.Student) dataBody_;
       }
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.getDefaultInstance();
+      return MultiTypeDto.Student.getDefaultInstance();
     }
     /**
      * <code>.Student student = 2;</code>
      */
-    public cn.pounds.netty.codec.protobuf.MultiTypeDto.StudentOrBuilder getStudentOrBuilder() {
+    public MultiTypeDto.StudentOrBuilder getStudentOrBuilder() {
       if (dataBodyCase_ == 2) {
-         return (cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_;
+         return (MultiTypeDto.Student) dataBody_;
       }
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.getDefaultInstance();
+      return MultiTypeDto.Student.getDefaultInstance();
     }
 
     public static final int WORKER_FIELD_NUMBER = 3;
@@ -382,24 +382,24 @@ public final class MultiTypeDto {
     /**
      * <code>.Worker worker = 3;</code>
      */
-    public cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker getWorker() {
+    public MultiTypeDto.Worker getWorker() {
       if (dataBodyCase_ == 3) {
-         return (cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_;
+         return (MultiTypeDto.Worker) dataBody_;
       }
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.getDefaultInstance();
+      return MultiTypeDto.Worker.getDefaultInstance();
     }
     /**
      * <code>.Worker worker = 3;</code>
      */
-    public cn.pounds.netty.codec.protobuf.MultiTypeDto.WorkerOrBuilder getWorkerOrBuilder() {
+    public MultiTypeDto.WorkerOrBuilder getWorkerOrBuilder() {
       if (dataBodyCase_ == 3) {
-         return (cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_;
+         return (MultiTypeDto.Worker) dataBody_;
       }
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.getDefaultInstance();
+      return MultiTypeDto.Worker.getDefaultInstance();
     }
 
     private byte memoizedIsInitialized = -1;
-    @Override
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -409,53 +409,53 @@ public final class MultiTypeDto {
       return true;
     }
 
-    @Override
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (dataType_ != cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType.StudentType.getNumber()) {
+      if (dataType_ != MultiTypeDto.ControlMessage.DataType.StudentType.getNumber()) {
         output.writeEnum(1, dataType_);
       }
       if (dataBodyCase_ == 2) {
-        output.writeMessage(2, (cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_);
+        output.writeMessage(2, (MultiTypeDto.Student) dataBody_);
       }
       if (dataBodyCase_ == 3) {
-        output.writeMessage(3, (cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_);
+        output.writeMessage(3, (MultiTypeDto.Worker) dataBody_);
       }
       unknownFields.writeTo(output);
     }
 
-    @Override
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
-      if (dataType_ != cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType.StudentType.getNumber()) {
+      if (dataType_ != MultiTypeDto.ControlMessage.DataType.StudentType.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, dataType_);
       }
       if (dataBodyCase_ == 2) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, (cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_);
+          .computeMessageSize(2, (MultiTypeDto.Student) dataBody_);
       }
       if (dataBodyCase_ == 3) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, (cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_);
+          .computeMessageSize(3, (MultiTypeDto.Worker) dataBody_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage)) {
+      if (!(obj instanceof MultiTypeDto.ControlMessage)) {
         return super.equals(obj);
       }
-      cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage other = (cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage) obj;
+      MultiTypeDto.ControlMessage other = (MultiTypeDto.ControlMessage) obj;
 
       boolean result = true;
       result = result && dataType_ == other.dataType_;
@@ -478,7 +478,7 @@ public final class MultiTypeDto {
       return result;
     }
 
-    @Override
+    @java.lang.Override
     public int hashCode() {
       if (memoizedHashCode != 0) {
         return memoizedHashCode;
@@ -504,69 +504,69 @@ public final class MultiTypeDto {
       return hash;
     }
 
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(
+    public static MultiTypeDto.ControlMessage parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(
+    public static MultiTypeDto.ControlMessage parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(
+    public static MultiTypeDto.ControlMessage parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(
+    public static MultiTypeDto.ControlMessage parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(byte[] data)
+    public static MultiTypeDto.ControlMessage parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(
+    public static MultiTypeDto.ControlMessage parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(java.io.InputStream input)
+    public static MultiTypeDto.ControlMessage parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(
+    public static MultiTypeDto.ControlMessage parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseDelimitedFrom(java.io.InputStream input)
+    public static MultiTypeDto.ControlMessage parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseDelimitedFrom(
+    public static MultiTypeDto.ControlMessage parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(
+    public static MultiTypeDto.ControlMessage parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parseFrom(
+    public static MultiTypeDto.ControlMessage parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -574,21 +574,21 @@ public final class MultiTypeDto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    @Override
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage prototype) {
+    public static Builder newBuilder(MultiTypeDto.ControlMessage prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
-    @Override
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
     }
 
-    @Override
+    @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
@@ -604,21 +604,21 @@ public final class MultiTypeDto {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:ControlMessage)
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessageOrBuilder {
+        MultiTypeDto.ControlMessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_ControlMessage_descriptor;
+        return MultiTypeDto.internal_static_ControlMessage_descriptor;
       }
 
-      @Override
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_ControlMessage_fieldAccessorTable
+        return MultiTypeDto.internal_static_ControlMessage_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.class, cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.Builder.class);
+                MultiTypeDto.ControlMessage.class, MultiTypeDto.ControlMessage.Builder.class);
       }
 
-      // Construct using cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.newBuilder()
+      // Construct using cn.pounds.netty.codec.demo.protobuf.MultiTypeDto.ControlMessage.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -633,7 +633,7 @@ public final class MultiTypeDto {
                 .alwaysUseFieldBuilders) {
         }
       }
-      @Override
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         dataType_ = 0;
@@ -643,29 +643,29 @@ public final class MultiTypeDto {
         return this;
       }
 
-      @Override
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_ControlMessage_descriptor;
+        return MultiTypeDto.internal_static_ControlMessage_descriptor;
       }
 
-      @Override
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage getDefaultInstanceForType() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.getDefaultInstance();
+      @java.lang.Override
+      public MultiTypeDto.ControlMessage getDefaultInstanceForType() {
+        return MultiTypeDto.ControlMessage.getDefaultInstance();
       }
 
-      @Override
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage build() {
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage result = buildPartial();
+      @java.lang.Override
+      public MultiTypeDto.ControlMessage build() {
+        MultiTypeDto.ControlMessage result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      @Override
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage buildPartial() {
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage result = new cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage(this);
+      @java.lang.Override
+      public MultiTypeDto.ControlMessage buildPartial() {
+        MultiTypeDto.ControlMessage result = new MultiTypeDto.ControlMessage(this);
         result.dataType_ = dataType_;
         if (dataBodyCase_ == 2) {
           if (studentBuilder_ == null) {
@@ -686,50 +686,50 @@ public final class MultiTypeDto {
         return result;
       }
 
-      @Override
+      @java.lang.Override
       public Builder clone() {
         return (Builder) super.clone();
       }
-      @Override
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
-      @Override
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return (Builder) super.clearField(field);
       }
-      @Override
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return (Builder) super.clearOneof(oneof);
       }
-      @Override
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
-      @Override
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
-      @Override
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage) {
-          return mergeFrom((cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage)other);
+        if (other instanceof MultiTypeDto.ControlMessage) {
+          return mergeFrom((MultiTypeDto.ControlMessage)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage other) {
-        if (other == cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.getDefaultInstance()) return this;
+      public Builder mergeFrom(MultiTypeDto.ControlMessage other) {
+        if (other == MultiTypeDto.ControlMessage.getDefaultInstance()) return this;
         if (other.dataType_ != 0) {
           setDataTypeValue(other.getDataTypeValue());
         }
@@ -751,21 +751,21 @@ public final class MultiTypeDto {
         return this;
       }
 
-      @Override
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
-      @Override
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage parsedMessage = null;
+        MultiTypeDto.ControlMessage parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage) e.getUnfinishedMessage();
+          parsedMessage = (MultiTypeDto.ControlMessage) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -775,7 +775,7 @@ public final class MultiTypeDto {
         return this;
       }
       private int dataBodyCase_ = 0;
-      private Object dataBody_;
+      private java.lang.Object dataBody_;
       public DataBodyCase
           getDataBodyCase() {
         return DataBodyCase.forNumber(
@@ -820,10 +820,10 @@ public final class MultiTypeDto {
        *
        * <code>.ControlMessage.DataType data_type = 1;</code>
        */
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType getDataType() {
+      public MultiTypeDto.ControlMessage.DataType getDataType() {
         @SuppressWarnings("deprecation")
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType result = cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType.valueOf(dataType_);
-        return result == null ? cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType.UNRECOGNIZED : result;
+        MultiTypeDto.ControlMessage.DataType result = MultiTypeDto.ControlMessage.DataType.valueOf(dataType_);
+        return result == null ? MultiTypeDto.ControlMessage.DataType.UNRECOGNIZED : result;
       }
       /**
        * <pre>
@@ -832,11 +832,11 @@ public final class MultiTypeDto {
        *
        * <code>.ControlMessage.DataType data_type = 1;</code>
        */
-      public Builder setDataType(cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage.DataType value) {
+      public Builder setDataType(MultiTypeDto.ControlMessage.DataType value) {
         if (value == null) {
           throw new NullPointerException();
         }
-
+        
         dataType_ = value.getNumber();
         onChanged();
         return this;
@@ -849,14 +849,14 @@ public final class MultiTypeDto {
        * <code>.ControlMessage.DataType data_type = 1;</code>
        */
       public Builder clearDataType() {
-
+        
         dataType_ = 0;
         onChanged();
         return this;
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
-          cn.pounds.netty.codec.protobuf.MultiTypeDto.Student, cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.Builder, cn.pounds.netty.codec.protobuf.MultiTypeDto.StudentOrBuilder> studentBuilder_;
+          MultiTypeDto.Student, MultiTypeDto.Student.Builder, MultiTypeDto.StudentOrBuilder> studentBuilder_;
       /**
        * <code>.Student student = 2;</code>
        */
@@ -866,23 +866,23 @@ public final class MultiTypeDto {
       /**
        * <code>.Student student = 2;</code>
        */
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Student getStudent() {
+      public MultiTypeDto.Student getStudent() {
         if (studentBuilder_ == null) {
           if (dataBodyCase_ == 2) {
-            return (cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_;
+            return (MultiTypeDto.Student) dataBody_;
           }
-          return cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.getDefaultInstance();
+          return MultiTypeDto.Student.getDefaultInstance();
         } else {
           if (dataBodyCase_ == 2) {
             return studentBuilder_.getMessage();
           }
-          return cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.getDefaultInstance();
+          return MultiTypeDto.Student.getDefaultInstance();
         }
       }
       /**
        * <code>.Student student = 2;</code>
        */
-      public Builder setStudent(cn.pounds.netty.codec.protobuf.MultiTypeDto.Student value) {
+      public Builder setStudent(MultiTypeDto.Student value) {
         if (studentBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -899,7 +899,7 @@ public final class MultiTypeDto {
        * <code>.Student student = 2;</code>
        */
       public Builder setStudent(
-          cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.Builder builderForValue) {
+          MultiTypeDto.Student.Builder builderForValue) {
         if (studentBuilder_ == null) {
           dataBody_ = builderForValue.build();
           onChanged();
@@ -912,11 +912,11 @@ public final class MultiTypeDto {
       /**
        * <code>.Student student = 2;</code>
        */
-      public Builder mergeStudent(cn.pounds.netty.codec.protobuf.MultiTypeDto.Student value) {
+      public Builder mergeStudent(MultiTypeDto.Student value) {
         if (studentBuilder_ == null) {
           if (dataBodyCase_ == 2 &&
-              dataBody_ != cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.getDefaultInstance()) {
-            dataBody_ = cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.newBuilder((cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_)
+              dataBody_ != MultiTypeDto.Student.getDefaultInstance()) {
+            dataBody_ = MultiTypeDto.Student.newBuilder((MultiTypeDto.Student) dataBody_)
                 .mergeFrom(value).buildPartial();
           } else {
             dataBody_ = value;
@@ -953,35 +953,35 @@ public final class MultiTypeDto {
       /**
        * <code>.Student student = 2;</code>
        */
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.Builder getStudentBuilder() {
+      public MultiTypeDto.Student.Builder getStudentBuilder() {
         return getStudentFieldBuilder().getBuilder();
       }
       /**
        * <code>.Student student = 2;</code>
        */
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.StudentOrBuilder getStudentOrBuilder() {
+      public MultiTypeDto.StudentOrBuilder getStudentOrBuilder() {
         if ((dataBodyCase_ == 2) && (studentBuilder_ != null)) {
           return studentBuilder_.getMessageOrBuilder();
         } else {
           if (dataBodyCase_ == 2) {
-            return (cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_;
+            return (MultiTypeDto.Student) dataBody_;
           }
-          return cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.getDefaultInstance();
+          return MultiTypeDto.Student.getDefaultInstance();
         }
       }
       /**
        * <code>.Student student = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          cn.pounds.netty.codec.protobuf.MultiTypeDto.Student, cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.Builder, cn.pounds.netty.codec.protobuf.MultiTypeDto.StudentOrBuilder>
+          MultiTypeDto.Student, MultiTypeDto.Student.Builder, MultiTypeDto.StudentOrBuilder>
           getStudentFieldBuilder() {
         if (studentBuilder_ == null) {
           if (!(dataBodyCase_ == 2)) {
-            dataBody_ = cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.getDefaultInstance();
+            dataBody_ = MultiTypeDto.Student.getDefaultInstance();
           }
           studentBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              cn.pounds.netty.codec.protobuf.MultiTypeDto.Student, cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.Builder, cn.pounds.netty.codec.protobuf.MultiTypeDto.StudentOrBuilder>(
-                  (cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) dataBody_,
+              MultiTypeDto.Student, MultiTypeDto.Student.Builder, MultiTypeDto.StudentOrBuilder>(
+                  (MultiTypeDto.Student) dataBody_,
                   getParentForChildren(),
                   isClean());
           dataBody_ = null;
@@ -992,7 +992,7 @@ public final class MultiTypeDto {
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
-          cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker, cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.Builder, cn.pounds.netty.codec.protobuf.MultiTypeDto.WorkerOrBuilder> workerBuilder_;
+          MultiTypeDto.Worker, MultiTypeDto.Worker.Builder, MultiTypeDto.WorkerOrBuilder> workerBuilder_;
       /**
        * <code>.Worker worker = 3;</code>
        */
@@ -1002,23 +1002,23 @@ public final class MultiTypeDto {
       /**
        * <code>.Worker worker = 3;</code>
        */
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker getWorker() {
+      public MultiTypeDto.Worker getWorker() {
         if (workerBuilder_ == null) {
           if (dataBodyCase_ == 3) {
-            return (cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_;
+            return (MultiTypeDto.Worker) dataBody_;
           }
-          return cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.getDefaultInstance();
+          return MultiTypeDto.Worker.getDefaultInstance();
         } else {
           if (dataBodyCase_ == 3) {
             return workerBuilder_.getMessage();
           }
-          return cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.getDefaultInstance();
+          return MultiTypeDto.Worker.getDefaultInstance();
         }
       }
       /**
        * <code>.Worker worker = 3;</code>
        */
-      public Builder setWorker(cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker value) {
+      public Builder setWorker(MultiTypeDto.Worker value) {
         if (workerBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1035,7 +1035,7 @@ public final class MultiTypeDto {
        * <code>.Worker worker = 3;</code>
        */
       public Builder setWorker(
-          cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.Builder builderForValue) {
+          MultiTypeDto.Worker.Builder builderForValue) {
         if (workerBuilder_ == null) {
           dataBody_ = builderForValue.build();
           onChanged();
@@ -1048,11 +1048,11 @@ public final class MultiTypeDto {
       /**
        * <code>.Worker worker = 3;</code>
        */
-      public Builder mergeWorker(cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker value) {
+      public Builder mergeWorker(MultiTypeDto.Worker value) {
         if (workerBuilder_ == null) {
           if (dataBodyCase_ == 3 &&
-              dataBody_ != cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.getDefaultInstance()) {
-            dataBody_ = cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.newBuilder((cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_)
+              dataBody_ != MultiTypeDto.Worker.getDefaultInstance()) {
+            dataBody_ = MultiTypeDto.Worker.newBuilder((MultiTypeDto.Worker) dataBody_)
                 .mergeFrom(value).buildPartial();
           } else {
             dataBody_ = value;
@@ -1089,35 +1089,35 @@ public final class MultiTypeDto {
       /**
        * <code>.Worker worker = 3;</code>
        */
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.Builder getWorkerBuilder() {
+      public MultiTypeDto.Worker.Builder getWorkerBuilder() {
         return getWorkerFieldBuilder().getBuilder();
       }
       /**
        * <code>.Worker worker = 3;</code>
        */
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.WorkerOrBuilder getWorkerOrBuilder() {
+      public MultiTypeDto.WorkerOrBuilder getWorkerOrBuilder() {
         if ((dataBodyCase_ == 3) && (workerBuilder_ != null)) {
           return workerBuilder_.getMessageOrBuilder();
         } else {
           if (dataBodyCase_ == 3) {
-            return (cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_;
+            return (MultiTypeDto.Worker) dataBody_;
           }
-          return cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.getDefaultInstance();
+          return MultiTypeDto.Worker.getDefaultInstance();
         }
       }
       /**
        * <code>.Worker worker = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker, cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.Builder, cn.pounds.netty.codec.protobuf.MultiTypeDto.WorkerOrBuilder>
+          MultiTypeDto.Worker, MultiTypeDto.Worker.Builder, MultiTypeDto.WorkerOrBuilder>
           getWorkerFieldBuilder() {
         if (workerBuilder_ == null) {
           if (!(dataBodyCase_ == 3)) {
-            dataBody_ = cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.getDefaultInstance();
+            dataBody_ = MultiTypeDto.Worker.getDefaultInstance();
           }
           workerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker, cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.Builder, cn.pounds.netty.codec.protobuf.MultiTypeDto.WorkerOrBuilder>(
-                  (cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) dataBody_,
+              MultiTypeDto.Worker, MultiTypeDto.Worker.Builder, MultiTypeDto.WorkerOrBuilder>(
+                  (MultiTypeDto.Worker) dataBody_,
                   getParentForChildren(),
                   isClean());
           dataBody_ = null;
@@ -1126,13 +1126,13 @@ public final class MultiTypeDto {
         onChanged();;
         return workerBuilder_;
       }
-      @Override
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
       }
 
-      @Override
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
@@ -1143,18 +1143,18 @@ public final class MultiTypeDto {
     }
 
     // @@protoc_insertion_point(class_scope:ControlMessage)
-    private static final cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage DEFAULT_INSTANCE;
+    private static final MultiTypeDto.ControlMessage DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage();
+      DEFAULT_INSTANCE = new MultiTypeDto.ControlMessage();
     }
 
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage getDefaultInstance() {
+    public static MultiTypeDto.ControlMessage getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
     private static final com.google.protobuf.Parser<ControlMessage>
         PARSER = new com.google.protobuf.AbstractParser<ControlMessage>() {
-      @Override
+      @java.lang.Override
       public ControlMessage parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1167,13 +1167,13 @@ public final class MultiTypeDto {
       return PARSER;
     }
 
-    @Override
+    @java.lang.Override
     public com.google.protobuf.Parser<ControlMessage> getParserForType() {
       return PARSER;
     }
 
-    @Override
-    public cn.pounds.netty.codec.protobuf.MultiTypeDto.ControlMessage getDefaultInstanceForType() {
+    @java.lang.Override
+    public MultiTypeDto.ControlMessage getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1191,7 +1191,7 @@ public final class MultiTypeDto {
     /**
      * <code>string name = 2;</code>
      */
-    String getName();
+    java.lang.String getName();
     /**
      * <code>string name = 2;</code>
      */
@@ -1215,7 +1215,7 @@ public final class MultiTypeDto {
       name_ = "";
     }
 
-    @Override
+    @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
       return this.unknownFields;
@@ -1226,7 +1226,7 @@ public final class MultiTypeDto {
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
       if (extensionRegistry == null) {
-        throw new NullPointerException();
+        throw new java.lang.NullPointerException();
       }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
@@ -1245,7 +1245,7 @@ public final class MultiTypeDto {
               break;
             }
             case 18: {
-              String s = input.readStringRequireUtf8();
+              java.lang.String s = input.readStringRequireUtf8();
 
               name_ = s;
               break;
@@ -1271,15 +1271,15 @@ public final class MultiTypeDto {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Student_descriptor;
+      return MultiTypeDto.internal_static_Student_descriptor;
     }
 
-    @Override
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Student_fieldAccessorTable
+      return MultiTypeDto.internal_static_Student_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.class, cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.Builder.class);
+              MultiTypeDto.Student.class, MultiTypeDto.Student.Builder.class);
     }
 
     public static final int ID_FIELD_NUMBER = 1;
@@ -1292,18 +1292,18 @@ public final class MultiTypeDto {
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
-    private volatile Object name_;
+    private volatile java.lang.Object name_;
     /**
      * <code>string name = 2;</code>
      */
-    public String getName() {
-      Object ref = name_;
-      if (ref instanceof String) {
-        return (String) ref;
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
+        java.lang.String s = bs.toStringUtf8();
         name_ = s;
         return s;
       }
@@ -1313,11 +1313,11 @@ public final class MultiTypeDto {
      */
     public com.google.protobuf.ByteString
         getNameBytes() {
-      Object ref = name_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
+                (java.lang.String) ref);
         name_ = b;
         return b;
       } else {
@@ -1326,7 +1326,7 @@ public final class MultiTypeDto {
     }
 
     private byte memoizedIsInitialized = -1;
-    @Override
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -1336,7 +1336,7 @@ public final class MultiTypeDto {
       return true;
     }
 
-    @Override
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (id_ != 0) {
@@ -1348,7 +1348,7 @@ public final class MultiTypeDto {
       unknownFields.writeTo(output);
     }
 
-    @Override
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -1366,15 +1366,15 @@ public final class MultiTypeDto {
       return size;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof cn.pounds.netty.codec.protobuf.MultiTypeDto.Student)) {
+      if (!(obj instanceof MultiTypeDto.Student)) {
         return super.equals(obj);
       }
-      cn.pounds.netty.codec.protobuf.MultiTypeDto.Student other = (cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) obj;
+      MultiTypeDto.Student other = (MultiTypeDto.Student) obj;
 
       boolean result = true;
       result = result && (getId()
@@ -1385,7 +1385,7 @@ public final class MultiTypeDto {
       return result;
     }
 
-    @Override
+    @java.lang.Override
     public int hashCode() {
       if (memoizedHashCode != 0) {
         return memoizedHashCode;
@@ -1401,69 +1401,69 @@ public final class MultiTypeDto {
       return hash;
     }
 
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(
+    public static MultiTypeDto.Student parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(
+    public static MultiTypeDto.Student parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(
+    public static MultiTypeDto.Student parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(
+    public static MultiTypeDto.Student parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(byte[] data)
+    public static MultiTypeDto.Student parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(
+    public static MultiTypeDto.Student parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(java.io.InputStream input)
+    public static MultiTypeDto.Student parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(
+    public static MultiTypeDto.Student parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseDelimitedFrom(java.io.InputStream input)
+    public static MultiTypeDto.Student parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseDelimitedFrom(
+    public static MultiTypeDto.Student parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(
+    public static MultiTypeDto.Student parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parseFrom(
+    public static MultiTypeDto.Student parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1471,21 +1471,21 @@ public final class MultiTypeDto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    @Override
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(cn.pounds.netty.codec.protobuf.MultiTypeDto.Student prototype) {
+    public static Builder newBuilder(MultiTypeDto.Student prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
-    @Override
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
     }
 
-    @Override
+    @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
@@ -1497,21 +1497,21 @@ public final class MultiTypeDto {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:Student)
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.StudentOrBuilder {
+        MultiTypeDto.StudentOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Student_descriptor;
+        return MultiTypeDto.internal_static_Student_descriptor;
       }
 
-      @Override
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Student_fieldAccessorTable
+        return MultiTypeDto.internal_static_Student_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.class, cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.Builder.class);
+                MultiTypeDto.Student.class, MultiTypeDto.Student.Builder.class);
       }
 
-      // Construct using cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.newBuilder()
+      // Construct using cn.pounds.netty.codec.demo.protobuf.MultiTypeDto.Student.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1526,7 +1526,7 @@ public final class MultiTypeDto {
                 .alwaysUseFieldBuilders) {
         }
       }
-      @Override
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         id_ = 0;
@@ -1536,79 +1536,79 @@ public final class MultiTypeDto {
         return this;
       }
 
-      @Override
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Student_descriptor;
+        return MultiTypeDto.internal_static_Student_descriptor;
       }
 
-      @Override
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Student getDefaultInstanceForType() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.getDefaultInstance();
+      @java.lang.Override
+      public MultiTypeDto.Student getDefaultInstanceForType() {
+        return MultiTypeDto.Student.getDefaultInstance();
       }
 
-      @Override
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Student build() {
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.Student result = buildPartial();
+      @java.lang.Override
+      public MultiTypeDto.Student build() {
+        MultiTypeDto.Student result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      @Override
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Student buildPartial() {
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.Student result = new cn.pounds.netty.codec.protobuf.MultiTypeDto.Student(this);
+      @java.lang.Override
+      public MultiTypeDto.Student buildPartial() {
+        MultiTypeDto.Student result = new MultiTypeDto.Student(this);
         result.id_ = id_;
         result.name_ = name_;
         onBuilt();
         return result;
       }
 
-      @Override
+      @java.lang.Override
       public Builder clone() {
         return (Builder) super.clone();
       }
-      @Override
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
-      @Override
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return (Builder) super.clearField(field);
       }
-      @Override
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return (Builder) super.clearOneof(oneof);
       }
-      @Override
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
-      @Override
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
-      @Override
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) {
-          return mergeFrom((cn.pounds.netty.codec.protobuf.MultiTypeDto.Student)other);
+        if (other instanceof MultiTypeDto.Student) {
+          return mergeFrom((MultiTypeDto.Student)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(cn.pounds.netty.codec.protobuf.MultiTypeDto.Student other) {
-        if (other == cn.pounds.netty.codec.protobuf.MultiTypeDto.Student.getDefaultInstance()) return this;
+      public Builder mergeFrom(MultiTypeDto.Student other) {
+        if (other == MultiTypeDto.Student.getDefaultInstance()) return this;
         if (other.getId() != 0) {
           setId(other.getId());
         }
@@ -1621,21 +1621,21 @@ public final class MultiTypeDto {
         return this;
       }
 
-      @Override
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
-      @Override
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.Student parsedMessage = null;
+        MultiTypeDto.Student parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (cn.pounds.netty.codec.protobuf.MultiTypeDto.Student) e.getUnfinishedMessage();
+          parsedMessage = (MultiTypeDto.Student) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -1656,7 +1656,7 @@ public final class MultiTypeDto {
        * <code>int32 id = 1;</code>
        */
       public Builder setId(int value) {
-
+        
         id_ = value;
         onChanged();
         return this;
@@ -1665,26 +1665,26 @@ public final class MultiTypeDto {
        * <code>int32 id = 1;</code>
        */
       public Builder clearId() {
-
+        
         id_ = 0;
         onChanged();
         return this;
       }
 
-      private Object name_ = "";
+      private java.lang.Object name_ = "";
       /**
        * <code>string name = 2;</code>
        */
-      public String getName() {
-        Object ref = name_;
-        if (!(ref instanceof String)) {
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
+          java.lang.String s = bs.toStringUtf8();
           name_ = s;
           return s;
         } else {
-          return (String) ref;
+          return (java.lang.String) ref;
         }
       }
       /**
@@ -1692,11 +1692,11 @@ public final class MultiTypeDto {
        */
       public com.google.protobuf.ByteString
           getNameBytes() {
-        Object ref = name_;
+        java.lang.Object ref = name_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
+                  (java.lang.String) ref);
           name_ = b;
           return b;
         } else {
@@ -1707,11 +1707,11 @@ public final class MultiTypeDto {
        * <code>string name = 2;</code>
        */
       public Builder setName(
-          String value) {
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-
+  
         name_ = value;
         onChanged();
         return this;
@@ -1720,7 +1720,7 @@ public final class MultiTypeDto {
        * <code>string name = 2;</code>
        */
       public Builder clearName() {
-
+        
         name_ = getDefaultInstance().getName();
         onChanged();
         return this;
@@ -1734,18 +1734,18 @@ public final class MultiTypeDto {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-
+        
         name_ = value;
         onChanged();
         return this;
       }
-      @Override
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
       }
 
-      @Override
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
@@ -1756,18 +1756,18 @@ public final class MultiTypeDto {
     }
 
     // @@protoc_insertion_point(class_scope:Student)
-    private static final cn.pounds.netty.codec.protobuf.MultiTypeDto.Student DEFAULT_INSTANCE;
+    private static final MultiTypeDto.Student DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new cn.pounds.netty.codec.protobuf.MultiTypeDto.Student();
+      DEFAULT_INSTANCE = new MultiTypeDto.Student();
     }
 
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Student getDefaultInstance() {
+    public static MultiTypeDto.Student getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
     private static final com.google.protobuf.Parser<Student>
         PARSER = new com.google.protobuf.AbstractParser<Student>() {
-      @Override
+      @java.lang.Override
       public Student parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1780,13 +1780,13 @@ public final class MultiTypeDto {
       return PARSER;
     }
 
-    @Override
+    @java.lang.Override
     public com.google.protobuf.Parser<Student> getParserForType() {
       return PARSER;
     }
 
-    @Override
-    public cn.pounds.netty.codec.protobuf.MultiTypeDto.Student getDefaultInstanceForType() {
+    @java.lang.Override
+    public MultiTypeDto.Student getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1804,7 +1804,7 @@ public final class MultiTypeDto {
     /**
      * <code>string name = 2;</code>
      */
-    String getName();
+    java.lang.String getName();
     /**
      * <code>string name = 2;</code>
      */
@@ -1828,7 +1828,7 @@ public final class MultiTypeDto {
       name_ = "";
     }
 
-    @Override
+    @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
       return this.unknownFields;
@@ -1839,7 +1839,7 @@ public final class MultiTypeDto {
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
       if (extensionRegistry == null) {
-        throw new NullPointerException();
+        throw new java.lang.NullPointerException();
       }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
@@ -1858,7 +1858,7 @@ public final class MultiTypeDto {
               break;
             }
             case 18: {
-              String s = input.readStringRequireUtf8();
+              java.lang.String s = input.readStringRequireUtf8();
 
               name_ = s;
               break;
@@ -1884,15 +1884,15 @@ public final class MultiTypeDto {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Worker_descriptor;
+      return MultiTypeDto.internal_static_Worker_descriptor;
     }
 
-    @Override
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Worker_fieldAccessorTable
+      return MultiTypeDto.internal_static_Worker_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.class, cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.Builder.class);
+              MultiTypeDto.Worker.class, MultiTypeDto.Worker.Builder.class);
     }
 
     public static final int AGE_FIELD_NUMBER = 1;
@@ -1905,18 +1905,18 @@ public final class MultiTypeDto {
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
-    private volatile Object name_;
+    private volatile java.lang.Object name_;
     /**
      * <code>string name = 2;</code>
      */
-    public String getName() {
-      Object ref = name_;
-      if (ref instanceof String) {
-        return (String) ref;
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs =
+        com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
+        java.lang.String s = bs.toStringUtf8();
         name_ = s;
         return s;
       }
@@ -1926,11 +1926,11 @@ public final class MultiTypeDto {
      */
     public com.google.protobuf.ByteString
         getNameBytes() {
-      Object ref = name_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
+                (java.lang.String) ref);
         name_ = b;
         return b;
       } else {
@@ -1939,7 +1939,7 @@ public final class MultiTypeDto {
     }
 
     private byte memoizedIsInitialized = -1;
-    @Override
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -1949,7 +1949,7 @@ public final class MultiTypeDto {
       return true;
     }
 
-    @Override
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (age_ != 0) {
@@ -1961,7 +1961,7 @@ public final class MultiTypeDto {
       unknownFields.writeTo(output);
     }
 
-    @Override
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -1979,15 +1979,15 @@ public final class MultiTypeDto {
       return size;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker)) {
+      if (!(obj instanceof MultiTypeDto.Worker)) {
         return super.equals(obj);
       }
-      cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker other = (cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) obj;
+      MultiTypeDto.Worker other = (MultiTypeDto.Worker) obj;
 
       boolean result = true;
       result = result && (getAge()
@@ -1998,7 +1998,7 @@ public final class MultiTypeDto {
       return result;
     }
 
-    @Override
+    @java.lang.Override
     public int hashCode() {
       if (memoizedHashCode != 0) {
         return memoizedHashCode;
@@ -2014,69 +2014,69 @@ public final class MultiTypeDto {
       return hash;
     }
 
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(
+    public static MultiTypeDto.Worker parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(
+    public static MultiTypeDto.Worker parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(
+    public static MultiTypeDto.Worker parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(
+    public static MultiTypeDto.Worker parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(byte[] data)
+    public static MultiTypeDto.Worker parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(
+    public static MultiTypeDto.Worker parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(java.io.InputStream input)
+    public static MultiTypeDto.Worker parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(
+    public static MultiTypeDto.Worker parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseDelimitedFrom(java.io.InputStream input)
+    public static MultiTypeDto.Worker parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseDelimitedFrom(
+    public static MultiTypeDto.Worker parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(
+    public static MultiTypeDto.Worker parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parseFrom(
+    public static MultiTypeDto.Worker parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2084,21 +2084,21 @@ public final class MultiTypeDto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    @Override
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker prototype) {
+    public static Builder newBuilder(MultiTypeDto.Worker prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
-    @Override
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
     }
 
-    @Override
+    @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
@@ -2110,21 +2110,21 @@ public final class MultiTypeDto {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:Worker)
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.WorkerOrBuilder {
+        MultiTypeDto.WorkerOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Worker_descriptor;
+        return MultiTypeDto.internal_static_Worker_descriptor;
       }
 
-      @Override
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Worker_fieldAccessorTable
+        return MultiTypeDto.internal_static_Worker_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.class, cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.Builder.class);
+                MultiTypeDto.Worker.class, MultiTypeDto.Worker.Builder.class);
       }
 
-      // Construct using cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.newBuilder()
+      // Construct using cn.pounds.netty.codec.demo.protobuf.MultiTypeDto.Worker.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2139,7 +2139,7 @@ public final class MultiTypeDto {
                 .alwaysUseFieldBuilders) {
         }
       }
-      @Override
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         age_ = 0;
@@ -2149,79 +2149,79 @@ public final class MultiTypeDto {
         return this;
       }
 
-      @Override
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.internal_static_Worker_descriptor;
+        return MultiTypeDto.internal_static_Worker_descriptor;
       }
 
-      @Override
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker getDefaultInstanceForType() {
-        return cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.getDefaultInstance();
+      @java.lang.Override
+      public MultiTypeDto.Worker getDefaultInstanceForType() {
+        return MultiTypeDto.Worker.getDefaultInstance();
       }
 
-      @Override
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker build() {
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker result = buildPartial();
+      @java.lang.Override
+      public MultiTypeDto.Worker build() {
+        MultiTypeDto.Worker result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      @Override
-      public cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker buildPartial() {
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker result = new cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker(this);
+      @java.lang.Override
+      public MultiTypeDto.Worker buildPartial() {
+        MultiTypeDto.Worker result = new MultiTypeDto.Worker(this);
         result.age_ = age_;
         result.name_ = name_;
         onBuilt();
         return result;
       }
 
-      @Override
+      @java.lang.Override
       public Builder clone() {
         return (Builder) super.clone();
       }
-      @Override
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
-      @Override
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return (Builder) super.clearField(field);
       }
-      @Override
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return (Builder) super.clearOneof(oneof);
       }
-      @Override
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
-      @Override
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
-      @Override
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) {
-          return mergeFrom((cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker)other);
+        if (other instanceof MultiTypeDto.Worker) {
+          return mergeFrom((MultiTypeDto.Worker)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker other) {
-        if (other == cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker.getDefaultInstance()) return this;
+      public Builder mergeFrom(MultiTypeDto.Worker other) {
+        if (other == MultiTypeDto.Worker.getDefaultInstance()) return this;
         if (other.getAge() != 0) {
           setAge(other.getAge());
         }
@@ -2234,21 +2234,21 @@ public final class MultiTypeDto {
         return this;
       }
 
-      @Override
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
-      @Override
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker parsedMessage = null;
+        MultiTypeDto.Worker parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker) e.getUnfinishedMessage();
+          parsedMessage = (MultiTypeDto.Worker) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -2269,7 +2269,7 @@ public final class MultiTypeDto {
        * <code>int32 age = 1;</code>
        */
       public Builder setAge(int value) {
-
+        
         age_ = value;
         onChanged();
         return this;
@@ -2278,26 +2278,26 @@ public final class MultiTypeDto {
        * <code>int32 age = 1;</code>
        */
       public Builder clearAge() {
-
+        
         age_ = 0;
         onChanged();
         return this;
       }
 
-      private Object name_ = "";
+      private java.lang.Object name_ = "";
       /**
        * <code>string name = 2;</code>
        */
-      public String getName() {
-        Object ref = name_;
-        if (!(ref instanceof String)) {
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
+          java.lang.String s = bs.toStringUtf8();
           name_ = s;
           return s;
         } else {
-          return (String) ref;
+          return (java.lang.String) ref;
         }
       }
       /**
@@ -2305,11 +2305,11 @@ public final class MultiTypeDto {
        */
       public com.google.protobuf.ByteString
           getNameBytes() {
-        Object ref = name_;
+        java.lang.Object ref = name_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
+                  (java.lang.String) ref);
           name_ = b;
           return b;
         } else {
@@ -2320,11 +2320,11 @@ public final class MultiTypeDto {
        * <code>string name = 2;</code>
        */
       public Builder setName(
-          String value) {
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-
+  
         name_ = value;
         onChanged();
         return this;
@@ -2333,7 +2333,7 @@ public final class MultiTypeDto {
        * <code>string name = 2;</code>
        */
       public Builder clearName() {
-
+        
         name_ = getDefaultInstance().getName();
         onChanged();
         return this;
@@ -2347,18 +2347,18 @@ public final class MultiTypeDto {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-
+        
         name_ = value;
         onChanged();
         return this;
       }
-      @Override
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
       }
 
-      @Override
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
@@ -2369,18 +2369,18 @@ public final class MultiTypeDto {
     }
 
     // @@protoc_insertion_point(class_scope:Worker)
-    private static final cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker DEFAULT_INSTANCE;
+    private static final MultiTypeDto.Worker DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker();
+      DEFAULT_INSTANCE = new MultiTypeDto.Worker();
     }
 
-    public static cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker getDefaultInstance() {
+    public static MultiTypeDto.Worker getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
     private static final com.google.protobuf.Parser<Worker>
         PARSER = new com.google.protobuf.AbstractParser<Worker>() {
-      @Override
+      @java.lang.Override
       public Worker parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -2393,13 +2393,13 @@ public final class MultiTypeDto {
       return PARSER;
     }
 
-    @Override
+    @java.lang.Override
     public com.google.protobuf.Parser<Worker> getParserForType() {
       return PARSER;
     }
 
-    @Override
-    public cn.pounds.netty.codec.protobuf.MultiTypeDto.Worker getDefaultInstanceForType() {
+    @java.lang.Override
+    public MultiTypeDto.Worker getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2407,17 +2407,17 @@ public final class MultiTypeDto {
 
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_ControlMessage_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_ControlMessage_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_Student_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_Student_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_Worker_descriptor;
-  private static final
+  private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_Worker_fieldAccessorTable;
 
@@ -2428,7 +2428,7 @@ public final class MultiTypeDto {
   private static  com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
-    String[] descriptorData = {
+    java.lang.String[] descriptorData = {
       "\n\017MultiType.proto\"\256\001\n\016ControlMessage\022+\n\t" +
       "data_type\030\001 \001(\0162\030.ControlMessage.DataTyp" +
       "e\022\033\n\007student\030\002 \001(\0132\010.StudentH\000\022\031\n\006worker" +
@@ -2456,19 +2456,19 @@ public final class MultiTypeDto {
     internal_static_ControlMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ControlMessage_descriptor,
-        new String[] { "DataType", "Student", "Worker", "DataBody", });
+        new java.lang.String[] { "DataType", "Student", "Worker", "DataBody", });
     internal_static_Student_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_Student_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Student_descriptor,
-        new String[] { "Id", "Name", });
+        new java.lang.String[] { "Id", "Name", });
     internal_static_Worker_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_Worker_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Worker_descriptor,
-        new String[] { "Age", "Name", });
+        new java.lang.String[] { "Age", "Name", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

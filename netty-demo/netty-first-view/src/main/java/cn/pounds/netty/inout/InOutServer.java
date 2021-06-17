@@ -31,6 +31,7 @@ public class InOutServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
                             p.addLast(new MyByteToLongDecoder());
+                            p.addLast(new MyLongToByteEncoder());
                             p.addLast(new MyServerHandler());
                         }
                     });

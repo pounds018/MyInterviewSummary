@@ -64,7 +64,7 @@
          ```c
             int epoll_create(int size);
          ```
-         该函数会在内存中开辟一块空间(这个空间会有很多个),通过一个文件描述符来引用这块地址,并将该文件描述符返回给调用方.  
+         该函数会在内存中开辟一块空间(这宗空间可能有很多个),通过一个文件描述符来引用这块地址,并将该文件描述符返回给调用方.  
          size表示 该空间一共能管理多少个文件描述符
          ```c
             int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
@@ -74,14 +74,14 @@
          参数: 
             - `epfd`: epoll空间的文件描述符,用于定位epoll空间
             - `op`: 表示当前请求的类型,值通常是由三个宏定义
-                - EPOLL_CTL_ADD: 注册新的fd到epfd中
-                - EPOLL_CTL_MOD: 修改已经注册的fd监听事件
-                - EPOLL_CTL_DEL: 删除epfd中某个fd
+                - `EPOLL_CTL_ADD`: 注册新的fd到epfd中
+                - `EPOLL_CTL_MOD`: 修改已经注册的fd监听事件
+                - `EPOLL_CTL_DEL`: 删除epfd中某个fd
             - `fd`: 需要操作的fd.通常是socket_fd
             - `event`: 参数`fd`关注的事件   
               ![event结构体](../../_media/chapter13_Netty/4_netty线程模型/event结构体.png)  
               events属性是以下几个类型的集合:  
-              EPOLLIN(可读),EPOLLOUT(可写),EPOLLPRI(),EPOLLHUB(挂断),EPOLLET(边缘触发),EPOLLONESHOT(只监听一次,事件触发之后会清除该fd)  
+              `EPOLLIN`(可读),`EPOLLOUT`(可写),`EPOLLPRI`(),`EPOLLHUB`(挂断),`EPOLLET`(边缘触发),`EPOLLONESHOT`(只监听一次,事件触发之后会清除该fd)  
 
          ```c
             int epoll_wait(int epfd,struct epoll_event *event,int maxevents,int timeout)

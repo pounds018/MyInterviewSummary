@@ -30,3 +30,5 @@
 * [第 13 章 netty](_content/chapter13_Netty/chapter_blank.md)
   * [第一节 java i/o复习](_content/chapter13_Netty/1_javaIO复习.md)
   * [第二节 零拷贝](_content/chapter13_Netty/2_零拷贝.md)
+  * [第三节 netty简介](_content/chapter13_Netty/3_netty简介.md)
+  * [第四节 netty线程模型](_content/chapter13_Netty/4_netty线程模型.md)

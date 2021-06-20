@@ -67,12 +67,12 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
     int epoll_create(int size);
   ```  
   该函数会在内存中开辟一块空间(这宗空间可能有很多个),通过一个文件描述符来引用这块地址,并将该文件描述符返回给调用方.  
-  size表示 该空间一共能管理多少个文件描述符  
-  <br/>
+  size表示 该空间一共能管理多少个文件描述符
   ```c 
     int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
   ```  
-  该函数是对epoll空间进行管理的函数,对文件描述感兴趣的事件进行注册.该函数是一个 `非阻塞函数`,作用是对epoll空间中fd信息进行crud  
+  该函数是对epoll空间进行管理的函数,对文件描述感兴趣的事件进行注册.  
+  该函数是一个 `非阻塞函数`,作用是对epoll空间中fd信息进行crud  
   `与select不同的是`: select函数在调用的时候需要指定文件描述符和关心事件,epoll则是将文件描述符关心的事件注册到epoll空间内.    
   参数:
     - `epfd`: epoll空间的文件描述符,用于定位epoll空间
@@ -89,7 +89,7 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
   ```c 
     int epoll_wait(int epfd,struct epoll_event *event,int maxevents,int timeout)
   ```  
-  该函数是用来获取数据,从就绪列表里面读取fd(也就是图中的链表)  
+  该函数是用来获取数据,从就绪列表里面读取fd(也就是epoll大致流程图中的链表)  
   参数:
     - `epfd`: epoll空间的文件描述符
     - `events`: 关注的事件,是个数组,有数据的时候会将数据拷贝到这个数组里面去

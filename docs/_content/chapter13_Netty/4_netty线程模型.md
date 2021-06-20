@@ -138,6 +138,7 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
 #### 4.2.2 Reactor模型的分类: 
 按照reactor的数量和处理资源池线程数量的不同分为以下几种
 
+
 #### 4.2.2.1 单Reactor单线程:  
 
 ![单Reactor单线程](../../_media/chapter13_Netty/4_netty线程模型/单Reactor单线程.png)
@@ -156,6 +157,7 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
     - 客户端数量有限,业务处理非常快速,比如`Redis`在业务处理的`时间复杂度 O(1)` 的情况
 4. 模型示例: 见NIO网络编程 [NIO复习](../../../netty-demo/java-io/src/main/java/cn/pounds/nio/NioNetWorkServer.java)
 
+
 #### 4.2.2.2 单Reactor多线程:  
 
 ![单Reactor多线程](../../_media/chapter13_Netty/4_netty线程模型/单Reactor多线程.png)  
@@ -169,6 +171,7 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
     - 优点: 实现i/o复用 和 线程的复用,节约资源提高性能.
     - 缺点: 多线程存在的问题他都有了, `reactor`处理所有的事件监听和响应,并且`reactor`是在单线程中运行的,高并发场景下可能会存在性能瓶颈
     
+
 #### 4.2.2.3 多Reactor多线程:  
 
 ![多Reactor多线程](../../_media/chapter13_Netty/4_netty线程模型/多Reactor多线程.png)  
@@ -187,4 +190,5 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
     - 优点: 数据交互简单,只需要传递原始数据,响应结果
     - 缺点: 编程复杂度高
     
+
 ## 4.3 netty线程模型:  

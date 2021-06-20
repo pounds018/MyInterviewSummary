@@ -62,7 +62,7 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
   ![epoll大致流程](../../_media/chapter13_Netty/4_netty线程模型/epoll大致流程.png)
 - epoll 相关函数:  
   ![epoll相关函数](../../_media/chapter13_Netty/4_netty线程模型/epoll相关函数.png)  
-  说明:  
+  说明:
   ```c 
     int epoll_create(int size);
   ```  
@@ -75,29 +75,29 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
   该函数是对epoll空间进行管理的函数,对文件描述感兴趣的事件进行注册.该函数是一个 `非阻塞函数`,作用是对epoll空间中fd信息进行crud  
   `与select不同的是`: select函数在调用的时候需要指定文件描述符和关心事件,epoll则是将文件描述符关心的事件注册到epoll空间内.    
   参数:
-  - `epfd`: epoll空间的文件描述符,用于定位epoll空间 
-  - `op`: 表示当前请求的类型,值通常是由三个宏定义 
-      - `EPOLL_CTL_ADD`: 注册新的fd到epfd中 
-      - `EPOLL_CTL_MOD`: 修改已经注册的fd监听事件 
-      - `EPOLL_CTL_DEL`: 删除epfd中某个fd 
-  - `fd`: 需要操作的fd.通常是socket_fd 
-  - `event`: 参数`fd`关注的事件   
-    ![event结构体](../../_media/chapter13_Netty/4_netty线程模型/event结构体.png)  
-    events属性是以下几个类型的集合:  
-    `EPOLLIN`(可读),`EPOLLOUT`(可写),`EPOLLPRI`(),`EPOLLHUB`(挂断),`EPOLLET`(边缘触发),`EPOLLONESHOT`(只监听一次, 事件触发之后会清除该fd)   
-    <br/>
+    - `epfd`: epoll空间的文件描述符,用于定位epoll空间
+    - `op`: 表示当前请求的类型,值通常是由三个宏定义
+        - `EPOLL_CTL_ADD`: 注册新的fd到epfd中
+        - `EPOLL_CTL_MOD`: 修改已经注册的fd监听事件
+        - `EPOLL_CTL_DEL`: 删除epfd中某个fd
+    - `fd`: 需要操作的fd.通常是socket_fd
+    - `event`: 参数`fd`关注的事件   
+      ![event结构体](../../_media/chapter13_Netty/4_netty线程模型/event结构体.png)  
+      events属性是以下几个类型的集合:  
+      `EPOLLIN`(可读),`EPOLLOUT`(可写),`EPOLLPRI`(),`EPOLLHUB`(挂断),`EPOLLET`(边缘触发),`EPOLLONESHOT`(只监听一次, 事件触发之后会清除该fd)   
+      <br/>
   ```c 
     int epoll_wait(int epfd,struct epoll_event *event,int maxevents,int timeout)
   ```  
   该函数是用来获取数据,从就绪列表里面读取fd(也就是图中的链表)  
-  参数:  
-  - `epfd`: epoll空间的文件描述符  
-  - `events`: 关注的事件,是个数组,有数据的时候会将数据拷贝到这个数组里面去  
-  - `maxevents`: 设置events数组的长度 
-  - `timeout`: epoll_wait方法的时间  
-      - timeout == 0 : 表示epoll_wait方法非阻塞立即返回结果 
-      - timeout == -1 : 一直阻塞,直到有数据 
-      - timeout > 0: 如果没有数据,epoll_wait会阻塞timeout时间,这期间有数据就返回
+  参数:
+    - `epfd`: epoll空间的文件描述符
+    - `events`: 关注的事件,是个数组,有数据的时候会将数据拷贝到这个数组里面去
+    - `maxevents`: 设置events数组的长度
+    - `timeout`: epoll_wait方法的时间
+        - timeout == 0 : 表示epoll_wait方法非阻塞立即返回结果
+        - timeout == -1 : 一直阻塞,直到有数据
+        - timeout > 0: 如果没有数据,epoll_wait会阻塞timeout时间,这期间有数据就返回
 
 - epoll的工作模式:
   - `LT(水平触发)`: 事件准备就绪之后,用户可以选择处理或者不处理数据,如果本次调用未处理,操作系统会保留这个数据,在下次调用epoll_wait函数的时候仍然会将数据打包返回 

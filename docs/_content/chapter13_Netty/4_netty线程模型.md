@@ -85,7 +85,6 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
       ![event结构体](../../_media/chapter13_Netty/4_netty线程模型/event结构体.png)  
       events属性是以下几个类型的集合:  
       `EPOLLIN`(可读),`EPOLLOUT`(可写),`EPOLLPRI`(),`EPOLLHUB`(挂断),`EPOLLET`(边缘触发),`EPOLLONESHOT`(只监听一次, 事件触发之后会清除该fd)   
-      <br/>
   ```c 
     int epoll_wait(int epfd,struct epoll_event *event,int maxevents,int timeout)
   ```  

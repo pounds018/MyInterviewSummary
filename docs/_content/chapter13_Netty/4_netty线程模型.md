@@ -219,7 +219,9 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
       - 轮询 read，write 事件
       - 处理 I/O 事件，即 read，write 事件，在对应 NioSocketChannel 处理
       - 处理任务队列的任务，即 runAllTasks
-   5. 每个 `worker NioEventloop`处理业务的时候,会使用`pipeline`(管道),[管道实际上是一个处理器链,上面维护了许多i/o处理器]  
+   5. 每个 `worker NioEventloop`处理业务的时候,会使用`pipeline`(管道),[管道实际上是一个处理器链,上面维护了许多i/o处理器]   
+    
+
     
 ## 4.4 Netty快速入门实例:  
 1. 实例要求：使用 IDEA 创建 Netty 项目

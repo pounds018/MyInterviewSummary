@@ -135,7 +135,8 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
    - 服务端程序处理传入的多个请求,并将他们分发到相应的处理线程,dispatcher模式别名的由来 - reactor模式,通过一个或者多个输入同时传递给服务处理的模式(基于事件驱动)
    - reactor模式使用i/o复用监听事件,收到事件之后分发给相应的处理线程,这就是网络服务高并发处理的关键
 
-#### 4.2.2 Reactor模型的分类: 按照reactor的数量和处理资源池线程数量的不同分为以下几种
+#### 4.2.2 Reactor模型的分类: 
+按照reactor的数量和处理资源池线程数量的不同分为以下几种
 
 #### 4.2.2.1 单Reactor单线程:  
 
@@ -159,3 +160,31 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
 
 ![单Reactor多线程](../../_media/chapter13_Netty/4_netty线程模型/单Reactor多线程.png)  
 
+1. 说明:  
+    - `Reactor`通过`select`监听事件请求,完成i/o多路复用的目的,连接请求给`acceptor`,其他请求转发给`handler`
+    - `handler`只进行 `read`和`send`操作,不进行业务处理,业务操作会分发给线程池中线程来处理,达到线程的复用
+    - 由 `worker` 线程池分配线程来进行业务处理,并将结果返回给`handler`,由 `handler`通过`send`方法返回结果给`dispatcher`.
+    
+2. 优缺点:  
+    - 优点: 实现i/o复用 和 线程的复用,节约资源提高性能.
+    - 缺点: 多线程存在的问题他都有了, `reactor`处理所有的事件监听和响应,并且`reactor`是在单线程中运行的,高并发场景下可能会存在性能瓶颈
+    
+#### 4.2.2.3 多Reactor多线程:  
+
+![多Reactor多线程](../../_media/chapter13_Netty/4_netty线程模型/多Reactor多线程.png)  
+
+1. 说明:  
+    - 主 `reactor`[即`mainReactor`]: 同样通过select监听有事件发生的i/o,收到事件之后,通过`Acceptor`处理`连接事件`
+    - `Acceptor`处理完成`连接事件`后,`MainReactor`将连接分配给`SubReactor`
+    - 从`reactor`[即`subReactor`]: 将连接加入到连接队列进行监听,并创建`handler`进行各种事件的处理  
+    - 当有新事件准备就绪时, `subReactor`就会调用对应`handler`处理  
+    - `handler`通过 `read方法`读取数据,分发给后面的 `worker`进行业务处理,并将结果返回给 `handker`  
+    - `handler`接收到相应之后,再通过`send方法`将结果返回给Client  
+    - `Reactor`主线程可以对应多个 `Reactor`子线程,即 `mainReactor`可以对应多个 `subReactor`  
+    
+2. 优缺点:  
+    - 优点: 父线程与子线程的数据交互责任明确,父线程accept,子线程处理读写任务
+    - 优点: 数据交互简单,只需要传递原始数据,响应结果
+    - 缺点: 编程复杂度高
+    
+## 4.3 netty线程模型:  

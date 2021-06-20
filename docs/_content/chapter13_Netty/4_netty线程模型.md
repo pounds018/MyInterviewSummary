@@ -141,22 +141,20 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
 
 ![单Reactor单线程](../../_media/chapter13_Netty/4_netty线程模型/单Reactor单线程.png)
 
-- 说明:
+1. 说明:
     - `reactor`通过`select`监听客户端请求事件,然后通过`dispatch`将事件分发
     - `select`就是前面i/o复用模型介绍的标准网络api,通过`select`实现应用程序通过`一个阻塞对象(线程)监听多路连接请求`
     - 如果是`建立连接请求`事件,则由`acceptor`通过`accept`方法处理连接请求,然后创建一个`handler`对象处理连接完成之后的具体业务处理
     - 如果不是 `建立连接请求`事件,则 `Reacotr`会分发调用`handler`来处理该事件并响应.
     - `handler` 会完成 整套业务逻辑处理流程 (`read` -> `业务处理逻辑` -> `send`).
-- 优缺点:
+2. 优缺点:
     - 优点: 模型简单,没有多线程、进程通信、竞争的问题,全部都在一个线程中完成
     - 缺点: 性能问题,只有一个线程,无法完全发挥多核 `cpu`的性能.`handler`在处理某个客户端连接的业务时,整个进程无法处理其他客户端连接的事件,容易造成性能瓶颈
     - 缺点: 可靠性问题,线程以外终止,或者进入死循环,会导致整个系统通信模块无法使用,不能接收和处理外部消息,造成结点故障
-- 使用场景:
+3. 使用场景:
     - 客户端数量有限,业务处理非常快速,比如`Redis`在业务处理的`时间复杂度 O(1)` 的情况
-- 模型示例: 见NIO网络编程 [NIO复习](../../../netty-demo/java-io/src/main/java/cn/pounds/nio/NioNetWorkServer.java)   
-  <br/>
-  <br/>
-  
+4. 模型示例: 见NIO网络编程 [NIO复习](../../../netty-demo/java-io/src/main/java/cn/pounds/nio/NioNetWorkServer.java)
+
 #### 4.2.2.2 单Reactor多线程:  
 
 ![单Reactor多线程](../../_media/chapter13_Netty/4_netty线程模型/单Reactor多线程.png)  

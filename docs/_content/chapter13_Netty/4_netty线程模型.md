@@ -175,7 +175,9 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
 #### 4.2.2.3 主从Reactor多线程:  
 
 ![多Reactor多线程](../../_media/chapter13_Netty/4_netty线程模型/多Reactor多线程.png)  
-![多Reactor多线程](../../_media/chapter13_Netty/4_netty线程模型/多Reactor多线程1.png)
+![多Reactor多线程](../../_media/chapter13_Netty/4_netty线程模型/多Reactor多线程1.png)   
+**<font color=#ff4500>EventLoop和channel、线程之间的对应关系: </font>**   
+![loop,channel,thread](../../_media/chapter13_Netty/4_netty线程模型/EventLoop、channal、线程的对应关系.png)
 
 1. 说明:  
     - 主 `reactor`[即`mainReactor`]: 同样通过select监听有事件发生的i/o,收到事件之后,通过`Acceptor`处理`连接事件`
@@ -196,34 +198,33 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
 1. Netty在`主从Reactor多线程`模型的基础上,进行了一定的改动:  
    简单版:
    ![netty线程模型](../../_media/chapter13_Netty/4_netty线程模型/netty线程模型简单版.png)  
-   说明:  
+   说明:
     - `BossGroup` 线程维护 `Selector`，只关注 `Accept`
     - 当接收到 `Accept` 事件，获取到对应的 `SocketChannel`，封装成 `NIOSocketChannel` 并注册到 `Worker 线程（事件循环）`，并进行维护
-    - 当 `Worker` 线程监听到 `Selector` 中通道发生自己感兴趣的事件后，就进行处理（就由 handler），注意 `handler` 已经加入到通道  
-   
+    - 当 `Worker` 线程监听到 `Selector` 中通道发生自己感兴趣的事件后，就进行处理（就由 handler），注意 `handler` 已经加入到通道
+
    进阶版:  
    ![netty线程模型](../../_media/chapter13_Netty/4_netty线程模型/netty线程模型进阶版.png)
 
    完整版:  
    ![netty线程模型](../../_media/chapter13_Netty/4_netty线程模型/netty线程模型.png)  
-   说明:  
-   1. `Netty`抽象出两组线程池 `BossGroup专门负责客户端连接`和`WorkerGroup专门负责网络的读写`  
-   2. `BossGroup`和`WorkerGroup`的类型 都是`NioEventLoopGroup`.  
-      - `NioEventLoop`表示一个不断循环执行处理任务的线程,每个`NioEventLoop`都关联了一个`Selector`,用于监听注册在`NioEventLoop`上的网络通信
-      - `NioEventLoopGroup`(事件循环组,其实是个`线程池`),里面包含很多 `NioEventLoop`(事件循环,`唯一`绑定一个`线程`)  
-   3. 每个 `BossNioEventLoop`循环执行的步骤有3步:  
-      - 轮询`accept`事件
-      - 处理 `accept`事件,与 `client`建立连接,生成 `NioSocketChannel`,并将其注册到 `workerNioEventLoop`的`selector`上
-      - 处理任务队列任务, 即 `runAllTasks`  
-   4. 每个 `worker NioEventLoop`循环执行的步骤: 
-      - 轮询 read，write 事件
-      - 处理 I/O 事件，即 read，write 事件，在对应 NioSocketChannel 处理
-      - 处理任务队列的任务，即 runAllTasks
-   5. 每个 `worker NioEventloop`处理业务的时候,会使用`pipeline`(管道),[管道实际上是一个处理器链,上面维护了许多i/o处理器]   
-    
+   说明:
+    1. `Netty`抽象出两组线程池 `BossGroup专门负责客户端连接`和`WorkerGroup专门负责网络的读写`
+    2. `BossGroup`和`WorkerGroup`的类型 都是`NioEventLoopGroup`.
+        - `NioEventLoop`表示一个不断循环执行处理任务的线程,每个`NioEventLoop`都关联了一个`Selector`,用于监听注册在`NioEventLoop`上的网络通信
+        - `NioEventLoopGroup`(事件循环组,其实是个`线程池`),里面包含很多 `NioEventLoop`(事件循环,`唯一`绑定一个`线程`)
+    3. 每个 `BossNioEventLoop`循环执行的步骤有3步:
+        - 轮询`accept`事件
+        - 处理 `accept`事件,与 `client`建立连接,生成 `NioSocketChannel`,并将其注册到 `workerNioEventLoop`的`selector`上
+        - 处理任务队列任务, 即 `runAllTasks`
+    4. 每个 `worker NioEventLoop`循环执行的步骤:
+        - 轮询 read，write 事件
+        - 处理 I/O 事件，即 read，write 事件，在对应 NioSocketChannel 处理
+        - 处理任务队列的任务，即 runAllTasks
+    5. 每个 `worker NioEventloop`处理业务的时候,会使用`pipeline`(管道),[管道实际上是一个处理器链,上面维护了许多i/o处理器]
 
-    
-## 4.4 Netty快速入门实例:  
+
+## 4.4 Netty快速入门实例:
 1. 实例要求：使用 IDEA 创建 Netty 项目
 
     - Netty 服务器在 6668 端口监听，客户端能发送消息给服务器"hello,服务器~"

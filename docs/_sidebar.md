@@ -32,3 +32,4 @@
   * [第二节 零拷贝](_content/chapter13_Netty/2_零拷贝.md)
   * [第三节 netty简介](_content/chapter13_Netty/3_netty简介.md)
   * [第四节 netty线程模型](_content/chapter13_Netty/4_netty线程模型.md)
+  * [第五节 netty核心组件](_content/chapter13_Netty/5_netty核心组件.md)

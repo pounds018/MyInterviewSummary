@@ -1,9 +1,9 @@
 ## 5.1 核心组件概述:  
 1. Channel:  
-   Channel是NIO 三大核心组件之一, Channel是输入输出硬件设备与内存之间的一个通道的抽象,channel当做是 数据传输的载体,因此 channel可以被打开或者关闭,
+   `Channel`是NIO 三大核心组件之一, Channel是输入输出硬件设备与内存之间的一个通道的抽象,channel当做是 数据传输的载体,因此 channel可以被打开或者关闭,
    可以连接或者断开连接.
 2. ByteBuf:  
-   ByteBuf是Netty在Nio的ByteBuffer基础上的扩展,Netty的核心数据容器.
+   `ByteBuf`是Netty在Nio的ByteBuffer基础上的扩展,Netty的核心数据容器.
 3. ChannelHandler和ChannelPipeline:  
    `ChannelPipeline`: channel包裹的数据处理链,本质是个双向链表,结点元素是ChannelHandlerContext.而ChannelHandlerContext又与数据处理器 
    `ChannelHandler`关联.  

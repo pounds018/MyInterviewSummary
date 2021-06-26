@@ -405,6 +405,11 @@
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作2.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作3.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作4.png)
+3. `随机写操作`:  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/随机写操作.png)  
+4. `随机读操作`:  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/随机读操作.png)
+
 
 ### 5.3.5 ByteBuf辅助工具类:
 

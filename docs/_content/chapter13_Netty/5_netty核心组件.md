@@ -17,6 +17,7 @@
 
 ## 5.2 Channel:  
 ### 5.2.1 Channel概述:  
+
 1. 基本的I/O操作(bind,connect,read,write)依赖于底层网络传输提供的原语(Socket).Netty提供了自己的Channel及其子类,大大的降低了直接使用socket的复杂性.
 2. 通过channel可以获得当前网络连接的通道的状态
 3. 通过channel可以获得当前网络连接的配置参数(比如: 接口缓冲区的大小等)
@@ -33,8 +34,10 @@
    | OioSocketChannel  |阻塞的客户端tcp连接|  
    | EmbeddedChannel   |内置的channel 用于测试channel|  
    
+
 ### 5.2.2 Channel的层次结构、常用方法:  
-1. 层次结构:
+
+### 5.2.2.1 层次结构:
    ```java
       public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparable<Channel>
    ```
@@ -46,8 +49,8 @@
    4. ChannelPipeLine是实现Channel只执行I/O操作所有逻辑的容器,里面包含了许多 实际处理数据的handler了, 本质是一个 双向链表,表头表位分别表示入站出站的起点.
    5. Netty的Channel是线程安全的,所以可以使用多线程对channel进行操作
    6. 通过Channel.write()操作,数据将从链表表尾开始向链表表头移动,通过ChannelHandlerContext.write()是将数据传递给下一个ChannelHandler开始沿着链表移动.  
-   
-2. 常见方法
+
+### 5.2.2.2 常见方法
    1. `Channel read()`: 从当前Channel中读取数据到第一个inbound缓冲区,如果数据读取成功,触发`ChannelHandler.channelRead(ChannelHandlerContext ctx,
       Object msg)事件`.`read()操作`完毕之后,紧接着触发`ChannelHandler.channelReadComplete(ChannelHandlerContext ctx)事件`.
       如果该channel读请求被挂起,后续的读操作会被忽略.
@@ -87,8 +90,9 @@
         EventLoop eventLoop(); // 获取channel绑定的eventLoop(唯一分配一个I/O事件的处理线程)
         ChannelId id(); // 获取channel的唯一标识
         Channel parent();  // serverChannel.parent()返回null,socketChannel返回serverSocketChannel 
-   ```
-3. Channel的工作原理: 
+   ```  
+
+### 5.2.2.3 Channel的工作原理: 
    TODO
 
 ## 5.3 ByteBuf:  

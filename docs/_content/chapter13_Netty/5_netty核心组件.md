@@ -244,7 +244,8 @@
    > 读取 `writerIndex`之外的数据将造成数组越界异常
 
 3. `可写字节区间`:  
-   可写字节区间是指一个拥有未定义内容的,写入就绪的内存区域.`新分配`的缓冲区默认的`readerIndex`为`0`. 任何以 `write` 开头的方法都会造成 `writerIndex`增加以写入字节数.
+   可写字节区间是指一个拥有未定义内容的,写入就绪的内存区域.`新分配`的缓冲区默认的`readerIndex`为`0`.  
+   任何以 `write` 开头的方法都会造成 `writerIndex`增加以写入字节数.
    如果 `writeBytes(Bytes dest)`读取并写入到`dest` 会造成 `调用` 这个方法的缓冲区的 `readerIndex`增加相应的数量.
 
 ### 5.3.3.2 索引管理:
@@ -257,9 +258,11 @@
 
 2. `顺序访问索引`: `read()或者write()`方法来顺序 `读取或者写入` 数据
 3. `索引管理`:  
-   调用 `markReaderIndex()`, `markWriterIndex()` 来标记读写索引 调用 `resetWriterIndex()`, `resetReaderIndex()` 来重置读写索引到标记的位置
-   调用 `readerIndex(index)`, `writerIndex(index` 来指定读写索引的位置 调用 `clear()` 将读写索引重新指向 `数组起始位置`
-   > 1. `clear()`方法仅仅是重置读写索引为0,不会对buf中的数据进行清除
+   调用 `markReaderIndex()`, `markWriterIndex()` 来标记读写索引  
+   调用 `resetWriterIndex()`, `resetReaderIndex()` 来重置读写索引到标记的位置  
+   调用 `readerIndex(index)`, `writerIndex(index` 来指定读写索引的位置  
+   调用 `clear()` 将读写索引重新指向 `数组起始位置`  
+   > 1. `clear()`方法仅仅是重置读写索引为0,不会对buf中的数据进行清除  
    > 2. 相对于 `discardReadBytes()`方法,`clear()`方法更为效率,因为它只是将读写索引重置为了0,不会引发任何的数据复制.
 
 ### 5.3.3.3 派生缓冲区:

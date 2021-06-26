@@ -92,6 +92,329 @@
    TODO
 
 ## 5.3 ByteBuf:  
+### 5.3.1 ByteBuf概述:  
+1. ByteBuf优化:  
+   NIO中ByteBuffer的缺点:  
+      - `长度固定`: 一旦ByteBuffer分配完成,其容量就不能动态扩展或者收缩, 容易出现数组越界异常.
+      - `操作繁琐`: ByteBuffer所有的读写操作都是基于`position`作为定位指针进行操作,读写操作切换的时候需要使用`flip()`或者`rewind()`方法
+      - `功能有限`: ByteBuffer的API功能有限, 一些高级和实用的特性不支持,需要手动实现  
+   
+   Netty中ByteBuf的优点:  
+      - 可以被用户自定义的缓冲区类型扩展
+      - 通过内置的复合缓冲区实现了透明的零拷贝  
+      - 容量可以按需增长(类似于StringBuilder)  
+      - 读写操作使用不同的索引,读写都有专门的api无需来回切换
+      - 支持方法的链式调用  
+      - 支持引用计数
+      - 支持池化  
+
+### 5.3.2 ByteBuf工作原理:  
+   1. ByteBuf的数据结构:  
+      - `初始化时`:  
+         ![ByteBuf数据结构](../../_media/chapter13_Netty/5_netty核心组件/ByteBuf数据结构.png)  
+      - `写入部分数据之后`:  
+         ![ByteBuf数据结构](../../_media/chapter13_Netty/5_netty核心组件/读写部分数据之后.png)  
+      说明:  
+         - ByteBuf维护了两个不同的指针: 一个用于读(readerIndex),一个用于写(writeIndex).
+         - ReadIndex 和 WriteIndex 的起始位置都是数组下标为0的位置. 
+         - 凡是 `read` 或者 `write`开头的api都会让 `readerIndex` 或者 `writeIndex`递增,而 `get` 或者 `set`开头的api不会.
+         - ByteBuf有默认的最大长度限制 `Integter.MAX_VALUE`.在这个范围之内可以定义ByteBuf的最大容量,通过`capacity(int)
+           `或者`ensureWritable(int)`方法扩容如果超出最大容量会抛出异常.
+         - 试图读 `writeIndex`之后的数据,或者视图在`最大容量`之外写数据,会发生数组越界异常  
+   2. ByteBuf的使用模式:  
+      - `堆缓冲区`:  
+        最常用模式,将数据存放在JVM的对空间里面.这种模式又被称为是 `支撑数组`.  
+        `优点`: 能够在没有使用 `池化` 的情况下提供快速的分配和释放.`非常适合有遗留数据需要处理的情况`  
+        `缺点`: 当需要发送堆缓冲区的数据时,JVM需要在内部把 `堆缓冲区` 中的数据复制到 `直接缓冲区`中.  
+        使用示例:  
+        ```java
+           // 通过netty提供的工具类Unpooled获取Netty的数据容器,ByteBuf
+           ByteBuf byteBuf = Unpooled.copiedBuffer("hello netty", Charset.forName("utf-8"));
+   
+           // 相关方法
+           // public abstract boolean hasArray();判断ByteBuf的使用模式(hasArray判断的是 byteBuf是否在堆空间有一个支撑数组),
+           // 即数据存放的位置在哪儿 堆/直接缓存区/复合缓冲区
+           if (byteBuf.hasArray()){
+               //  获取byteBuf的支撑数组
+               byte[] array = byteBuf.array();
+   
+               // 把字节数组转换成字符串
+               System.out.println( new String(array,Charset.forName("utf-8")));
+   
+               // 获取支撑数组的一些信息:
+               // 获取支撑数组的偏移量
+               System.out.println(byteBuf.arrayOffset());
+               // 获取支撑数组的可读索引位置
+               System.out.println(byteBuf.readerIndex());
+               // 获取支撑数组的可写索引位置
+               System.out.println(byteBuf.writerIndex());
+               // 获取支撑数组的容量
+               System.out.println(byteBuf.capacity());
+               // 获取支撑数组中剩余可读元素占多少个字节,这个的大小是相对于readerIndex位置的,
+               // 比如下面这个读取方法会导致readerIndex的移动,从而导致readableBytes()变化
+               System.out.println(byteBuf.readByte());
+               // 但是getByte方法是不会造成readerIndex移动的
+               System.out.println(byteBuf.getByte(1));
+               System.out.println(byteBuf.readableBytes());
+           } 
+        ```  
+        
+      - `直接缓冲区`:  
+        `网络数据传输最理想的选择`,直接缓冲区中的数据是常驻在常规会被JVM进行垃圾回收的堆空间之外.
+        优点: 由于数据是存储在JVM堆空间之外的直接内存中,在进行网络传输的时候,无需把数据从堆空间复制到直接内存中,提高网络传输时的性能.   
+        缺点: 1.分配和释放的开销都十分昂贵;2.如果数据不仅仅是用作网络传输的数据,在服务端还可能对齐进行访问的话,必须要将数据从`直接内存`复制到`堆空间中`来.
+        > 建议: 如果缓冲区中的数据,需要被访问的话,堆缓冲区是更好的选择.
+        
+        使用示例:  
+        ```java
+           ByteBuf directBuf = Unpooled.directBuffer();
+           // public abstract boolean hasArray();判断ByteBuf的使用模式(hasArray判断的是 byteBuf是否在堆空间有一个支撑数组),
+           // 如果不是那么就是直接缓冲区
+           if (!directBuf.hasArray()){
+               int len = directBuf.readableBytes();
+               byte[] bytes = new byte[len];
+               directBuf.getBytes(directBuf.readerIndex(),bytes);
+               // 业务逻辑处理
+               handleArray(bytes,0,len);
+           }  
+        ```
+
+      - `复合缓冲区`:    
+        `多个ByteBuf的聚合视图`,可以根据需要添加或者删除ByteBuf实例.Netty通过ByteBuf子类 --- `CompositeByteBuf`实现`复合缓冲区模式`,
+        其提供一个将多个缓冲区表示为单个合并缓冲区的虚拟表示.
+        > ps:  `CompositeByteBuf`中的byteBuf实例可能同时包含 `直接缓冲区`或者`非直接缓冲区`,此时`hasArray()`方法在只有一个实例的时候,回去判断该实例是否有支撑数组,
+        > 存在多个实例的时候`hasArray方法`总是返回`false`
+
+        使用示例:  模拟一个HTTP协议传输的消息,包含两部分 头部和主题,分别由不同的模块生成,在发送数据的时候进行组装.如图:`可以使用CompositeByteBuf来消除每条消息都重复创建这两个缓冲区`  
+        ![Composite实例](../../_media/chapter13_Netty/5_netty核心组件/CompositeByteBuf示例.png)
+        ```java
+            //  -------------------------------  构造 复合缓冲区  -----------------------------
+            CompositeByteBuf composited = Unpooled.compositeBuffer();
+            // 也可以是堆缓冲区
+            ByteBuf headerBuf = Unpooled.directBuffer();
+            // 也可以是直接缓冲区,buffer()返回的是一个堆缓冲区
+            ByteBuf bodyBuf = Unpooled.buffer();
+    
+            // 添加缓冲区到复合缓冲区
+            composited.addComponents(headerBuf,bodyBuf);
+    
+            //  .... 业务逻辑
+    
+            // 删除某个buf,按照添加的顺序,在本例子中,0为headBuf
+            composited.removeComponent(0);
+            // 遍历获取每一个buf
+            for (ByteBuf buf : composited) {
+                System.out.println(buf.toString());
+            }   
+          
+            // ------------------------------  访问复合缓冲区  --------------------------------
+            public static void byteBufCompositeArray() {
+                CompositeByteBuf compBuf = Unpooled.compositeBuffer();
+                //获得可读字节数
+                int length = compBuf.readableBytes();
+                //分配一个具有可读字节数长度的新数组
+                byte[] array = new byte[length];
+                //将字节读到该数组中
+                compBuf.getBytes(compBuf.readerIndex(), array);
+                //使用偏移量和长度作为参数使用该数组
+                handleArray(array, 0, array.length);
+            }
+        ```  
+
+### 5.3.3 字节级别操作:
+
+工作时通常ByteBuf的数据结构图:  
+![ByteBuf数据结构](../../_media/chapter13_Netty/5_netty核心组件/读写部分数据之后.png)
+
+### 5.3.3.1 几种不同的字节区间:
+
+1. `可丢弃字节区间`:  
+   在ByteBuf中,已经被读取过的字节都会被视为是 `可丢弃的字节`, `0`到 `readerIndex`之间就是 `可丢弃区间`,通过`discardReadBytes()`可以丢弃他们并回收空间.
+   `discardReadBytes()`方法会将 `readerIndex`重新指向 `byteBuf`数组开始元素的位置,`writerIndex`会减少相应的数量.
+   `discardReadBytes()`调用之后的数据结构:  
+   ![ByteBuf数据结构](../../_media/chapter13_Netty/5_netty核心组件/discardReadBytes调用之后.png)
+   > 注意:
+   > 1. 由于`discardReadBytes()`方法只是移动了`writerIndex`和`可读字节`,但是没有对其他数组空间进行数据擦除,所以可写部分的数据是`没有任何保证的`.
+   > 2. 在非必要时刻(内存极低紧张)的时候,不要使用 `discardReadBytes()`将`可丢弃字节区间`转化为`可写区间`,因为该方法必须将`可读区间`中的数据转移到数组开始位置去,这个操作很有可能会发生`内存复制`
+
+2. `可读字节区间`:  
+   ByteBuf的可读字节是存储实际数据的区间.`新分配`、`包装`、`复制`的缓冲区默认的`readerIndex`为`0`.  
+   任何 `read` 或者 `skip` 开头的方法都会将造成`readerIndex`增加已读字节. 如果 `readBytes(ByteBuf dest)`读取并写入到`dest`会造成 `dest`的`writerIndex`
+   增加相应的数量.
+   > 读取 `writerIndex`之外的数据将造成数组越界异常
+
+3. `可写字节区间`:  
+   可写字节区间是指一个拥有未定义内容的,写入就绪的内存区域.`新分配`的缓冲区默认的`readerIndex`为`0`. 任何以 `write` 开头的方法都会造成 `writerIndex`增加以写入字节数.
+   如果 `writeBytes(Bytes dest)`读取并写入到`dest` 会造成 `调用` 这个方法的缓冲区的 `readerIndex`增加相应的数量.
+
+### 5.3.3.2 索引管理:
+
+1. `随机访问索引`: `get或者set`开头的方法来随机`访问或者写入`数据 ByteBuf与普通数组一样,索引总是从 `0`开始,到`capacity - 1`截至.
+   > 注意:
+   > 1. `get或者set`开头的方法不会造成读写索引的移动
+   > 2. 通过`需要索引值为入参`的方法来访问缓冲区,同样不会造成读写索引的移动
+   > 3. 在需要的时候可以通过 readerIndex(index) 或者 writerIndex(index) 来移动读写索引
+
+2. `顺序访问索引`: `read()或者write()`方法来顺序 `读取或者写入` 数据
+3. `索引管理`:  
+   调用 `markReaderIndex()`, `markWriterIndex()` 来标记读写索引 调用 `resetWriterIndex()`, `resetReaderIndex()` 来重置读写索引到标记的位置
+   调用 `readerIndex(index)`, `writerIndex(index` 来指定读写索引的位置 调用 `clear()` 将读写索引重新指向 `数组起始位置`
+   > 1. `clear()`方法仅仅是重置读写索引为0,不会对buf中的数据进行清除
+   > 2. 相对于 `discardReadBytes()`方法,`clear()`方法更为效率,因为它只是将读写索引重置为了0,不会引发任何的数据复制.
+
+### 5.3.3.3 派生缓冲区:
+  
+派生缓冲区为ByteBuf提供以专门的方式呈现 `缓冲区数据` 的视图,常见方法为:  
+- `duplicate()`: 返回一个与调用`duplicate()`的缓冲区`共享所有空间`的缓冲区  
+- `slice()`: 返回调用`slice()`的缓冲区`整个可读字节区间`的切片  
+- `slice(int,int)`: 返回调用`slice()`的缓冲区`部分可读字节区间`的切片
+- `readSlice(int length)`: 返回调用`slice()`的缓冲区`可读字节区间中 readerIndex + length`的切片,会将`readerIndex`增加length长度.
+- `order(ByteOrder)`:  
+- `Unpooled.unmofifiableBuffer(..)`:  
+> 注意:
+> 1. 上面的方法只是将数据展示出来了,但是与原buffer使用的是同一份数据,修改派生缓冲区的数据也会改变原缓冲区的数据.(`如同ArrayList.subList`)
+> 2. 如果想要复制一份独立的数据副本,请使用`copy()`,`copy(int,int)`  
+
+测试:  
+```java
+        // ----------------------   非共享  -----------------------------------------
+
+        Charset utf8 = Charset.forName("UTF-8");
+        //创建 ByteBuf 以保存所提供的字符串的字节
+        ByteBuf buf = Unpooled.copiedBuffer("Netty in Action rocks!", utf8);
+        //创建该 ByteBuf 从索引 0 开始到索引 15 结束的分段的副本
+        ByteBuf copy = buf.copy(0, 15);
+        //将打印"Netty in Action"
+        System.out.println(copy.toString(utf8));
+        //更新索引 0 处的字节
+        buf.setByte(0, (byte)'J');
+        //将会成功，因为数据不是共享的
+        assert buf.getByte(0) != copy.getByte(0);
+
+        // ----------------------   共享  -----------------------------------------
+        //创建一个用于保存给定字符串的字节的 ByteBuf
+        ByteBuf bufForSlice = Unpooled.copiedBuffer("Netty in Action rocks!", utf8);
+        //创建该 ByteBuf 从索引 0 开始到索引 15 结束的一个新切片
+        ByteBuf sliced = bufForSlice.slice(0, 15);
+        //将打印"Netty in Action"
+        System.out.println(sliced.toString(utf8));
+        //更新索引 0 处的字节
+        bufForSlice.setByte(0, (byte)'J');
+        //将会成功，因为数据是共享的，对其中一个所做的更改对另外一个也是可见的
+        assert bufForSlice.getByte(0) == sliced.getByte(0);
+```
+
+### 5.3.3.4 查找字节所在的位置:
+![1](../../_media/chapter13_Netty/5_netty核心组件/查找操作.png)
+一般的字节可以通过 `indexOf()` 方法来查找指定的字节,或者通过传入 `ByteProcessor参数` 设定`中止字符`来配合`forEachByte()方法`帮助查找.
+```java
+    /**
+     * Aborts on a {@code NUL (0x00)}.
+     */
+    ByteProcessor FIND_NUL = new IndexOfProcessor((byte) 0);
+
+    /**
+     * Aborts on a non-{@code NUL (0x00)}.
+     */
+    ByteProcessor FIND_NON_NUL = new IndexNotOfProcessor((byte) 0);
+
+    /**
+     * Aborts on a {@code CR ('\r')}.
+     */
+    ByteProcessor FIND_CR = new IndexOfProcessor(CARRIAGE_RETURN);
+
+    /**
+     * Aborts on a non-{@code CR ('\r')}.
+     */
+    ByteProcessor FIND_NON_CR = new IndexNotOfProcessor(CARRIAGE_RETURN);
+
+    /**
+     * Aborts on a {@code LF ('\n')}.
+     */
+    ByteProcessor FIND_LF = new IndexOfProcessor(LINE_FEED);
+
+    /**
+     * Aborts on a non-{@code LF ('\n')}.
+     */
+    ByteProcessor FIND_NON_LF = new IndexNotOfProcessor(LINE_FEED);
+
+    /**
+     * Aborts on a semicolon {@code (';')}.
+     */
+    ByteProcessor FIND_SEMI_COLON = new IndexOfProcessor((byte) ';');
+
+    /**
+     * Aborts on a comma {@code (',')}.
+     */
+    ByteProcessor FIND_COMMA = new IndexOfProcessor((byte) ',');
+
+    /**
+     * Aborts on a ascii space character ({@code ' '}).
+     */
+    ByteProcessor FIND_ASCII_SPACE = new IndexOfProcessor(SPACE);
+
+    /**
+     * Aborts on a {@code CR ('\r')} or a {@code LF ('\n')}.
+     */
+    ByteProcessor FIND_CRLF = new ByteProcessor() {
+        @Override
+        public boolean process(byte value) {
+            return value != CARRIAGE_RETURN && value != LINE_FEED;
+        }
+    };
+
+    /**
+     * Aborts on a byte which is neither a {@code CR ('\r')} nor a {@code LF ('\n')}.
+     */
+    ByteProcessor FIND_NON_CRLF = new ByteProcessor() {
+        @Override
+        public boolean process(byte value) {
+            return value == CARRIAGE_RETURN || value == LINE_FEED;
+        }
+    };
+
+    /**
+     * Aborts on a linear whitespace (a ({@code ' '} or a {@code '\t'}).
+     */
+    ByteProcessor FIND_LINEAR_WHITESPACE = new ByteProcessor() {
+        @Override
+        public boolean process(byte value) {
+            return value != SPACE && value != HTAB;
+        }
+    };
+
+    /**
+     * Aborts on a byte which is not a linear whitespace (neither {@code ' '} nor {@code '\t'}).
+     */
+    ByteProcessor FIND_NON_LINEAR_WHITESPACE = new ByteProcessor() {
+        @Override
+        public boolean process(byte value) {
+            return value == SPACE || value == HTAB;
+        }
+    };
+```
+
+### 5.3.4 ByteBuf常见API总结:  
+1. `顺序读操作`:  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作1.png)
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作2.png)
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作3.png)
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作4.png)  
+2. `顺序写操作`:  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作1.png)
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作2.png)
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作3.png)
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作4.png)
+
+### 5.3.5 ByteBuf辅助工具类:
+
+TODO
+
+### 5.3.6 ByteBuf源码分析:  
+
+TODO
+
+
 ## 5.4 ChannelHandler和ChannelPipeline:  
 ## 5.5 EventLoopGroup和EventLoop:  
 ## 5.6 Future和Promise:

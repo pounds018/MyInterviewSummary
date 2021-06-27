@@ -402,27 +402,85 @@
 ```
 
 ### 5.3.4 ByteBuf常见API总结:  
-1. `顺序读操作`:  
+
+### 5.3.4.1 顺序读操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作1.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作2.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作3.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作4.png)  
-2. `顺序写操作`:  
+
+### 5.3.4.2 顺序写操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作1.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作2.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作3.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作4.png)
-3. `随机写操作`:  
+
+### 5.3.4.3 随机写操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/随机写操作.png)  
-4. `随机读操作`:  
+
+### 5.3.4.4 随机读操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/随机读操作.png)
 
+### 5.3.4.5 其他操作:  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/其他操作.png)
 
 ### 5.3.5 ByteBuf辅助工具类:
 
-TODO
+### 5.3.5.1 ByteBufHolder接口:   
+`ByteBufHolder`是`ByteBuf`的容器,除了实际数据装载之外,我们还需要存储各种属性值.比如HTTP的请求和响应都可以携带消息体,在Netty中消息体就是用`ByteBuf`来表示;
+但是由于不同的协议之间会包含不同的协议字段和功能,这部分数据并不适合写在实际数据中,所以Netty抽象出了一个 `ByteBufHolder接口`持有一个`ByteBuf`用以装载实际数据,
+同时携带不同协议的协议字段和功能. (ByteBufHolder的实现类实现不同协议的协议字段和功能描述).  
+![1](../../_media/chapter13_Netty/5_netty核心组件/不同协议的ByteBufHolder实现类.png)  
+说明:  
+- `ByteBufHolder`为Netty的高级特性提供了支持,比如缓冲区池化,其中可以从池中借用ByteBuf,并且在需要时自动释放.  
+- `通常用作需要存储实际数据的消息对象接口`
+- `常用方法`:  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/ByteBufHolder的常用方法.png)  
 
-### 5.3.6 ByteBuf源码分析:  
+### 5.3.5.2 ByteBuf内存空间分配:  
+
+1. `按需分配 --- ByteBufAllocator接口`:  
+    1. 为了降低分配和释放的内存开销,Netty通过`interface ByteBufAllocator`实现了缓冲区池化,`ByteBufAllocator`可以用来分配我们所描述过得任意类型的ByteBuf实例.
+    `池化`不会改变`ByteBuf`api 的语义,只是新的数据需要使用ByteBuf来存储的时候,可以从缓冲池中取出一个 `ByteBuf实例` 来存储数据.
+    2. 常用方法:  
+       ![1](../../_media/chapter13_Netty/5_netty核心组件/ByteBufAllocator常用方法.png)  
+       
+    3. 说明:  
+        - 可以通过 `channel`(每个都可以有一个不同的ByteBufAllocator实例) 或者 绑定到 
+          `channelHandler`的`ChannelHandlerContext`获取到一个`ByteBufAllocator`的引用.  
+        - Netty提供了  ByteBufAllocator 的实现:  
+          `PooledByteBufAllocator`:  池化ByteBuf实例,提高性能并最大限度的减少内存碎片.使用的是jemalloc技术实现的内存分配.
+          `UnpooledByteBufAllocator`:  非池化ByteBuf实例分配,每一次调用都会返回一个新的byteBuf实例.  
+          > 1. netty4.1版本默认使用的是 `PooledByteBufAllocator`, 4.0版本默认使用的则是 `UnpooledByteBufAllocator`.
+          > 2. 可以通过`ChannelConfig`或者`Bootstrap`配置 使用什么类型的 `ByteBufAllocator`.
+        - `ioBuffer()`: 这个方法在使用的时候,如果当前运行环境有 sun.misc.Unsafe 支持的时候, 返回的是 `Direct ByteBuf`,否则返回的是 `Heap ByteBuf`.  
+          当使用 `PreferHeapByteBufAllocator`的时候, 只会返回 `Heap ByteBuf`.
+          
+2. `Unpooled缓冲区`:  
+在某些情况下,如果未能获取到一个 `ByteBufAllocator`的引用.可以通过工具类 `Unpooled` 来创建未池化的 `ByteBuf实例`.
+![1](../../_media/chapter13_Netty/5_netty核心组件/Unpooled工具类.png)  
+
+3. `ByteBufUtil类`:  
+   `ByteBufUtil` 提供了用于操作 `ByteBuf` 的静态的辅助方法。因为这个API是通用的，并且和池化无关，所以这些方法已然在分配类的外部实现。
+   这些静态方法中最有价值的可能就是 hexdump()方法，它以十六进制的表示形式输出`ByteBuf` 的内容。这在各种情况下都很有用，例如，出于调试的目的记录 `ByteBuf` 的内容。十
+   六进制的表示通常会提供一个比字节值的直接表示形式更加有用的日志条目，此外，十六进制的版本还可以很容易地转换回实际的字节表示。
+   另一个有用的方法是 `boolean equals(ByteBuf, ByteBuf)`，它被用来判断两个 `ByteBuf`实例的相等性。
+
+### 5.3.6 引用计数:  
+
+- `引用计数`: 一种通过在某个对象所持有的资源不再被其他对象引用时,释放该对象所持有的资源来优化内存使用和性能的技术.(`类似于JVM的引用计数算法`)  
+- Netty 在第 4 版中为 `ByteBuf` 和 `ByteBufHolder` 引入了引用计数技术，它们都实现了 `interface ReferenceCounted`.  
+- `引用计数实现的大致思路`: 它主要涉及跟踪到某个特定对象的活动引用的数量。一个 `ReferenceCounted` 实现的实例将通常以活动的引用计数为 `1`作为开始。只要`引用计
+  数`大于 `0`，就能保证对象不会被释放。当活动引用的数量减少到 0 时，该实例就会被释放。
+  > 注意: 虽然释放的确切语义可能是特定于实现的，但是至少已经释放的对象应该不可再用了。
+- `引用计数`对于 `池化实现`（如 PooledByteBufAllocator）来说是至关重要的，它降低了内存分配的开销。
+- 试图访问一个已经被`释放(或者说是 引用计数为 0)`的引用计数的对象，将会导致一个 `IllegalReferenceCountException`。  
+- `谁来释放`: 一般是由 最后访问资源的一方 来负责释放 资源.  
+> 一个特定的（ReferenceCounted 的实现）类，可以用它自己的独特方式来定义它的引用计数规则。例如，我们可以设想一个类，其 `release()` 方法的实现总是将引用计数设为
+零，而不用关心它的当前值，从而一次性地使所有的活动引用都失效。  
+
+
+### 5.3.7 ByteBuf源码分析:  
 
 TODO
 

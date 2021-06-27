@@ -73,7 +73,7 @@
        > connect方法有很多的重载方法,可以既连接远程,又绑定本地地址等...  
    11. `ChannelFuture bind(SocketAddress localAddress)`: 绑定本地的socket地址,并级联触发所有`出站handler`中的`bind
        (ChannelHandlerContext, SocketAddress, ChannelPromise)方法`  
-       > 重载方法多了一个参变 `promise`,支持对bind操作执行结果的设置  
+       > 重载方法多了一个参数 `promise`,支持对bind操作执行结果的设置  
    
    12. channel信息获取方法:  
    ```java

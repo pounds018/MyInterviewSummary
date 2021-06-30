@@ -37,7 +37,7 @@
 
 ### 5.2.2 Channel的层次结构、常用方法:  
 
-### 5.2.2.1 层次结构:
+#### 5.2.2.1 层次结构:
    ```java
       public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparable<Channel>
    ```
@@ -50,7 +50,7 @@
    5. Netty的Channel是线程安全的,所以可以使用多线程对channel进行操作
    6. 通过Channel.write()操作,数据将从链表表尾开始向链表表头移动,通过ChannelHandlerContext.write()是将数据传递给下一个ChannelHandler开始沿着链表移动.  
 
-### 5.2.2.2 常见方法
+#### 5.2.2.2 常见方法
    1. `Channel read()`: 从当前Channel中读取数据到第一个inbound缓冲区,如果数据读取成功,触发`ChannelHandler.channelRead(ChannelHandlerContext ctx,
       Object msg)事件`.`read()操作`完毕之后,紧接着触发`ChannelHandler.channelReadComplete(ChannelHandlerContext ctx)事件`.
       如果该channel读请求被挂起,后续的读操作会被忽略.
@@ -92,7 +92,7 @@
         Channel parent();  // serverChannel.parent()返回null,socketChannel返回serverSocketChannel 
    ```  
 
-### 5.2.2.3 Channel的工作原理: 
+### 5.2.3 Channel的源码分析: 
    TODO
 
 ## 5.3 ByteBuf:  
@@ -230,7 +230,7 @@
 工作时通常ByteBuf的数据结构图:  
 ![ByteBuf数据结构](../../_media/chapter13_Netty/5_netty核心组件/读写部分数据之后.png)
 
-### 5.3.3.1 几种不同的字节区间:
+#### 5.3.3.1 几种不同的字节区间:
 
 1. `可丢弃字节区间`:  
    在ByteBuf中,已经被读取过的字节都会被视为是 `可丢弃的字节`, `0`到 `readerIndex`之间就是 `可丢弃区间`,通过`discardReadBytes()`可以丢弃他们并回收空间.
@@ -252,7 +252,7 @@
    任何以 `write` 开头的方法都会造成 `writerIndex`增加以写入字节数.
    如果 `writeBytes(Bytes dest)`读取并写入到`dest` 会造成 `调用` 这个方法的缓冲区的 `readerIndex`增加相应的数量.
 
-### 5.3.3.2 索引管理:
+#### 5.3.3.2 索引管理:
 
 1. `随机访问索引`: `get或者set`开头的方法来随机`访问或者写入`数据 ByteBuf与普通数组一样,索引总是从 `0`开始,到`capacity - 1`截至.
    > 注意:
@@ -269,7 +269,7 @@
    > 1. `clear()`方法仅仅是重置读写索引为0,不会对buf中的数据进行清除  
    > 2. 相对于 `discardReadBytes()`方法,`clear()`方法更为效率,因为它只是将读写索引重置为了0,不会引发任何的数据复制.
 
-### 5.3.3.3 派生缓冲区:
+#### 5.3.3.3 派生缓冲区:
   
 派生缓冲区为ByteBuf提供以专门的方式呈现 `缓冲区数据` 的视图,常见方法为:  
 - `duplicate()`: 返回一个与调用`duplicate()`的缓冲区`共享所有空间`的缓冲区  
@@ -311,7 +311,7 @@
         assert bufForSlice.getByte(0) == sliced.getByte(0);
 ```
 
-### 5.3.3.4 查找字节所在的位置:
+#### 5.3.3.4 查找字节所在的位置:
 ![1](../../_media/chapter13_Netty/5_netty核心组件/查找操作.png)
 一般的字节可以通过 `indexOf()` 方法来查找指定的字节,或者通过传入 `ByteProcessor参数` 设定`中止字符`来配合`forEachByte()方法`帮助查找.
 ```java
@@ -403,30 +403,30 @@
 
 ### 5.3.4 ByteBuf常见API总结:  
 
-### 5.3.4.1 顺序读操作:  
+#### 5.3.4.1 顺序读操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作1.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作2.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作3.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作4.png)  
 
-### 5.3.4.2 顺序写操作:  
+#### 5.3.4.2 顺序写操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作1.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作2.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作3.png)
    ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作4.png)
 
-### 5.3.4.3 随机写操作:  
+#### 5.3.4.3 随机写操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/随机写操作.png)  
 
-### 5.3.4.4 随机读操作:  
+#### 5.3.4.4 随机读操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/随机读操作.png)
 
-### 5.3.4.5 其他操作:  
+#### 5.3.4.5 其他操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/其他操作.png)
 
 ### 5.3.5 ByteBuf辅助工具类:
 
-### 5.3.5.1 ByteBufHolder接口:   
+#### 5.3.5.1 ByteBufHolder接口:   
 `ByteBufHolder`是`ByteBuf`的容器,除了实际数据装载之外,我们还需要存储各种属性值.比如HTTP的请求和响应都可以携带消息体,在Netty中消息体就是用`ByteBuf`来表示;
 但是由于不同的协议之间会包含不同的协议字段和功能,这部分数据并不适合写在实际数据中,所以Netty抽象出了一个 `ByteBufHolder接口`持有一个`ByteBuf`用以装载实际数据,
 同时携带不同协议的协议字段和功能. (ByteBufHolder的实现类实现不同协议的协议字段和功能描述).  
@@ -437,7 +437,7 @@
 - `常用方法`:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/ByteBufHolder的常用方法.png)  
 
-### 5.3.5.2 ByteBuf内存空间分配:  
+#### 5.3.5.2 ByteBuf内存空间分配:  
 
 1. `按需分配 --- ByteBufAllocator接口`:  
     1. 为了降低分配和释放的内存开销,Netty通过`interface ByteBufAllocator`实现了缓冲区池化,`ByteBufAllocator`可以用来分配我们所描述过得任意类型的ByteBuf实例.

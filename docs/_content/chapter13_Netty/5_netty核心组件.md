@@ -486,5 +486,31 @@ TODO
 
 
 ## 5.4 ChannelHandler和ChannelPipeline:  
+
+### 5.4.1 ChannelHandler和ChannelPipeline的概述:  
+`Channel,ChannelPipeline,ChannelContext,ChannelHandler之间的关系`:  
+
+![关系图](../../_media/chapter13_Netty/5_netty核心组件/channelhandler关系.png)
+
+Netty的ChannelPipeline和ChannelHandler机制类似于Servlet和Filter过滤器,这类拦截器实际上是责任链模式的一种变形,主要是为了方便事件的拦截和用户业务逻辑的定制.  
+`ChannelHandler`: 从应用程序开发人员的角度来看,Netty的主要组件是ChannelHandler,它充当了所有处理入站和出站数据的应用程序逻辑的容器,ChannelHandler可以适用于任何逻辑操作.  
+`ChannelPipeline`: Netty将Channel的数据管道抽象为 `ChannelPipeline`,消息在 `ChannelPipeline`中流动和传递.
+`ChannelPipeline`持有I/O事件拦截器`ChannelHandler`的链表, 由 `ChannelHandler` 对I/O事件进行拦截和处理,可以方便的通过增删handler来实现不同业务逻辑的定制,不需要对已有
+handler修改,就能实现对修改封闭和对扩展的支持.  
+`ChannelHandlerContext`: 当`ChannelHandler`每一次被分配到一个`ChannelPipeline`的时候,都会创建一个新的 
+`ChannelHandlerContext`与`ChannelHandler`关联起来,其表示`ChannelHandler`与`ChannelPipeline`的绑定关系.
+
+### 5.4.2 ChannelHandler:  
+
+#### 5.4.2.1 ChannelHandler相关接口:
+1. Channel的生命周期:  
+    `Channel`接口定义了一组和 `ChannelInBoundHandler`api 密切相关的简单但是功能强大的状态模型.`Channel的4个状态` :  
+    ![channel生命周期](../../_media/chapter13_Netty/5_netty核心组件/Channel生命周期.png)
+    说明:  
+    - 只要`Channel`没有关闭,`Channel`就可以再次被注册到`EventLoop`组件上.
+    - 当图片中的状态一旦发生改变的时候,就会生成对应的事件,这些事件会被转发给 `ChannelPipeline` 中的 `ChannelHandler`处理.  
+2. ChannelHandler的生命周期:  
+    
+
 ## 5.5 EventLoopGroup和EventLoop:  
 ## 5.6 Future和Promise:

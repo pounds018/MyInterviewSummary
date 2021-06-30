@@ -506,6 +506,7 @@ handler修改,就能实现对修改封闭和对扩展的支持.
 1. Channel的生命周期:  
     `Channel`接口定义了一组和 `ChannelInBoundHandler`api 密切相关的简单但是功能强大的状态模型.`Channel的4个状态` :  
     ![channel生命周期](../../_media/chapter13_Netty/5_netty核心组件/Channel生命周期.png)
+    ![channel状态模型](../../_media/chapter13_Netty/5_netty核心组件/CHANNEL状态模型.png)
     说明:  
     - 只要`Channel`没有关闭,`Channel`就可以再次被注册到`EventLoop`组件上.
     - 当图片中的状态一旦发生改变的时候,就会生成对应的事件,这些事件会被转发给 `ChannelPipeline` 中的 `ChannelHandler`处理.  

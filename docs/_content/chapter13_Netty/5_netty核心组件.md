@@ -502,16 +502,85 @@ handler修改,就能实现对修改封闭和对扩展的支持.
 
 ### 5.4.2 ChannelHandler:  
 
-#### 5.4.2.1 ChannelHandler相关接口:
-1. Channel的生命周期:  
-    `Channel`接口定义了一组和 `ChannelInBoundHandler`api 密切相关的简单但是功能强大的状态模型.`Channel的4个状态` :  
-    ![channel生命周期](../../_media/chapter13_Netty/5_netty核心组件/Channel生命周期.png)
-    ![channel状态模型](../../_media/chapter13_Netty/5_netty核心组件/CHANNEL状态模型.png)
-    说明:  
-    - 只要`Channel`没有关闭,`Channel`就可以再次被注册到`EventLoop`组件上.
-    - 当图片中的状态一旦发生改变的时候,就会生成对应的事件,这些事件会被转发给 `ChannelPipeline` 中的 `ChannelHandler`处理.  
-2. ChannelHandler的生命周期:  
-    
+#### 5.4.2.1 Channel的生命周期:  
+
+`Channel`接口定义了一组和 `ChannelInBoundHandler`api 密切相关的简单但是功能强大的状态模型.`Channel的4个状态` :  
+![channel生命周期](../../_media/chapter13_Netty/5_netty核心组件/Channel生命周期.png)
+![channel状态模型](../../_media/chapter13_Netty/5_netty核心组件/CHANNEL状态模型.png)
+说明:  
+- 只要`Channel`没有关闭,`Channel`就可以再次被注册到`EventLoop`组件上.
+- 当图片中的状态一旦发生改变的时候,就会生成对应的事件,这些事件会被转发给 `ChannelPipeline` 中的 `ChannelHandler`处理.  
+
+#### 5.4.2.2 ChannelHandler的生命周期: 
+`ChannelHandler`定义的生命周期操作,`ChannelHandler`被添加到`channelPipeline`或者从`channelPipeline`中移除的时候会触发这些操作.
+每个方法都会接收一个`ChannelHandlerContext`作为参数
+![ChannelHandler生命周期](../../_media/chapter13_Netty/5_netty核心组件/handler的生命周期.png)
+`channelHandler`两个重要的子接口:  
+- `ChannelInboundHandler` : 处理入栈数据以及各种状态变化
+- `ChannelOutboundHandler` : 处理出站数据并且允许拦截所有的操作
+
+#### 5.4.2.3 `ChannelInboundHandler`接口:  
+![ChannelInboundHandler](../../_media/chapter13_Netty/5_netty核心组件/inboundHandler生命周期.png)  
+说明:  
+
+- 上面是 `ChannelInboundHandler`的生命周期方法,channel中的`数据被读取`或者`channel状态发生变化`的时候被调用.
+- 当 `ChannelInboundHandler`的子类类重写了`channelRead()`方法的时候,需要手动通过 `ReferenceCountUtil.release()`来手动释放与`池化ByteBuf有关的内存
+(即参数msg)`
+```java
+         @Sharable
+         public class DiscardHandler extends ChannelInboundHandlerAdapter{
+             @Override
+             public void channelRead(ChannelHandlerContext ctx,Object msg){
+                 // 如果不手动释放,Netty会通过日志的形式记录msg未释放的实例
+                 ReferenceCountUtil.release(msg);
+             }  
+         }
+```
+- 也可以通过 `SimpleChannelInboundHandler`来自动释放资源,ps: 不要试图把 `SimpleChannelInboundHandler`中的数据存放起来,以便后期使用.
+```java
+         @Sharable
+         public class DiscardHandler extends ChannelInboundHandlerAdapter{
+             @Override
+             public void channelRead(ChannelHandlerContext ctx,Object msg){
+                 // 在这里就不需要手动释放msg所占用的byteBuf空间了
+             }  
+         }
+```
+
+#### 5.4.2.3 `ChannelOutboundHandler`接口:  
+
+出站操作和数据将由 `ChannelOutboundHandler`处理.`ChannelOutboundHandler`的方法将会被 `Channel` , `ChannelPipeline` ,以及 
+`ChannelHandlerContext` 调用.  
+`ChannelOutboundHandler` 可以按照需要`推迟操作` 或者 `推迟事件`, 这可以通过一些复杂的方法来处理请求.   
+![ChannelOutboundHandler](../../_media/chapter13_Netty/5_netty核心组件/outbound生命周期.png)  
+
+#### 5.4.2.4 `ChannelHandlerAadptor`:  
+
+![ChannelHandlerAadptor](../../_media/chapter13_Netty/5_netty核心组件/adaptor的层次结构.png)
+说明:  
+- `ChannelInboundHandlerAdapter` 和 `ChannelOutboundHandlerAdapter` 类分别提供了 `ChannelInboundHandler`和 `ChannelOutboundHandler` 
+  的基本实现。通过扩展抽象类 `ChannelHandlerAdapter`，它们获得了它们共同的超接口 ChannelHandler 的方法。  
+- `ChannelHandlerAdapter` 还提供了实用方法 `isSharable()`。如果其对应的实现被标注为 `@Sharable`，那么这个方法将返回 `true`，表示它可以被添加到多个 
+  `ChannelPipeline`中.
+- 在 `ChannelInboundHandlerAdapter` 和 `ChannelOutboundHandlerAdapter` 中所提供的方法体调用了其相关联的 `ChannelHandlerContext` 上的等效方法(
+  fireXXX())， 从而将事件转发到了 `ChannelPipeline` 中的下一个 `ChannelHandler` 中。
+
+#### 5.4.2.5 防止内存泄露:  
+
+- 每当通过调用 `ChannelInboundHandler.channelRead()`或者 `ChannelOutboundHandler.write()`方法来处理数据时，都需要保证不会出现资源泄漏(buf没有释放)。
+Netty 使用引用计数来处理池化的 ByteBuf。所以在完全使用完某个 ByteBuf 后，调整其引用计数是很重要的。  
+- Netty提供了class ResourceLeakDetector ， 它将对你应用程序的缓冲区分配做大约 1%的采样来检测内存泄露。  
+  Netty定义的4种`泄漏检测级别`:  
+  ![netty内存检测级别](../../_media/chapter13_Netty/5_netty核心组件/内存检测级别.png)
+  > 可以通过启动命令: `java -Dio.netty.leakDetectionLevel=ADVANCED` 来设置内存检测级别
+  
+  检测结果: `存在内存泄漏`如图   
+  ![netty内存检测结果](../../_media/chapter13_Netty/5_netty核心组件/检测结果.png)
+
+### 5.4.3 ChannelPipeline:  
+
+
+
 
 ## 5.5 EventLoopGroup和EventLoop:  
 ## 5.6 Future和Promise:

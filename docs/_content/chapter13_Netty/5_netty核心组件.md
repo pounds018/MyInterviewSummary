@@ -556,7 +556,7 @@ handler修改,就能实现对修改封闭和对扩展的支持.
 
 #### 5.4.2.4 `ChannelHandlerAadptor`:  
 
-![ChannelHandlerAadptor](../../_media/chapter13_Netty/5_netty核心组件/adaptor的层次结构.png)
+![ChannelHandlerAdaptor](../../_media/chapter13_Netty/5_netty核心组件/adaptor的层次结构.png)
 说明:  
 - `ChannelInboundHandlerAdapter` 和 `ChannelOutboundHandlerAdapter` 类分别提供了 `ChannelInboundHandler`和 `ChannelOutboundHandler` 
   的基本实现。通过扩展抽象类 `ChannelHandlerAdapter`，它们获得了它们共同的超接口 ChannelHandler 的方法。  
@@ -576,10 +576,86 @@ Netty 使用引用计数来处理池化的 ByteBuf。所以在完全使用完某
   
   检测结果: `存在内存泄漏`如图   
   ![netty内存检测结果](../../_media/chapter13_Netty/5_netty核心组件/检测结果.png)
-
+  
 ### 5.4.3 ChannelPipeline:  
 
+- `ChannelPipeline` : 是一个流经Channel的入站和出站事件的ChannelHandler实例双向链表.
+- `ChannelPipeline`在`Channel`创建的时候,就会分配给`Channel`并与之关联,直到`Channel`关闭.在`Channel`整个生命周期中,`ChannelPipeline`都是唯一与之绑定的,
+既不能 `新增pipeline`也不能`分离pipeline`.  
+- 根据事件的类型,事件将会被 `ChannelInboundHandler`或者`ChannelOutboundHandler`处理.`ChannelHandler`之间通过上下文对象`ChannelHandlerContext`交互.
+- `ChannelHandlerContext`可以让`ChannelHandler`之间进行交互,也可以动态的修改 `ChannelPipeline`中 handler的顺序.
+- 入站口总是 `处理入站事件`的 `ChannelInboundHandler`(即链表的head总是指向`能够`处理入站事件的处理器),出站口总是 `处理出站事件`的`ChannelOutboundHandler`(即
+  链表的tail总是指向`能够`处理出站事件的处理器)
+- `ChannelHandler`在`ChannelPipeline`执行顺序是根据`handler`被加入到双向链表中的顺序而决定的
+  > 一个处理器,可能同时实现 `ChannelInboundHandler` 和 `ChannelOutboundHandler`.在`Netty`中事件流经pipeline的时候通过标志位判断当前处理器能不能处理该事件,直到找到一个
+  > 能够处理该事件的handler为止.
+#### 5.4.3.1 获取pipeline:  
+- 通过Channel获取
+```java
+        bootstrap = new Bootstrap()
+        .group(clientGroup)
+        .channel(NioSocketChannel.class)
+        // 这里实现的是中途断线重连,断线换成netty术语就是channel不活跃了
+        .handler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel ch) {
+                // ch.pipeline就是获取pipeline
+                ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+                    // channel在运行过程中中断,就会触发这个(channelInactive)方法,然后通过这个方法去重新连接
+                    @Override
+                    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+                        ctx.channel().eventLoop().schedule(()-> doConnect(),2, TimeUnit.SECONDS);
+                    }
+                });
+            }
+        });
+```
+- 通过ChannelHandlerContext获取: 
+```java
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        Channel curChannel = ctx.channel();  
+        // 获取pipeline
+        ChannelPipeline pipeline = ctx.pipeline();
+    }
+```
 
+#### 5.4.3.2 处理ChannelPipeline中的handler:
+
+1. `ChannelPipeline`的修改,实际上是修改双向链表上的handler,`ChannelPipeline`提供了一些对handler进行crud的方法:
+![修改pipeline中ChannelHandler](../../_media/chapter13_Netty/5_netty核心组件/修改pipeline中的handler.png)  
+```java
+ChannelPipeline pipeline = ..; // 通过channel或者channelHandlerContext可以获取pipeline
+FirstHandler firstHandler = new FirstHandler(); 
+pipeline.addLast("handler1", firstHandler); // 加入
+pipeline.addFirst("handler2", new SecondHandler()); 加入
+pipeline.addLast("handler3", new ThirdHandler()); 加入
+        // 此时pipeline中的顺序为 handler2 -> handler1 -> handler3
+...
+pipeline.remove("handler3");
+pipeline.remove(firstHandler);
+pipeline.replace("handler2", "handler4", new ForthHandler());
+// 此时pipeline中仅剩 handler4
+```
+> 由于整个pipeline中的channelHandler都是由与channel绑定的eventLoop来执行的,所以如果要在handler中使用阻塞api,为了不降低整体的I/O性能,在`添加handler`的时候,
+> 可以使用pipeline中带有EventExecutorGroup的add()方法,`将handler交给ExecutorGroup中的线程去执行而不是有eventLoop线程执行`.
+2. 访问handler:  
+![访问handler](../../_media/chapter13_Netty/5_netty核心组件/访问handler.png)  
+
+#### 5.4.3.3 事件的传递:  
+`入站操作`:  实际上就是通知pipeline中下一个handler调用对应的接口:  
+![访问handler](../../_media/chapter13_Netty/5_netty核心组件/ChannelPipeline传递事件.png)
+> 调用channel或者pipeline对象的上述方法,会将整个事件沿着pipeline进行传播,但是通过handlerContext中的上述方法只会将事件传递给pipeline中下一个能够处理该事件的handler.
+
+`出站操作`:  许多方法会造成底层套接字上发生一些列的动作  
+![访问handler](../../_media/chapter13_Netty/5_netty核心组件/pipeline的出站操作.png)
+
+### 5.4.4 ChannelHandlerContext:  
+
+![访问handler](../../_media/chapter13_Netty/5_netty核心组件/context与handler之间的关系.png)
+
+- `ChannelHandlerContext`代表 `handler` 和 `pipeline`之间的关联关系,只要有 `handler`分配到`pipeline`中来,就创建一个`context`与`handler关联`.
+- `ChannelHandlerContext`主要作用是 用来与`context`关联的`handler`和其他`同一个pipeline中的handler`之间的交互.
+- `ChannelHandlerContext`与`handler`的关联关系是永远不会改变的,
 
 
 ## 5.5 EventLoopGroup和EventLoop:  

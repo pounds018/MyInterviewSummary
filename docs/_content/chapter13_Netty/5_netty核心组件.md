@@ -655,7 +655,7 @@ pipeline.replace("handler2", "handler4", new ForthHandler());
 
 - `ChannelHandlerContext`代表 `handler` 和 `pipeline`之间的关联关系,只要有 `handler`分配到`pipeline`中来,就创建一个`context`与`handler关联`.
 - `ChannelHandlerContext`主要作用是 用来与`context`关联的`handler`和其他`同一个pipeline中的handler`之间的交互.
-- `ChannelHandlerContext`与`handler`的关联关系是永远不会改变的,
+- `ChannelHandlerContext`与`handler`的关联关系是永远不会改变的,缓存Context的引用是线程安全的.
 
 
 ## 5.5 EventLoopGroup和EventLoop:  

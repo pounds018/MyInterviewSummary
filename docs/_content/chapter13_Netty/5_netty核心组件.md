@@ -497,8 +497,8 @@ Netty的ChannelPipeline和ChannelHandler机制类似于Servlet和Filter过滤器
 `ChannelPipeline`: Netty将Channel的数据管道抽象为 `ChannelPipeline`,消息在 `ChannelPipeline`中流动和传递.
 `ChannelPipeline`持有I/O事件拦截器`ChannelHandler`的链表, 由 `ChannelHandler` 对I/O事件进行拦截和处理,可以方便的通过增删handler来实现不同业务逻辑的定制,不需要对已有
 handler修改,就能实现对修改封闭和对扩展的支持.  
-`ChannelHandlerContext`: 当`ChannelHandler`每一次被分配到一个`ChannelPipeline`的时候,都会创建一个新的 
-`ChannelHandlerContext`与`ChannelHandler`关联起来,其表示`ChannelHandler`与`ChannelPipeline`的绑定关系.
+`ChannelHandlerContext`: 当`ChannelHandler`每一次被分配到一个`ChannelPipeline`的时候,都会创建一个新的`ChannelHandlerContext`与`ChannelHandler`关联起来,
+其表示`ChannelHandler`与`ChannelPipeline`的绑定关系.
 
 ### 5.4.2 ChannelHandler:  
 
@@ -654,9 +654,132 @@ pipeline.replace("handler2", "handler4", new ForthHandler());
 ![访问handler](../../_media/chapter13_Netty/5_netty核心组件/context与handler之间的关系.png)
 
 - `ChannelHandlerContext`代表 `handler` 和 `pipeline`之间的关联关系,只要有 `handler`分配到`pipeline`中来,就创建一个`context`与`handler关联`.
-- `ChannelHandlerContext`主要作用是 用来与`context`关联的`handler`和其他`同一个pipeline中的handler`之间的交互.
+- `ChannelHandlerContext`主要作用是 用来与`context`关联的`handler`和其他`同一个pipeline中的handler`之间的交互 --- 将消息传递给下一个能够处理该消息的handler
 - `ChannelHandlerContext`与`handler`的关联关系是永远不会改变的,缓存Context的引用是线程安全的.
+- `ChannelHandlerContext`常用方法总结:  
+  ![context常用方法](../../_media/chapter13_Netty/5_netty核心组件/context常用方法.png)
 
+- `ChannelHandlerContext`与其他用同名方法的组件相比,产生的事件流更短,可以利用这个特性来获取最大的性能,`特性使用场景如下:`
+    - 为了减少将事件传经对它不感兴趣的handler所带来的开销
+    - 为了避免将事件传经那些可能会对他感兴趣的handler
+    
+- `ChannelHandlerContext`只能于一个handler绑定,但是handler可以绑定多个context实例.
+    - 正确示例: 
+    ```java
+        @sharable
+        public class SharableHandler extends ChannelInboundHandlerAdapter{
+            @Override
+            public void channelRead(ChannelHandlerContext ctx, Object meg){ 
+                ctx.fireChannelRead(msg);
+            }         
+        }
+    ```
+    - 错误示例:
+    ```java
+        @sharable
+        public class SharableHandler extends ChannelInboundHandlerAdapter{
+            private int count;
+            @Override
+            public void channelRead(ChannelHandlerContext ctx, Object meg){ 
+                // 对共享资源不保证线程安全的修改操作,会导致问题
+                count++;
+                ctx.fireChannelRead(msg);
+            }         
+        }
+    ```
+    > handler必须添加@Shareble注解,并且handler必须要是线程安全的.
+  
+- `ChannelHandlerContext`特殊用法:  
+    保存`ChannelHandlerContext`在其他channel中使用或者以供稍后使用,完成一些特殊的操作
+    ```java
+        public class WriteHandler extends ChannelHandlerAdapter { 
+            private ChannelHandlerContext ctx;
+            @Override
+            public void handlerAdded(ChannelHandlerContext ctx) {
+                this.ctx = ctx;
+            }
+            public void send(String msg) {
+                ctx.writeAndFlush(msg);
+            }
+        }
+    ```
+  
+### 5.4.5 异常处理:  
 
+### 5.4.5.1 入站异常处理:  
+如果在处理入站事件的过程中,发生了异常,那么异常将会从当前handler开始在pipeline中的`InboundHandler`传递下去.
+- 实现异常处理: 通过重写exceptionCaught方法
+    ```java
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception;
+    ```
+    ```java
+        public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+            @Override
+            public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                cause.printStackTrace();
+                ctx.close();
+            }
+        }
+    ```
+- 注意事项:  
+    1. 默认的exceptionCaught()方法只是简单的将当前异常转发给了pipeline中的handler
+    2. 如果异常到达了pipeline的尾部仍然没有处理,netty会在日志这种记录该异常为未处理异常, `通常为了所有异常都会被处理,pipeline的最后都会存在一个实现了示例代码的handler`
+    3. 通过重写exceptionCaught()来自定义自己的异常处理方法.  
+
+### 5.4.5.2 出站异常处理:
+通过异步通知机制,来处理出站异常:  
+- 每个出站操作都会返回一个ChannelFuture.注册到ChannelFuture的ChannelFutureListener将在操作完成的时候通知该操作是否成功
+- 几乎所有的ChannelOutboundHandler上的方法都会传入一个ChannelPromise的实例.channelPromise是channelFuture的子类,可以用于异步通知也可以用于立即通知的可写方法
+    ```java
+        ChannelPromise setSuccess();
+        ChannelPromise setFailure(Throwable cause);
+    ```
+  
+- 处理异常示例:  
+    方法1: 通过向出站操作返回的ChannelFuture中添加具体的监听器
+    ```java
+        ChannelFuture future = channel.write(someMessage)
+        future.addListener(new ChanelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture f){
+                if(!f.isSuccess()){
+                    f.cause().printStackTrace();
+                    f.channel().close();
+                }     
+            }     
+        })
+    ```
+    <font color=red>**启动重连的示例**</font>
+    ```java
+        // 注意这里一定不要调用sync()
+        ChannelFuture connectFuture = bootstrap.connect(new InetSocketAddress(remoteHost, port));
+        // 添加链接事件的监听器,当连接事件触发的时候就会调用监听器里面的operationComplete方法
+        connectFuture.addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()){
+                System.out.println(" 连接成功........");
+            }else{
+                System.out.println(String.format(" 连接失败,正在尝试重连 ..... 当前为 第 %s 次重连",retryTime.intValue()));
+                future.channel().eventLoop().schedule(()->doConnect(),1,TimeUnit.SECONDS);
+            }
+        });
+    ```
+    方法2: 给出站操作的参数 promise添加listener.
+    ```java
+        public class OutboundExceptionHandler extends ChannelOutboundHandlerAdapter {
+            @Override
+            public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
+                promise.addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture f) {
+                        if (!f.isSuccess()) {
+                            f.cause().printStackTrace();
+                            f.channel().close();
+                        } 
+                    }
+                });
+            } 
+        }
+    ```
+    > 两种方法如何选择: 不同出站事件的细节异常处理使用`方法一`更好, `方法二`更适合于一般的异常处理
 ## 5.5 EventLoopGroup和EventLoop:  
 ## 5.6 Future和Promise:

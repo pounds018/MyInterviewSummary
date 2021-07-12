@@ -312,7 +312,7 @@
 ```
 
 #### 5.3.3.4 查找字节所在的位置:
-![1](../../_media/chapter13_Netty/5_netty核心组件/查找操作.png)
+![1](../../_media/chapter13_Netty/5_netty核心组件/查找操作.png)  
 一般的字节可以通过 `indexOf()` 方法来查找指定的字节,或者通过传入 `ByteProcessor参数` 设定`中止字符`来配合`forEachByte()方法`帮助查找.
 ```java
     /**
@@ -404,16 +404,16 @@
 ### 5.3.4 ByteBuf常见API总结:  
 
 #### 5.3.4.1 顺序读操作:  
-   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作1.png)
-   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作2.png)
-   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作3.png)
-   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作4.png)  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作1.png)  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作2.png)  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作3.png)  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序读操作4.png)   
 
 #### 5.3.4.2 顺序写操作:  
-   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作1.png)
-   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作2.png)
-   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作3.png)
-   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作4.png)
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作1.png)  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作2.png)  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作3.png)  
+   ![1](../../_media/chapter13_Netty/5_netty核心组件/顺序写操作4.png)  
 
 #### 5.3.4.3 随机写操作:  
    ![1](../../_media/chapter13_Netty/5_netty核心组件/随机写操作.png)  
@@ -457,7 +457,7 @@
           当使用 `PreferHeapByteBufAllocator`的时候, 只会返回 `Heap ByteBuf`.
           
 2. `Unpooled缓冲区`:  
-在某些情况下,如果未能获取到一个 `ByteBufAllocator`的引用.可以通过工具类 `Unpooled` 来创建未池化的 `ByteBuf实例`.
+在某些情况下,如果未能获取到一个 `ByteBufAllocator`的引用.可以通过工具类 `Unpooled` 来创建未池化的 `ByteBuf实例`.  
 ![1](../../_media/chapter13_Netty/5_netty核心组件/Unpooled工具类.png)  
 
 3. `ByteBufUtil类`:  
@@ -505,8 +505,8 @@ handler修改,就能实现对修改封闭和对扩展的支持.
 #### 5.4.2.1 Channel的生命周期:  
 
 `Channel`接口定义了一组和 `ChannelInBoundHandler`api 密切相关的简单但是功能强大的状态模型.`Channel的4个状态` :  
-![channel生命周期](../../_media/chapter13_Netty/5_netty核心组件/Channel生命周期.png)
-![channel状态模型](../../_media/chapter13_Netty/5_netty核心组件/CHANNEL状态模型.png)
+![channel生命周期](../../_media/chapter13_Netty/5_netty核心组件/Channel生命周期.png)  
+![channel状态模型](../../_media/chapter13_Netty/5_netty核心组件/CHANNEL状态模型.png)  
 说明:  
 - 只要`Channel`没有关闭,`Channel`就可以再次被注册到`EventLoop`组件上.
 - 当图片中的状态一旦发生改变的时候,就会生成对应的事件,这些事件会被转发给 `ChannelPipeline` 中的 `ChannelHandler`处理.  
@@ -514,7 +514,7 @@ handler修改,就能实现对修改封闭和对扩展的支持.
 #### 5.4.2.2 ChannelHandler的生命周期: 
 `ChannelHandler`定义的生命周期操作,`ChannelHandler`被添加到`channelPipeline`或者从`channelPipeline`中移除的时候会触发这些操作.
 每个方法都会接收一个`ChannelHandlerContext`作为参数
-![ChannelHandler生命周期](../../_media/chapter13_Netty/5_netty核心组件/handler的生命周期.png)
+![ChannelHandler生命周期](../../_media/chapter13_Netty/5_netty核心组件/handler的生命周期.png)  
 `channelHandler`两个重要的子接口:  
 - `ChannelInboundHandler` : 处理入栈数据以及各种状态变化
 - `ChannelOutboundHandler` : 处理出站数据并且允许拦截所有的操作
@@ -556,7 +556,7 @@ handler修改,就能实现对修改封闭和对扩展的支持.
 
 #### 5.4.2.4 `ChannelHandlerAadptor`:  
 
-![ChannelHandlerAdaptor](../../_media/chapter13_Netty/5_netty核心组件/adaptor的层次结构.png)
+![ChannelHandlerAdaptor](../../_media/chapter13_Netty/5_netty核心组件/adaptor的层次结构.png)  
 说明:  
 - `ChannelInboundHandlerAdapter` 和 `ChannelOutboundHandlerAdapter` 类分别提供了 `ChannelInboundHandler`和 `ChannelOutboundHandler` 
   的基本实现。通过扩展抽象类 `ChannelHandlerAdapter`，它们获得了它们共同的超接口 ChannelHandler 的方法。  
@@ -621,7 +621,7 @@ Netty 使用引用计数来处理池化的 ByteBuf。所以在完全使用完某
 
 #### 5.4.3.2 处理ChannelPipeline中的handler:
 
-1. `ChannelPipeline`的修改,实际上是修改双向链表上的handler,`ChannelPipeline`提供了一些对handler进行crud的方法:
+1. `ChannelPipeline`的修改,实际上是修改双向链表上的handler,`ChannelPipeline`提供了一些对handler进行crud的方法:  
 ![修改pipeline中ChannelHandler](../../_media/chapter13_Netty/5_netty核心组件/修改pipeline中的handler.png)  
 ```java
 ChannelPipeline pipeline = ..; // 通过channel或者channelHandlerContext可以获取pipeline
@@ -702,11 +702,12 @@ pipeline.replace("handler2", "handler4", new ForthHandler());
                 ctx.writeAndFlush(msg);
             }
         }
-    ```
+    ```  
   
+
 ### 5.4.5 异常处理:  
 
-### 5.4.5.1 入站异常处理:  
+#### 5.4.5.1 入站异常处理:  
 如果在处理入站事件的过程中,发生了异常,那么异常将会从当前handler开始在pipeline中的`InboundHandler`传递下去.
 - 实现异常处理: 通过重写exceptionCaught方法
     ```java
@@ -726,7 +727,7 @@ pipeline.replace("handler2", "handler4", new ForthHandler());
     2. 如果异常到达了pipeline的尾部仍然没有处理,netty会在日志这种记录该异常为未处理异常, `通常为了所有异常都会被处理,pipeline的最后都会存在一个实现了示例代码的handler`
     3. 通过重写exceptionCaught()来自定义自己的异常处理方法.  
 
-### 5.4.5.2 出站异常处理:
+#### 5.4.5.2 出站异常处理:
 通过异步通知机制,来处理出站异常:  
 - 每个出站操作都会返回一个ChannelFuture.注册到ChannelFuture的ChannelFutureListener将在操作完成的时候通知该操作是否成功
 - 几乎所有的ChannelOutboundHandler上的方法都会传入一个ChannelPromise的实例.channelPromise是channelFuture的子类,可以用于异步通知也可以用于立即通知的可写方法
@@ -781,5 +782,7 @@ pipeline.replace("handler2", "handler4", new ForthHandler());
         }
     ```
     > 两种方法如何选择: 不同出站事件的细节异常处理使用`方法一`更好, `方法二`更适合于一般的异常处理
+
+
 ## 5.5 EventLoopGroup和EventLoop:  
 ## 5.6 Future和Promise:

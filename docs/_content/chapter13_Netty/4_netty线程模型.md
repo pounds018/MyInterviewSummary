@@ -208,6 +208,8 @@ I/O多路复用简单来讲就是使用一个线程去处理多个I/O请求,在�
    ![netty线程模型](../../_media/chapter13_Netty/4_netty线程模型/netty线程模型.png)   
    **<font color=#ff4500>EventLoop和channel、线程之间的对应关系: </font>**   
    ![loop,channel,thread](../../_media/chapter13_Netty/4_netty线程模型/EventLoop、channal、线程的对应关系.png)
+   **<font color=#ff4500>i/o操作大致执行原理: </font>**  
+   ![大致执行原理](../../_media/chapter13_Netty/4_netty线程模型/netty线程模型任务执行原理.png)
    说明:
     1. `Netty`抽象出两组线程池 `BossGroup专门负责客户端连接`和`WorkerGroup专门负责网络的读写`
     2. `BossGroup`和`WorkerGroup`的类型 都是`NioEventLoopGroup`.

@@ -785,4 +785,86 @@ pipeline.replace("handler2", "handler4", new ForthHandler());
 
 
 ## 5.5 EventLoopGroup和EventLoop:  
+
+**继承结构**  
+![NioEventLoop继承结构](../../_media/chapter13_Netty/5_netty核心组件/NioEventLoop继承结构.png)  
+### 5.5.1 EventLoop: 
+
+#### 5.5.1.1 概述:
+运行任务来处理在连接的生命周期内发生的事件是任何网络框架的基本功能.这种功能在编程上的构造称为`事件循环`,Netty使用`EventLoop`表示.  
+事件循环的大致思路:  
+```java
+    // 只要线程没有被关闭,就一直循环执行
+    while (!terminated) {
+        // 阻塞获取就绪事件
+        List<Runnable> readyEvents = blockUntilEventsReady();
+        // 遍历就绪事件,逐一执行
+        for (Runnable event : readEvents) {
+            ev.run();
+        }
+    }
+```  
+1. 在Netty所提供的线程模型中 `EventLoop` 将由一个永远不会改变的 线程 驱动(即由这个线程来处理`EventLoop`中就绪的事件).   
+2. 任务可以直接提交给`EventLoop的实现类`,根据具体需求直接直接执行或者调度执行.  `EventLoop`继承了JUC中的延迟任务线程池`ScheduledExecutorService`,但是
+   只定义了一个用来返回 `EventLoop`属于哪一个`EventLoopGroup`的方法(`parent()`)
+3. 根据配置和cpu核心数量不同,可能会创建多个EventLoop实例来优化资源的使用率,当个 `EventLoop`可以被分配给多个 `Channel`.  
+#### 5.5.1.2 I/O事件处理:
+1. Netty3 中的I/O事件处理:
+   - Netty3 中使用的线程模型只保证了入站事件会在I/O线程(Netty4中的`EventLoop`)中执行.但是出站事件都是由调用线程处理,该线程可以能是`EventLoop`或者其他线程,这样一来
+   handler中执行的代码就有可能被多个线程并发执行,就需要在handler中处理线程安全问题.  
+     比如: 在不同的线程中调用Channel.write(),同一个Channel中同时触发了出站事件.
+   - Netty3 模型中如果出站事件触发了入站事件,可能造成一次额外的线程上下文切换.  
+     比如: Channel.write()方法造成异常的时候,需要生成并触发一个exceptionCaught事件.在Netty3 模型中 exceptionCaught是一个入站事件,需要在调用线程中执行,然后将事件\
+     交给I/O线程处理,造成依次不必要的线程上下文切换.
+     
+2. Netty4 中的I/O事件处理:  
+   - 所有的I/O操作和事件都交给 驱动`EventLoop`永远不会改变的线程处理.解决了 `handler需要注意线程安全的问题` 和 `不必要的线程切换`
+
+#### 5.5.1.3 I/O事件处理:
+1. JDK的任务调度API:  通过 `ScheduledExecutorService`来完成
+2. `EventLoop`来调度任务:  
+   - 延迟多少时间后执行一次:  
+   ```java
+        Channel ch = ...
+        // 60 秒之后执行一次,之后不再执行
+        ScheduledFuture<?> future = ch.eventLoop().schedule( new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("60 seconds later");
+                }
+        }, 60, TimeUnit.SECONDS);
+   ```  
+   - 定时任务:  
+   ```java
+        Channel ch = ...
+        // 60秒后,执行第一次,之后每60秒执行一次.
+        ScheduledFuture<?> future = ch.eventLoop().scheduleAtFixedRate(
+            new Runnable() {
+                @Override
+                public void run() {
+                System.out.println("Run every 60 seconds");
+            }
+        }, 60, 60, TimeUnit.Seconds);
+   ```
+   - 任务的取消: 通过future来取消或者检查任务的执行状态  
+   ```java
+        ScheduledFuture<?> future = ch.eventLoop().scheduleAtFixedRate(...);
+        // Some other code that runs...
+        // 任务的取消
+        boolean mayInterruptIfRunning = false;
+        future.cancel(mayInterruptIfRunning);
+   ```
+   说明:
+   1. netty的任务调度是否立即执行是取决于调用任务的线程是否是 与`EventLoop`绑定的线程,即`负责处理`该channel事件的线程.如果是那么将会立即执行,如果不是那么将会把任务放入延时队列中,
+   在 `EventLoop` 下次处理它的事件的时候,会去处理这些任务.`保证了任务不会被多个线程同时执行`.  
+   2. `EventLoop`的任务队列,是 `EventLoop独有的`,独立于其他EventLoop.
+   3. 调度任务执行的逻辑:  
+   ![调度任务执行逻辑](../../_media/chapter13_Netty/5_netty核心组件/eventLoop调度任务执行的逻辑.png)
+### 5.5.2 EventLoopGroup:
+
+从上面的继承结构图中可以看出 `EventLoopGroup`实际上就是一个 `ScheduledExecutorService` 延时任务线程池.
+`EventLoopGroup`主要功能:  
+1. 作为一个线程池管理 `EventLoop实例`
+2. 将channel注册到eventLoop的selector上
+3. 
 ## 5.6 Future和Promise:
